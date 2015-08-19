@@ -20,7 +20,7 @@ private:
 	void setBgImage(float px, float py);
 	void addTitle(float px, float py);
 	void addTargetNumLabel();
-	
+
 
 
 	virtual void onTouchesBegan(const std::vector<Touch*>& touches, Event* event);
@@ -51,5 +51,6 @@ private:
 	//Íæ¼Ò
 	Player*  m_player1;
 	Player*  m_player2;
+
 };
 #endif

@@ -77,7 +77,7 @@ bool MultiScene::init()
 
 	//注册帧事件
 	this->scheduleUpdate();
-	
+
 
 
 	//初始化
@@ -139,55 +139,42 @@ void MultiScene::addTitle(float px, float py)
 
 void MultiScene::onTouchesBegan(const std::vector<Touch*>& touches, Event* event)
 {
-
 	for (auto &item : touches)
 	{
 		auto touch = item;
 		auto location = touch->getLocation();
-		if (m_p1count_flag && m_p2count_flag)
+		if (_touchP1ID != -1 && _touchP2ID != -1)
 			break;
 
-		if (!m_p1count_flag && m_player1->MoneyTotal()->isOnMoney(location))
+		if (_touchP1ID == -1 && m_player1->MoneyTotal()->isOnMoney(location))
 		{
-			m_p1count_flag = true;
 			_sP1Pos = location;
 			_touchP1ID = touch->getID();
 			m_effect_id1 = AudioControl::playEffectMusic();
 		}
-		if (!m_p2count_flag && m_player2->MoneyTotal()->isOnMoney(location))
+		if (_touchP2ID == -1 && m_player2->MoneyTotal()->isOnMoney(location))
 		{
-			m_p2count_flag = true;
 			_sP2Pos = location;
 			_touchP2ID = touch->getID();
 			m_effect_id2 = AudioControl::playEffectMusic();
 		}
-		
+
 	}
-}
-
-void MultiScene::onTouchesMoved(const std::vector<Touch*>& touches, Event* event)
-{
-
 }
 
 void MultiScene::onTouchesEnded(const std::vector<Touch*>& touches, Event* event)
 {
-	if (!m_p1count_flag && !m_p2count_flag)
+	if (_touchP1ID == -1 && _touchP2ID == -1)
 		return;
-
-	if (m_p1count_flag)
-		m_p1count_flag = false;
-
-	if (m_p2count_flag)
-		m_p2count_flag = false;
 
 	for (auto &item : touches)
 	{
 		auto touch = item;
 		auto location = touch->getLocation();
-		auto touchID = touch->getID();
+
+
 		bool flag1 = true;
-		if (touchID == _touchP1ID)          //right player
+		if (touch->getID() == _touchP1ID)          //right player
 		{
 			switch (MCUtil::direction(_sP1Pos, location))
 			{
@@ -236,12 +223,12 @@ void MultiScene::onTouchesEnded(const std::vector<Touch*>& touches, Event* event
 		}
 
 		bool flag2 = true;
-		if (touchID == _touchP2ID)     //left player
+		if (touch->getID() == _touchP2ID)     //left player
 		{
 			switch (MCUtil::direction(_sP2Pos, location))
 			{
 			case RIGHT:
-				m_player2->addSingleMoneyLabel(m_p2IsFake, "right2", Vec2(-380,0));
+				m_player2->addSingleMoneyLabel(m_p2IsFake, "right2", Vec2(-380, 0));
 				m_player2->MoneySingle()->moneyFly(100.0, 0.0, 0.1);
 				break;
 
@@ -284,9 +271,17 @@ void MultiScene::onTouchesEnded(const std::vector<Touch*>& touches, Event* event
 				m_player2->changeTotalMoneyLabel();
 			}
 		}
+
 		AudioControl::stopAllEffcts();
+
 	}
 }
+
+void MultiScene::onTouchesMoved(const std::vector<Touch*>& touches, Event* event)
+{
+
+}
+
 
 void MultiScene::addTargetNumLabel()
 {
@@ -341,4 +336,3 @@ void MultiScene::update(float dt)
 		this->unscheduleUpdate();
 	}
 }
-
