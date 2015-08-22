@@ -33,8 +33,11 @@ public:
 
 	void setTotalMoneySpritePos(float detax, float detay);
 	void setSingleMoneySpritePos(float detax, float detay);
+	
 	void setTotalMoneyNumPos(float detax, float detay);
 	void setFakeWrongNumPos(float detax, float detay);
+
+	void setTotalMoneyNumRot(float detaRot);
 
 private:
 	void displayTotalMoney();

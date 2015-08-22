@@ -13,7 +13,7 @@ public:
 	CMTimer();
 	~CMTimer();
 	//void createLabel(Vec2 pos, Player* pyr);
-	void createLabel(Vec2 pos, Player* pyr, int sceneKind = 1);
+	void createLabel(Vec2 pos, Player* pyr, int sceneMode = 1);
 
 	CREATE_FUNC(CMTimer);
 	void setTotalTime(float totaltime){ m_totaltime = totaltime; }
@@ -35,6 +35,7 @@ private:
 	bool   m_ender;
 
 	Player*  m_player_status;
+	int m_sceneMode;
 };
 
 #endif // __CMTIMER_H__

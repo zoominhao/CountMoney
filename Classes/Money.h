@@ -32,9 +32,11 @@ public:
 	bool isOnMoney(Vec2 point){ return m_MoneySprite->boundingBox().containsPoint(point); }
 
 	void moneyFly(float detax, float detay, float detat);
+	void moneyFakeFly(float detax, float detay, float detat);
 	void moneyMove(float x, float y, float detat);
 
 	void setPos(float detax, float detay);
+	Sprite* MoneySprite(){ return m_MoneySprite; }
 private:
 	const char* getMoneyImg(Money_Type mtype);
 

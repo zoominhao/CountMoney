@@ -33,6 +33,15 @@ public:
 	static int playEffectMusic();
 	static void stopEffectMusic(int id);
 	static void stopAllEffcts();
+
+	static void setMCEffectsVolume(float vol);
+	static void setBGMusicVolume(float vol);
+
+	static void stopMCEffects();
+	static void stopBGMusic();
+
+	static bool isEffectStopped;
+	static bool isBGMusicStopped;
 };
 
 #endif

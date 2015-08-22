@@ -4,16 +4,16 @@
 	<dict>
 		<key>frames</key>
 		<dict>
-			<key>over_scene.png</key>
+			<key>background_w.png</key>
 			<dict>
 				<key>width</key>
-				<integer>533</integer>
+				<integer>768</integer>
 				<key>height</key>
-				<integer>323</integer>
+				<integer>1025</integer>
 				<key>originalWidth</key>
-				<integer>533</integer>
+				<integer>768</integer>
 				<key>originalHeight</key>
-				<integer>323</integer>
+				<integer>1025</integer>
 				<key>x</key>
 				<integer>0</integer>
 				<key>y</key>
@@ -23,18 +23,18 @@
 				<key>offsetY</key>
 				<real>0</real>
 			</dict>
-			<key>restart.png</key>
+			<key>restart_btn1.png</key>
 			<dict>
 				<key>width</key>
-				<integer>75</integer>
+				<integer>480</integer>
 				<key>height</key>
-				<integer>273</integer>
+				<integer>120</integer>
 				<key>originalWidth</key>
-				<integer>75</integer>
+				<integer>480</integer>
 				<key>originalHeight</key>
-				<integer>273</integer>
+				<integer>120</integer>
 				<key>x</key>
-				<integer>535</integer>
+				<integer>770</integer>
 				<key>y</key>
 				<integer>0</integer>
 				<key>offsetX</key>
@@ -42,20 +42,58 @@
 				<key>offsetY</key>
 				<real>0</real>
 			</dict>
-			<key>return.png</key>
+			<key>restart_btn2.png</key>
 			<dict>
 				<key>width</key>
-				<integer>76</integer>
+				<integer>480</integer>
 				<key>height</key>
-				<integer>272</integer>
+				<integer>120</integer>
 				<key>originalWidth</key>
-				<integer>76</integer>
+				<integer>480</integer>
 				<key>originalHeight</key>
-				<integer>272</integer>
+				<integer>120</integer>
 				<key>x</key>
-				<integer>612</integer>
+				<integer>1252</integer>
 				<key>y</key>
 				<integer>0</integer>
+				<key>offsetX</key>
+				<real>0</real>
+				<key>offsetY</key>
+				<real>0</real>
+			</dict>
+			<key>return_btn1.png</key>
+			<dict>
+				<key>width</key>
+				<integer>480</integer>
+				<key>height</key>
+				<integer>120</integer>
+				<key>originalWidth</key>
+				<integer>480</integer>
+				<key>originalHeight</key>
+				<integer>120</integer>
+				<key>x</key>
+				<integer>0</integer>
+				<key>y</key>
+				<integer>1027</integer>
+				<key>offsetX</key>
+				<real>0</real>
+				<key>offsetY</key>
+				<real>0</real>
+			</dict>
+			<key>return_btn2.png</key>
+			<dict>
+				<key>width</key>
+				<integer>480</integer>
+				<key>height</key>
+				<integer>120</integer>
+				<key>originalWidth</key>
+				<integer>480</integer>
+				<key>originalHeight</key>
+				<integer>120</integer>
+				<key>x</key>
+				<integer>482</integer>
+				<key>y</key>
+				<integer>1027</integer>
 				<key>offsetX</key>
 				<real>0</real>
 				<key>offsetY</key>
@@ -71,14 +109,14 @@
 			<key>realTextureFileName</key>
 			<string>EndUi0.png</string>
 			<key>size</key>
-			<string>{1024,1024}</string>
+			<string>{2048,2048}</string>
 		</dict>
 		<key>texture</key>
 		<dict>
 			<key>width</key>
-			<integer>1024</integer>
+			<integer>2048</integer>
 			<key>height</key>
-			<integer>1024</integer>
+			<integer>2048</integer>
 		</dict>
 	</dict>
 </plist>

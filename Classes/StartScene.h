@@ -2,6 +2,9 @@
 #define _START_SCENE_H_
 
 #include "cocos2d.h"
+#include "cocostudio/CocoStudio.h"
+#include "ui/CocosGUI.h"
+
 USING_NS_CC;
 
 class StartScene : public Layer
@@ -11,10 +14,13 @@ public:
 	virtual bool init();
 	CREATE_FUNC(StartScene);
 
-	void enter_tellerScene(Ref* ref);
-	void enter_loserScene(Ref* ref);
-	void enter_multiScene(Ref* ref);
+private:
+	void SingleScene(Ref *pSender, ui::Widget::TouchEventType type);
+	void MultiScene(Ref *pSender, ui::Widget::TouchEventType type);
+	void LeaveScene(Ref *pSender, ui::Widget::TouchEventType type);
 
-	void game_over(Ref* ref);
+	void InfoScene(Ref *pSender, ui::Widget::TouchEventType type);
+	void SetScene(Ref *pSender, ui::Widget::TouchEventType type);
+
 };
 #endif

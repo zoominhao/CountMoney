@@ -17,8 +17,8 @@ void Player::createPlayer(int mode)
 	
 	addTotalMoneyLabel();
 	displayTotalMoney();
-	if (mode == 2)
-		displayFakeWrong();
+	/*if (mode == 2)
+		displayFakeWrong();*/
 	m_totalMoneyNum = 0;
 	m_fakeWrongNum = 0;
 }
@@ -50,6 +50,8 @@ void Player::displayFakeWrong()
 void Player::addTotalMoney(int deta)
 {
 	m_totalMoneyNum += deta;
+	if (m_totalMoneyNum < 0)
+		m_totalMoneyNum = 0;
 }
 
 void Player::addTotalMoneyLabel()
@@ -58,7 +60,7 @@ void Player::addTotalMoneyLabel()
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	m_money_total = Money::create();
-	m_money_total->createSprite(Vec2(visibleSize.width, visibleSize.height / 2 + origin.y), Real_100_T);
+	m_money_total->createSprite(Vec2(visibleSize.width / 2 + origin.x, origin.y), Real_100_T);
 	this->addChild(m_money_total, 1);
 }
 
@@ -90,7 +92,7 @@ void Player::addSingleMoneyLabel(bool isFake, const char* name, Vec2 pos)
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	
-	Vec2 curpos = Vec2(visibleSize.width + pos.x, visibleSize.height / 2 + origin.y + pos.y);
+	Vec2 curpos = Vec2(visibleSize.width / 2 + origin.x + pos.x, origin.y + pos.y);
 
 	m_money_single = Money::create();
 	if (isFake)
@@ -138,4 +140,10 @@ void Player::setFakeWrongNumPos(float detax, float detay)
 {
 	m_fakeWrongNumLabel->setPosition(m_fakeWrongNumLabel->getPositionX() + detax, m_fakeWrongNumLabel->getPositionY() + detay);
 }
+
+void Player::setTotalMoneyNumRot(float detaRot)
+{
+	m_totalMoneyNumLabel->setRotation(detaRot);
+}
+
 

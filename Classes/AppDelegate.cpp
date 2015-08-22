@@ -38,7 +38,9 @@ bool AppDelegate::applicationDidFinishLaunching() {
     director->setAnimationInterval(1.0 / 60);
 
 	// Set the design resolution
-	glview->setDesignResolutionSize(640, 480, ResolutionPolicy::NO_BORDER);
+	//glview->setDesignResolutionSize(768, 1024, ResolutionPolicy::NO_BORDER);
+	glview->setDesignResolutionSize(768, 1024, ResolutionPolicy::EXACT_FIT);
+	glview->setFrameSize(768, 1024);
 
     // create a scene. it's an autorelease object
     auto scene = StartScene::createScene();

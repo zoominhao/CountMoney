@@ -16,8 +16,9 @@ void Money::createSprite(Vec2 pos, Money_Type mtype)
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	m_MoneySprite = Sprite::create(getMoneyImg(mtype));
-	m_MoneySprite->setScale(0.6); //
-	m_MoneySprite->setPosition(Vec2(pos.x - m_MoneySprite->getContentSize().width*0.3, pos.y));
+	//m_MoneySprite->setScale(0.6); //
+	m_MoneySprite->setRotation(90);
+	m_MoneySprite->setPosition(Vec2(pos.x, pos.y + m_MoneySprite->getContentSize().height));
 	this->addChild(m_MoneySprite, 1);
 }
 
@@ -57,8 +58,22 @@ void Money::changeMoney(Money_Type mtype)
 void Money::moneyFly(float detax, float detay, float detat)
 {
 	MoveTo *MoveD = MoveTo::create(detat, ccp(m_MoneySprite->getPositionX() + detax, m_MoneySprite->getPositionY() + detay));
-	ScaleTo *Scale = ScaleTo::create(detat, 0.4, 0.4);
-	Sequence *Seq = Sequence::create(Scale, MoveD, NULL);          //上述各个语句定义组成一个动作序列，让各动作依次运行。
+	//ScaleTo *Scale = ScaleTo::create(detat, 0.4, 0.4);
+	//Sequence *Seq = Sequence::create(Scale, MoveD, NULL);          //上述各个语句定义组成一个动作序列，让各动作依次运行。
+	RotateTo *Rotate = RotateTo::create(detat, Vec3(0, 45, 0));
+	Spawn *Seq = Spawn::create(MoveD, Rotate, NULL);
+	Repeat *repeateAct = Repeat::create(Seq, 1);
+
+	m_MoneySprite->runAction(repeateAct);
+}
+
+void Money::moneyFakeFly(float detax, float detay, float detat)
+{
+	MoveTo *MoveD = MoveTo::create(detat, ccp(m_MoneySprite->getPositionX() + detax, m_MoneySprite->getPositionY() + detay));
+	ScaleTo *Scale = ScaleTo::create(detat, 0.2, 0.2);
+	//Sequence *Seq = Sequence::create(Scale, MoveD, NULL);          //上述各个语句定义组成一个动作序列，让各动作依次运行。
+	RotateTo *Rotate = RotateTo::create(detat, Vec3(0, 90, 0));
+	Spawn *Seq = Spawn::create(Scale, MoveD, Rotate, NULL);
 	Repeat *repeateAct = Repeat::create(Seq, 1);
 
 	m_MoneySprite->runAction(repeateAct);

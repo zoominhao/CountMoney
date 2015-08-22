@@ -1,0 +1,21 @@
+#ifndef _LOSER_PAUSE_SCENE_H_
+#define _LOSER_PAUSE_SCENE_H_
+
+#include "cocos2d.h"
+
+USING_NS_CC;
+
+class LoserPauseScene : public Layer
+{
+public:
+	static Scene* createScene(RenderTexture* sqr, int score = 1000);
+	virtual bool init();
+	CREATE_FUNC(LoserPauseScene);
+
+private:
+	void continueCallback(Ref *pSender);
+	void restartCallback(Ref *pSender);
+
+
+};
+#endif

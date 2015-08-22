@@ -1,5 +1,6 @@
 #include "TellerScene.h"
-#include "StartScene.h"
+#include "TellerPauseScene.h"
+#include "SingleScene.h"
 #include "MCUtil.h"
 #include "AudioControl.h"
 
@@ -35,32 +36,39 @@ bool TellerScene::init()
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-    /////////////////////////////
-    // 2. add a menu item with "X" image, which is clicked to quit the program
-    //    you may modify it.
+	auto returnItem = MenuItemImage::create(
+		"return_icon1.png",
+		"return_icon2.png",
+		CC_CALLBACK_1(TellerScene::returnCallback, this));
 
-    // add a "close" icon to exit the progress. it's an autorelease object
-    auto closeItem = MenuItemImage::create(
-                                           "CloseNormal.png",
-                                           "CloseSelected.png",
-										   CC_CALLBACK_1(TellerScene::menuCloseCallback, this));
-    
-	closeItem->setPosition(Vec2(origin.x + visibleSize.width - closeItem->getContentSize().width/2 ,
-                                origin.y + closeItem->getContentSize().height/2));
+	returnItem->setPosition(Vec2(origin.x + returnItem->getContentSize().width / 2,
+		origin.y + visibleSize.height - returnItem->getContentSize().height / 2));
 
-    // create menu, it's an autorelease object
-    auto menu = Menu::create(closeItem, NULL);
-    menu->setPosition(Vec2::ZERO);
-    this->addChild(menu, 1);
+
+	auto pauseItem = MenuItemImage::create(
+		"pause_icon1.png",
+		"pause_icon2.png",
+		CC_CALLBACK_1(TellerScene::pauseCallback, this));
+
+	pauseItem->setPosition(Vec2(origin.x + visibleSize.width - pauseItem->getContentSize().width / 2,
+		origin.y + visibleSize.height - pauseItem->getContentSize().height / 2));
+
+	// create menu, it's an autorelease object
+	auto menu = Menu::create(returnItem, pauseItem, NULL);
+	menu->setPosition(Vec2::ZERO);
+	this->addChild(menu, 1);
+
 
 	//preload audio
 	AudioControl::preLoad();
 
-    // add title
-	addTitle(origin.x + visibleSize.width / 2, origin.y + visibleSize.height);
 
 	//add background image
-	setBgImage(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y);
+	setBgImage();
+
+	//
+	addCounter();
+	addTranshCan();
 
 	//添加玩家，该场景为单人模式
 	m_player = Player::create();
@@ -69,7 +77,7 @@ bool TellerScene::init()
 
 	//添加计时器
 	m_cmTimer = CMTimer::create();
-	m_cmTimer->createLabel(Vec2(visibleSize.width / 2 + origin.x + 170, visibleSize.height / 2 + origin.y), m_player, 2);
+	m_cmTimer->createLabel(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - 80), m_player, 2);
 	this->addChild(m_cmTimer, 2);
 	
     //播放背景音乐
@@ -86,66 +94,69 @@ bool TellerScene::init()
 
 	//初始化
 	m_count_flag = false;
-	m_isFake = false;
+	m_curFake = false;
+	m_nextFake = false;
+	m_isEmpty = true;
+	m_needRand = true;
 
 	srand((unsigned)time(NULL));
 
     return true;
 }
 
-
-void TellerScene::menuCloseCallback(Ref* pSender)
+void TellerScene::setBgImage()
 {
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_WP8) || (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
-	MessageBox("You pressed the close button. Windows Store Apps do not implement a close button.","Alert");
-    return;
-#endif
+	auto sprite = LayerColor::create(ccc4(0xff, 0xff, 0xff, 0xff), 768, 1024);
 
-    //Director::getInstance()->end();
-	auto scene = StartScene::createScene();
-	Director::getInstance()->replaceScene(scene);
-
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-    exit(0);
-#endif
-}
-
-void TellerScene::setBgImage(float px, float py)
-{
-	// add "Main Scene" splash screen"
-	auto sprite = Sprite::create("bg_pic.jpg");
-
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	// position the sprite on the center of the screen
-	sprite->setPosition(Vec2(px, py));
+	sprite->setPosition(ccp(origin.x + visibleSize.width / 2 - sprite->getContentSize().width / 2,
+		origin.y + visibleSize.height / 2 - sprite->getContentSize().height / 2));
 
 	// add the sprite as a child to this layer
 	this->addChild(sprite, 0);
 }
 
 
-void TellerScene::addTitle(float px, float py)
-{
-	// add a label shows "Count Money"
-	// create and initialize a label
-	auto label = Label::createWithTTF("Count Money", "fonts/Marker Felt.ttf", 24);
-
-	// position the label on the center of the screen
-	label->setPosition(Vec2(px, py - label->getContentSize().height));
-	label->setColor(Color3B(0.0, 0.0, 0.0));
-	// add the label as a child to this layer
-	this->addChild(label, 1);
-}
-
 bool TellerScene::onTouchBegan(Touch* touch, Event* event)
 {
 	_spos = touch->getLocation();
+	_curPos = _spos;
 	if (m_player->MoneyTotal()->isOnMoney(_spos))
 	{
 		m_count_flag = true;
 		m_cmTimer->startTimer();
 		m_effect_id = AudioControl::playEffectMusic();
+		if (m_needRand)
+		{
+			m_player->addSingleMoneyLabel(m_curFake, "center");
+			int x = rand() % 100;
+			if (x > 70)
+			{
+				m_player->MoneyTotal()->changeMoney(Fake_100_T);
+				m_nextFake = true;
+			}
+			else
+			{
+				m_player->MoneyTotal()->changeMoney(Real_100_T);
+				m_nextFake = false;
+			}
+		}
 	}
 	return true;
+}
+
+void TellerScene::onTouchMoved(Touch* touch, Event* event)
+{
+	if (!m_count_flag)
+		return;
+	auto pos = touch->getLocation();
+	if (pos.y <= _spos.y)
+		pos.y = _spos.y;
+	m_player->MoneySingle()->MoneySprite()->setPosition(m_player->MoneySingle()->MoneySprite()->getPositionX(),
+		m_player->MoneySingle()->MoneySprite()->getPositionY() + (pos.y - _curPos.y)*0.5);
+	_curPos = pos;
 }
 
 void TellerScene::onTouchEnded(Touch* touch, Event* event)
@@ -155,96 +166,92 @@ void TellerScene::onTouchEnded(Touch* touch, Event* event)
 	else
 		return;
 
-	
-	
 	auto pos = touch->getLocation();
 	switch (MCUtil::direction(_spos, pos))
 	{
-	case LEFT:
-		m_player->addSingleMoneyLabel(m_isFake, "left");
-		m_player->MoneySingle()->moneyFly(-300.0, 0.0, 0.1);
-		if (m_isFake)   //出现假钞
+	case UP:
+		m_player->MoneySingle()->MoneySprite()->setName("up");
+		m_player->MoneySingle()->moneyFly(0.0, 400.0 - (pos.y - _spos.y)*0.5, 0.1);
+		if (m_curFake)   //出现假钞
 		{
 			m_player->addFakeWrong(1);
-			m_player->changeFakeWrongLabel();
+			m_player->addTotalMoney(-200);
+			//m_player->changeFakeWrongLabel();
 		}
 		else
 		{
 			m_player->addTotalMoney(100);
 		}
-		
+		m_needRand = true;
 		break;
-/*
 	case RIGHT:
-		m_money_single->moneyMove(50, 0, 0.1);
-		this->removeChild(m_money_single);
-		SimpleAudioEngine::sharedEngine()->stopEffect(m_effctId);
-		return;
-		break;*/
-	case UP:
-		m_player->addSingleMoneyLabel(m_isFake, "up");
-		m_player->MoneySingle()->moneyFly(0.0, 150.0, 0.1);
+		m_player->MoneySingle()->MoneySprite()->setName("right");
+		m_player->MoneySingle()->moneyFakeFly(220.0, 0.0, 0.1);
+		
+		if (m_isEmpty)
+		{
+			m_transhCan->setTexture("f_trashCan.png");
+			m_isEmpty = false;
+		}
+		m_needRand = true;
 		break;
-	/*case DOWN:
-		m_money_single->moneyMove(0, -25, 0.1);
-		this->removeChild(m_money_single);
-		SimpleAudioEngine::sharedEngine()->stopEffect(m_effctId);
-		return;
-		break;*/
 	default:
-		m_player->addSingleMoneyLabel(m_isFake);
-		m_player->removeChild(m_player->MoneySingle());
-		AudioControl::stopEffectMusic(m_effect_id);
-		return;
+		//m_player->removeChild(m_player->MoneySingle());
+		//AudioControl::stopEffectMusic(m_effect_id);
+		m_needRand = false;
 		break;
 	}
 	
-	
+	if (m_needRand)
+		m_curFake = m_nextFake;
 	AudioControl::stopEffectMusic(m_effect_id);
-
-	int x = rand() % 100;
-	//CCLOG("%d", x);
-	if (x > 50)
-	{
-		m_player->MoneyTotal()->changeMoney(Fake_100_T);
-		m_isFake = true;
-	}
-	else
-	{
-		m_player->MoneyTotal()->changeMoney(Real_100_T);
-		m_isFake = false;
-	}
 	m_player->changeTotalMoneyLabel();
 }
 
-void TellerScene::onTouchMoved(Touch* touch, Event* event)
+
+void TellerScene::returnCallback(Ref* pSender)
 {
-	/*auto pos = touch->getLocation();
-	cu_pos = pos;
-	auto vatu = sp2->getPhysicsBody()->getVelocity();
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WP8) || (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
+	MessageBox("You pressed the close button. Windows Store Apps do not implement a close button.", "Alert");
+	return;
+#endif
+	auto scene = SingleScene::createScene();
+	Director::getInstance()->replaceScene(scene);
 
-	if (vatu.x >= 0.0f)
-	{
-	sp2->getPhysicsBody()->setVelocity(vatu + Vect(20, 0));
-	}
-	else
-	{
-	sp2->getPhysicsBody()->setVelocity(vatu + Vect(-20, 0));
-	}
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+	exit(0);
+#endif
+}
 
-	log("%f---\n", sp2->getPhysicsBody()->getLinearDamping());*/
+void TellerScene::pauseCallback(Ref* pSender)
+{
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	RenderTexture *renderTexture = RenderTexture::create(visibleSize.width, visibleSize.height + 30);
+	renderTexture->begin();
+	this->getParent()->visit();
+	renderTexture->end();
 
-/*
-	int random(int a, int b){
-		int k = 0;
-		int sum = 0;
-		while (pow(2, k) < b)
-		{
-			sum += (random(0, 1) << k);
-			//rand()/2
-			k++；
-		}
-	}*/
+	auto scene = TellerPauseScene::createScene(renderTexture, m_player->totalMoneyNum());
+	Director::sharedDirector()->pushScene(scene);
+}
+
+void TellerScene::addCounter()
+{
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+	m_counter = Sprite::create("counter.jpg");
+	m_counter->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 + 200));
+	this->addChild(m_counter, 1);
+}
+
+void TellerScene::addTranshCan()
+{
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+	m_transhCan = Sprite::create("trashCan.png");
+	m_transhCan->setScale(0.6);
+	m_transhCan->setPosition(Vec2(origin.x + visibleSize.width - 100, origin.y + visibleSize.height / 2 - 300));
+	this->addChild(m_transhCan, 1);
 }
 
 

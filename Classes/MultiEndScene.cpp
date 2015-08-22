@@ -1,46 +1,36 @@
-#include "EndScene.h"
+#include "MultiEndScene.h"
 #include "StartScene.h"
-#include "TellerScene.h"
+#include "MultiScene.h"
 #include "SimpleAudioEngine.h"
  
 
 using namespace CocosDenshion;
 
 
-Scene* EndScene::createScene(RenderTexture* sqr, int score)
+Scene* MultiEndScene::createScene(const char* resultstr)
 {
 	auto scene = Scene::create();
-	auto layer = EndScene::create();
+	auto layer = MultiEndScene::create();
 	scene->addChild(layer, 1);
+
 
 	SimpleAudioEngine::sharedEngine()->stopAllEffects();
 
-	char scoreStr[20];
-	sprintf(scoreStr, "%d", score);
-	auto scoreLabel = Label::createWithTTF(scoreStr, "fonts/Marker Felt.ttf", 24);
+
+	auto scoreLabel = Label::createWithTTF(resultstr, "fonts/Marker Felt.ttf", 24);
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	//添加得分
-	scoreLabel->setPosition(origin.x + visibleSize.width / 3, origin.y + 20);
-	scoreLabel->setColor(Color3B(255.0, 255.0, 255.0));
+	scoreLabel->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height  - 200);
+	//scoreLabel->setColor(Color3B(255.0, 255.0, 255.0));
+	scoreLabel->setColor(Color3B::GRAY);
 
 	scene->addChild(scoreLabel, 1);
-
-
-	//并结束界面截图添加到GameEnd场景层中  
-	//得到窗口的大小  
-	Sprite *back_spr = Sprite::createWithTexture(sqr->getSprite()->getTexture());
-	//Sprite *back_spr = Sprite::create("bg_pic.jpg");
-	back_spr->setPosition(ccp(visibleSize.width / 2, visibleSize.height / 2 + 15)); //放置位置,这个相对于中心位置。  
-	back_spr->setFlipY(true);            //翻转，因为UI坐标和OpenGL坐标不同  
-	back_spr->setColor(Color3B::GRAY); //图片颜色变灰色  
-	//back_spr->setColor(Color3B(255,0,0));
-	scene->addChild(back_spr);
 
 	return scene;
 }
 
-bool EndScene::init()
+bool MultiEndScene::init()
 {
 	if (!Layer::init())
 		return false;
@@ -56,26 +46,21 @@ bool EndScene::init()
 	//给开始按钮添加事件监听  
 
 	ui::Button *Btn_Restart = dynamic_cast<ui::Button*>(uilayer->getChildByName("Restart"));
-	Btn_Restart->addTouchEventListener(CC_CALLBACK_2(EndScene::restartButton, this));
+	Btn_Restart->addTouchEventListener(CC_CALLBACK_2(MultiEndScene::restartButton, this));
 
 	ui::Button *Btn_Return = dynamic_cast<ui::Button*>(uilayer->getChildByName("Return"));
-	Btn_Return->addTouchEventListener(CC_CALLBACK_2(EndScene::returnButton, this));
+	Btn_Return->addTouchEventListener(CC_CALLBACK_2(MultiEndScene::returnButton, this));
 
 	return true;
 }
 
-void EndScene::restartButton(Ref *pSender, ui::Widget::TouchEventType type)
+void MultiEndScene::restartButton(Ref *pSender, ui::Widget::TouchEventType type)
 {
-	if (type == ui::Widget::TouchEventType::ENDED)
-	{
-		//auto scene = TellerScene::createScene();
-		//Director::getInstance()->replaceScene(scene);
-
-		//Director::sharedDirector()->popScene();
-	}
+	auto scene =  MultiScene::createScene();
+	Director::getInstance()->replaceScene(scene);
 }
 
-void EndScene::returnButton(Ref *pSender, ui::Widget::TouchEventType type)
+void MultiEndScene::returnButton(Ref *pSender, ui::Widget::TouchEventType type)
 {
 	if (type == ui::Widget::TouchEventType::ENDED)
 	{

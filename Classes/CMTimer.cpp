@@ -1,5 +1,6 @@
 #include "CMTimer.h"
-#include "EndScene.h"
+#include "LoserEndScene.h"
+#include "TellerEndScene.h"
 
 
 CMTimer::CMTimer() :m_timerLabel(NULL), m_totaltime(10.0), m_starter(true), m_ender(false)
@@ -12,20 +13,20 @@ CMTimer::~CMTimer()
 	
 }
 
-void CMTimer::createLabel(Vec2 pos, Player* pyr, int sceneKind)
+void CMTimer::createLabel(Vec2 pos, Player* pyr, int sceneMode)
 {
 	char totalTimeStr[10];
 	sprintf(totalTimeStr, "%4.2f", m_totaltime);
-	m_timerLabel = Label::createWithTTF(totalTimeStr, "fonts/Marker Felt.ttf", 24);
+	m_timerLabel = Label::createWithTTF(totalTimeStr, "fonts/Marker Felt.ttf", 60);
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
 	m_timerLabel->setPosition(pos);
-	m_timerLabel->setRotation(90);                               //放置在竖直白线上的，所以旋转90度
-	m_timerLabel->setColor(Color3B(255.0, 255.0, 0.0));
+	//m_timerLabel->setRotation(90);                               //放置在竖直白线上的，所以旋转90度
+	m_timerLabel->setColor(Color3B(0.0, 0.0, 0.0));
 
 	m_player_status = pyr;
-
+	m_sceneMode = sceneMode;
 	this->addChild(m_timerLabel, 2);
 }
 
@@ -59,15 +60,18 @@ void CMTimer::startTimer()
 
 void CMTimer::switchScene()
 {
-	//遍历当前类的所有子节点信息，画入renderTexture中。  
-	//这里类似截图。  
-	Size visibleSize = Director::getInstance()->getVisibleSize();
-	RenderTexture *renderTexture = RenderTexture::create(visibleSize.width, visibleSize.height + 30);
-	renderTexture->begin();
-	this->getParent()->visit();
-	renderTexture->end();
+	char scoreStr[20];
+	sprintf(scoreStr, "%d", m_player_status->totalMoneyNum());
+	Scene* scene;
+	if (m_sceneMode == 1)
+	{
+		scene = LoserEndScene::createScene(scoreStr);
+	}
+	else
+	{
+		scene = TellerEndScene::createScene(scoreStr);
+	}
+	 
 
-	auto scene = EndScene::createScene(renderTexture, m_player_status->totalMoneyNum());
-	Director::sharedDirector()->pushScene(scene);
-	//Director::getInstance()->replaceScene(scene);
+	Director::getInstance()->replaceScene(scene);
 }
