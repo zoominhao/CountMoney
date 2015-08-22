@@ -221,6 +221,10 @@ void MultiScene::onTouchesEnded(const std::vector<Touch*>& touches, Event* event
 				break;
 
 			default:
+				if (location.y - _sP1Pos.y > 0)
+				{
+					m_player1->MoneySingle()->MoneySprite()->setPositionY(m_player1->MoneySingle()->MoneySprite()->getPositionY() - (location.y - _sP1Pos.y)*0.5);
+				}
 				m_p1NeedRand = false;
 				break;
 			}
@@ -269,6 +273,10 @@ void MultiScene::onTouchesEnded(const std::vector<Touch*>& touches, Event* event
 				break;
 
 			default:
+				if (location.y - _sP2Pos.y < 0)
+				{
+					m_player2->MoneySingle()->MoneySprite()->setPositionY(m_player2->MoneySingle()->MoneySprite()->getPositionY() - (location.y - _sP2Pos.y)*0.5);
+				}
 				m_p2NeedRand = false;
 				break;
 			}

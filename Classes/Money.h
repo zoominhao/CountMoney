@@ -16,7 +16,11 @@ typedef enum{
 	Tool_3_T,
 	Tool_3_S,
 	Tool_4_T,
-	Tool_4_S
+	Tool_4_S,
+	Real_5_S,
+	Real_10_S,
+	Real_20_S,
+	Real_50_S
 }Money_Type;
 
 class Money: public Node

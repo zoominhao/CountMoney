@@ -20,17 +20,16 @@ bool StartScene::init()
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto origin = Director::getInstance()->getVisibleOrigin();
 
-
-	//¼ÓÔØcocos studioÖÆ×÷µÄ½çÃæ  
+	//åŠ è½½cocos studioåˆ¶ä½œçš„ç•Œé¢  
 	auto uilayer = cocostudio::GUIReader::getInstance()->widgetFromJsonFile("Start/StartUi_1.ExportJson");
 	uilayer->setPosition(ccp(origin.x + visibleSize.width / 2 - uilayer->getContentSize().width / 2,
 		origin.y + visibleSize.height / 2 - uilayer->getContentSize().height / 2));
 
-	
+
 	this->addChild(uilayer);
 
 
-	//¸ø¿ªÊ¼°´Å¥Ìí¼ÓÊÂ¼ş¼àÌı  
+	//ç»™å¼€å§‹æŒ‰é’®æ·»åŠ äº‹ä»¶ç›‘å¬  
 
 	ui::Button *Btn_Single = dynamic_cast<ui::Button*>(uilayer->getChildByName("SingleCount"));
 	Btn_Single->addTouchEventListener(CC_CALLBACK_2(StartScene::SingleScene, this));
@@ -48,7 +47,6 @@ bool StartScene::init()
 
 	ui::Button *Btn_Set = dynamic_cast<ui::Button*>(uilayer->getChildByName("Set"));
 	Btn_Set->addTouchEventListener(CC_CALLBACK_2(StartScene::SetScene, this));
-
 
 	return true;
 }

@@ -1,16 +1,16 @@
-#include "LoserEndScene.h"
+#include "EndlessEndScene.h"
 #include "StartScene.h"
-#include "LoserScene.h"
+#include "EndlessScene.h"
 #include "SimpleAudioEngine.h"
  
 
 using namespace CocosDenshion;
 
 
-Scene* LoserEndScene::createScene(const char* resultstr)
+Scene* EndlessEndScene::createScene(const char* resultstr)
 {
 	auto scene = Scene::create();
-	auto layer = LoserEndScene::create();
+	auto layer = EndlessEndScene::create();
 	scene->addChild(layer, 1);
 
 
@@ -30,7 +30,7 @@ Scene* LoserEndScene::createScene(const char* resultstr)
 	return scene;
 }
 
-bool LoserEndScene::init()
+bool EndlessEndScene::init()
 {
 	if (!Layer::init())
 		return false;
@@ -46,45 +46,26 @@ bool LoserEndScene::init()
 	//给开始按钮添加事件监听  
 
 	ui::Button *Btn_Restart = dynamic_cast<ui::Button*>(uilayer->getChildByName("Restart"));
-	Btn_Restart->addTouchEventListener(CC_CALLBACK_2(LoserEndScene::restartButton, this));
+	Btn_Restart->addTouchEventListener(CC_CALLBACK_2(EndlessEndScene::restartButton, this));
 
 	ui::Button *Btn_Return = dynamic_cast<ui::Button*>(uilayer->getChildByName("Return"));
-	Btn_Return->addTouchEventListener(CC_CALLBACK_2(LoserEndScene::returnButton, this));
+	Btn_Return->addTouchEventListener(CC_CALLBACK_2(EndlessEndScene::returnButton, this));
 
 	return true;
 }
 
-void LoserEndScene::restartButton(Ref *pSender, ui::Widget::TouchEventType type)
+void EndlessEndScene::restartButton(Ref *pSender, ui::Widget::TouchEventType type)
 {
 
-	auto scene = LoserScene::createScene();
+	auto scene = EndlessScene::createScene();
 	Director::getInstance()->replaceScene(scene);
 }
 
-void LoserEndScene::returnButton(Ref *pSender, ui::Widget::TouchEventType type)
+void EndlessEndScene::returnButton(Ref *pSender, ui::Widget::TouchEventType type)
 {
 	if (type == ui::Widget::TouchEventType::ENDED)
 	{
 		auto scene = StartScene::createScene();
 		Director::getInstance()->replaceScene(scene);
 	}
-/*
-	switch (type)
-	{
-	case ui::Widget::TouchEventType::BEGAN:
-		CCLOG("Button Down");//按钮按下  
-		break;
-	case ui::Widget::TouchEventType::MOVED:
-		CCLOG("Button Down and Mouse move");//按钮按下移动  
-		break;
-	case ui::Widget::TouchEventType::ENDED:
-		CCLOG("Button Up");//放开按钮  
-		
-		break;
-	case ui::Widget::TouchEventType::CANCELED:
-		CCLOG("Button Cancel");//取消按钮  
-		break;
-	default:
-		break;
-	}*/
 }

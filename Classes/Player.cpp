@@ -21,6 +21,7 @@ void Player::createPlayer(int mode)
 		displayFakeWrong();*/
 	m_totalMoneyNum = 0;
 	m_fakeWrongNum = 0;
+	m_stageNum = 0;
 }
 
 void Player::displayTotalMoney()
@@ -107,7 +108,7 @@ void Player::addSingleMoneyMLabel(Money_Type moneyType, const char* name, Vec2 p
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-	Vec2 curpos = Vec2(visibleSize.width + pos.x, visibleSize.height / 2 + origin.y + pos.y);
+	Vec2 curpos = Vec2(visibleSize.width / 2 + origin.x + pos.x, origin.y + pos.y);
 
 	m_money_single = Money::create();
 	m_money_single->createSprite(curpos, moneyType);

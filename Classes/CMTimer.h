@@ -16,7 +16,7 @@ public:
 	void createLabel(Vec2 pos, Player* pyr, int sceneMode = 1);
 
 	CREATE_FUNC(CMTimer);
-	void setTotalTime(float totaltime){ m_totaltime = totaltime; }
+	void setTotalTime(float totaltime){ m_totaltime = totaltime; m_timeLeft = m_totaltime; }
 
 	void startTimer();
 

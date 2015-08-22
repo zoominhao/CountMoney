@@ -2,6 +2,7 @@
 #define _MCUTIL_H_
 
 #include "cocos2d.h"
+
 USING_NS_CC;
 
 typedef enum{
@@ -16,10 +17,11 @@ class MCUtil
 {
 public:
 	static MCDirection direction(Vec2 pos1, Vec2 pos2);
+	static void displayCharacter();
 
 
 	static const float m;
-	static const std::string filename[12];
+	static const std::string filename[16];
 
 	static int random(int a, int b);
 };

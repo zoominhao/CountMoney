@@ -39,6 +39,9 @@ public:
 
 	void setTotalMoneyNumRot(float detaRot);
 
+	void setStageNum(int stageNum){ m_stageNum = stageNum; }
+	int stageNum(){ return m_stageNum; }
+
 private:
 	void displayTotalMoney();
 	void displayFakeWrong();
@@ -52,6 +55,8 @@ private:
 
 	Money*   m_money_total;
 	Money*   m_money_single;
+	
+	int m_stageNum;
 };
 
 #endif // __PLAYER_H__

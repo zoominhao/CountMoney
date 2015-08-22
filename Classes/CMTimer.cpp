@@ -1,6 +1,7 @@
 #include "CMTimer.h"
 #include "LoserEndScene.h"
 #include "TellerEndScene.h"
+#include "EndlessEndScene.h"
 
 
 CMTimer::CMTimer() :m_timerLabel(NULL), m_totaltime(10.0), m_starter(true), m_ender(false)
@@ -52,7 +53,7 @@ void CMTimer::startTimer()
 {
 	if (m_starter)
 	{
-		m_totaltime = 10.0;
+		//m_totaltime = 10.0;
 		m_starter = false;
 		schedule(schedule_selector(CMTimer::updatetime), 0.01f);
 	}
@@ -60,16 +61,22 @@ void CMTimer::startTimer()
 
 void CMTimer::switchScene()
 {
-	char scoreStr[20];
-	sprintf(scoreStr, "%d", m_player_status->totalMoneyNum());
+	char displayStr[100];
 	Scene* scene;
 	if (m_sceneMode == 1)
 	{
-		scene = LoserEndScene::createScene(scoreStr);
+		sprintf(displayStr, "Score: %d", m_player_status->totalMoneyNum());
+		scene = LoserEndScene::createScene(displayStr);
 	}
-	else
+	else if (m_sceneMode == 2)
 	{
-		scene = TellerEndScene::createScene(scoreStr);
+		sprintf(displayStr, "Score: %d", m_player_status->totalMoneyNum());
+		scene = TellerEndScene::createScene(displayStr);
+	}
+	else if (m_sceneMode == 3)
+	{
+		sprintf(displayStr, "Fail In Stage %d ", m_player_status->stageNum() + 1);
+		scene = EndlessEndScene::createScene(displayStr);
 	}
 	 
 

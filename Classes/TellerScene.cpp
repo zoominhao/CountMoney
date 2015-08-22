@@ -196,8 +196,10 @@ void TellerScene::onTouchEnded(Touch* touch, Event* event)
 		m_needRand = true;
 		break;
 	default:
-		//m_player->removeChild(m_player->MoneySingle());
-		//AudioControl::stopEffectMusic(m_effect_id);
+		if (pos.y - _spos.y > 0)
+		{
+			m_player->MoneySingle()->MoneySprite()->setPositionY(m_player->MoneySingle()->MoneySprite()->getPositionY() - (pos.y - _spos.y)*0.5);
+		}
 		m_needRand = false;
 		break;
 	}

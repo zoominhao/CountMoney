@@ -2,6 +2,7 @@
 #include "StartScene.h"
 #include "LoserScene.h"
 #include "TellerScene.h"
+#include "EndlessScene.h"
 
 
 
@@ -65,7 +66,8 @@ void SingleScene::GYScene(Ref *pSender, ui::Widget::TouchEventType type)
 
 void SingleScene::WJScene(Ref *pSender, ui::Widget::TouchEventType type)
 {
-
+	auto scene = EndlessScene::createScene();
+	Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
 }
 
 void SingleScene::StartScene(Ref *pSender, ui::Widget::TouchEventType type)

@@ -17,7 +17,7 @@ Scene* TellerEndScene::createScene(const char* resultstr)
 	SimpleAudioEngine::sharedEngine()->stopAllEffects();
 
 
-	auto scoreLabel = Label::createWithTTF(resultstr, "fonts/Marker Felt.ttf", 24);
+	auto scoreLabel = Label::createWithTTF(resultstr, "fonts/Marker Felt.ttf", 50);
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	//ฬํผำตรทึ
