@@ -56,9 +56,11 @@ bool EndlessEndScene::init()
 
 void EndlessEndScene::restartButton(Ref *pSender, ui::Widget::TouchEventType type)
 {
-
-	auto scene = EndlessScene::createScene();
-	Director::getInstance()->replaceScene(scene);
+	if (type == ui::Widget::TouchEventType::ENDED)
+	{
+		auto scene = EndlessScene::createScene();
+		Director::getInstance()->replaceScene(scene);
+	}
 }
 
 void EndlessEndScene::returnButton(Ref *pSender, ui::Widget::TouchEventType type)

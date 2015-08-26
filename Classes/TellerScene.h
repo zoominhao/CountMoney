@@ -48,6 +48,7 @@ private:
 	bool m_isEmpty;
 	//audio effect
 	int m_effect_id;
+
 	//¼ÆÊ±Æ÷
 	CMTimer* m_cmTimer;
 	//Íæ¼Ò

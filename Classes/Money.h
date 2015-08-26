@@ -17,6 +17,8 @@ typedef enum{
 	Tool_3_S,
 	Tool_4_T,
 	Tool_4_S,
+	Tool_5_T,
+	Tool_5_S,
 	Real_5_S,
 	Real_10_S,
 	Real_20_S,

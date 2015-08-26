@@ -56,9 +56,11 @@ bool LoserEndScene::init()
 
 void LoserEndScene::restartButton(Ref *pSender, ui::Widget::TouchEventType type)
 {
-
-	auto scene = LoserScene::createScene();
-	Director::getInstance()->replaceScene(scene);
+	if (type == ui::Widget::TouchEventType::ENDED)
+	{
+		auto scene = LoserScene::createScene();
+		Director::getInstance()->replaceScene(scene);
+	}
 }
 
 void LoserEndScene::returnButton(Ref *pSender, ui::Widget::TouchEventType type)

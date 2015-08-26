@@ -170,7 +170,6 @@ void TellerScene::onTouchEnded(Touch* touch, Event* event)
 	switch (MCUtil::direction(_spos, pos))
 	{
 	case UP:
-		m_player->MoneySingle()->MoneySprite()->setName("up");
 		m_player->MoneySingle()->moneyFly(0.0, 400.0 - (pos.y - _spos.y)*0.5, 0.1);
 		if (m_curFake)   //³öÏÖ¼Ù³®
 		{
@@ -182,10 +181,12 @@ void TellerScene::onTouchEnded(Touch* touch, Event* event)
 		{
 			m_player->addTotalMoney(100);
 		}
+
+		m_player->removeChildByName("up");
+		m_player->MoneySingle()->setName("up");
 		m_needRand = true;
 		break;
 	case RIGHT:
-		m_player->MoneySingle()->MoneySprite()->setName("right");
 		m_player->MoneySingle()->moneyFakeFly(220.0, 0.0, 0.1);
 		
 		if (m_isEmpty)
@@ -193,6 +194,8 @@ void TellerScene::onTouchEnded(Touch* touch, Event* event)
 			m_transhCan->setTexture("f_trashCan.png");
 			m_isEmpty = false;
 		}
+		m_player->removeChildByName("right");
+		m_player->MoneySingle()->setName("right");
 		m_needRand = true;
 		break;
 	default:

@@ -87,9 +87,8 @@ void Player::changeFakeWrongLabel()
 void Player::addSingleMoneyLabel(bool isFake, const char* name, Vec2 pos)
 {
 	//add single money
-	
-	/*if (this->getChildByName(name))
-		this->removeChildByName(name, true);*/
+	//if (this->getChildByName(rmname))
+	//	this->removeChildByName(rmname, true);
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	

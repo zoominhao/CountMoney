@@ -56,41 +56,58 @@ bool StartScene::init()
 
 void StartScene::SingleScene(Ref *pSender, ui::Widget::TouchEventType type)
 {
-	auto scene = SingleScene::createScene();
-	Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
+	if (type == ui::Widget::TouchEventType::ENDED)
+	{
+		auto scene = SingleScene::createScene();
+		Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
+	}
 }
 
 void StartScene::MultiScene(Ref *pSender, ui::Widget::TouchEventType type)
 {
-	auto scene = MultiScene::createScene();
-	Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
+	if (type == ui::Widget::TouchEventType::ENDED)
+	{
+		auto scene = MultiScene::createScene();
+		Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
+	}
 }
 
 void StartScene::LeaveScene(Ref *pSender, ui::Widget::TouchEventType type)
 {
-
+	if (type == ui::Widget::TouchEventType::ENDED)
+	{
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WP8) || (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
 	MessageBox("You pressed the close button. Windows Store Apps do not implement a close button.", "Alert");
 	return;
 #endif
-
-	Director::getInstance()->end();
+	
+		Director::getInstance()->end();
+	
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 	exit(0);
 #endif
+	}
 	
 }
 
 void StartScene::InfoScene(Ref *pSender, ui::Widget::TouchEventType type)
 {
-	auto scene = AboutScene::createScene();
-	Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
+	if (type == ui::Widget::TouchEventType::ENDED)
+	{
+		auto scene = AboutScene::createScene();
+		Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
+	}
 }
 
 void StartScene::SetScene(Ref *pSender, ui::Widget::TouchEventType type)
 {
-	auto scene = SetScene::createScene();
-	Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
+	if (type == ui::Widget::TouchEventType::ENDED)
+	{
+		auto scene = SetScene::createScene();
+		Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
+	}
 }
+
+
 

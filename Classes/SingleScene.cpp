@@ -21,7 +21,6 @@ bool SingleScene::init()
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto origin = Director::getInstance()->getVisibleOrigin();
 
-
 	//加载cocos studio制作的界面  
 	auto uilayer = cocostudio::GUIReader::getInstance()->widgetFromJsonFile("Single/SingleUi_1.ExportJson");
 	uilayer->setPosition(ccp(origin.x + visibleSize.width / 2 - uilayer->getContentSize().width / 2,
@@ -45,7 +44,6 @@ bool SingleScene::init()
 	ui::Button *Btn_Return = dynamic_cast<ui::Button*>(uilayer->getChildByName("Return"));
 	Btn_Return->addTouchEventListener(CC_CALLBACK_2(SingleScene::StartScene, this));
 
-
 	return true;
 }
 
@@ -54,26 +52,38 @@ bool SingleScene::init()
 
 void SingleScene::DSScene(Ref *pSender, ui::Widget::TouchEventType type)
 {
-	auto scene = LoserScene::createScene();
-	Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
+	if (type == ui::Widget::TouchEventType::ENDED)
+	{
+		auto scene = LoserScene::createScene();
+		Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
+	}
 }
 
 void SingleScene::GYScene(Ref *pSender, ui::Widget::TouchEventType type)
 {
-	auto scene = TellerScene::createScene();
-	Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
+	if (type == ui::Widget::TouchEventType::ENDED)
+	{
+		auto scene = TellerScene::createScene();
+		Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
+	}
 }
 
 void SingleScene::WJScene(Ref *pSender, ui::Widget::TouchEventType type)
 {
-	auto scene = EndlessScene::createScene();
-	Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
+	if (type == ui::Widget::TouchEventType::ENDED)
+	{
+		auto scene = EndlessScene::createScene();
+		Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
+	}
 }
 
 void SingleScene::StartScene(Ref *pSender, ui::Widget::TouchEventType type)
 {
-	auto scene = StartScene::createScene();
-	Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
+	if (type == ui::Widget::TouchEventType::ENDED)
+	{
+		auto scene = StartScene::createScene();
+		Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
+	}
 }
 
 

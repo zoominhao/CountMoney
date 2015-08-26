@@ -95,7 +95,7 @@ bool EndlessScene::init()
 	initProArr();
 
 	m_stage = 0;
-	m_time_per_count = 2.0f;
+	m_time_per_count = 1.0f;
 
 	srand((unsigned)time(NULL));
 	addTargetNumLabel();
@@ -118,7 +118,6 @@ void EndlessScene::setBgImage()
 
 	this->addChild(sprite, 0);
 }
-
 
 
 bool EndlessScene::onTouchBegan(Touch* touch, Event* event)
@@ -152,7 +151,6 @@ void EndlessScene::onTouchEnded(Touch* touch, Event* event)
 	switch (MCUtil::direction(_spos, pos))
 	{
 	case UP:
-		m_player->MoneySingle()->MoneySprite()->setName("up");
 		m_player->MoneySingle()->moneyFly(0.0, 400.0 - (pos.y - _spos.y)*0.5, 0.1);
 		switch (m_moneyType)
 		{
@@ -177,13 +175,13 @@ void EndlessScene::onTouchEnded(Touch* touch, Event* event)
 		if (m_player->totalMoneyNum() == m_targetNum)
 		{ 
 			m_stage++;
-			m_targetNum = 5 * (25 + 10 * m_stage + rand() % 11 - 5);
+			m_targetNum += 5 * (25 + 10 * m_stage + rand() % 11 - 5);
 			char targetNumStr[30];
 			sprintf(targetNumStr, "Target: %d", m_targetNum);
 			m_targetLabel->setString(targetNumStr);
 			m_player->setStageNum(m_stage);
 			char stageStr[30];
-			sprintf(stageStr, "Target: %d", m_stage + 1);
+			sprintf(stageStr, "Stage: %d", m_stage + 1);
 			m_stageLabel->setString(stageStr);
 
 			m_player->addTotalMoney(-1 * m_targetNum);
@@ -202,16 +200,20 @@ void EndlessScene::onTouchEnded(Touch* touch, Event* event)
 			auto scene = EndlessEndScene::createScene(stageNumStr);
 			Director::getInstance()->replaceScene(scene);
 		}
+		m_player->removeChildByName("up");
+		m_player->MoneySingle()->setName("up");
 		m_needRand = true;
 		break;
 	case RIGHT:
-		m_player->MoneySingle()->MoneySprite()->setName("right");
+		//m_player->MoneySingle()->MoneySprite()->setName("right");
 		m_player->MoneySingle()->moneyFakeFly(220.0, 0.0, 0.1);
 		if (m_isEmpty)
 		{
 			m_transhCan->setTexture("f_trashCan.png");
 			m_isEmpty = false;
 		}
+		m_player->removeChildByName("right");
+		m_player->MoneySingle()->setName("right");
 		m_needRand = true;
 		break;
 	default:

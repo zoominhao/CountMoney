@@ -21,7 +21,7 @@ public:
 
 
 	static const float m;
-	static const std::string filename[16];
+	static const std::string filename[18];
 
 	static int random(int a, int b);
 };

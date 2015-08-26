@@ -26,7 +26,7 @@ Scene* LoserPauseScene::createScene(RenderTexture* sqr, int score)
 	//Sprite *back_spr = Sprite::create("bg_pic.jpg");
 	back_spr->setPosition(ccp(visibleSize.width / 2, visibleSize.height / 2 + 15)); //放置位置,这个相对于中心位置。  
 	back_spr->setFlipY(true);            //翻转，因为UI坐标和OpenGL坐标不同  
-	back_spr->setColor(Color3B::GRAY); //图片颜色变灰色  
+	back_spr->setColor(Color3B::GRAY);   //图片颜色变灰色  
 	//back_spr->setColor(Color3B(255,0,0));
 	scene->addChild(back_spr);
 

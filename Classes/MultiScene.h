@@ -3,6 +3,8 @@
 
 #include "cocos2d.h"
 #include "Player.h"
+#include "MCUtil.h"
+#include "WebClient.h"
 
 USING_NS_CC;
 
@@ -31,6 +33,37 @@ private:
 
 
 	void addTranshCan();
+	void addCat();
+
+	//添加道具
+	void randNewSingleMoney(int whichPlayer);
+	void initProArr();
+
+
+	void giveOpponent(MCDirection direction, Vec2 location, int whichPlayer);
+	void giveMyself(MCDirection direction, Vec2 location, int whichPlayer);
+	void throwTrashCan(MCDirection direction, Vec2 location, int whichPlayer);
+	void returnPos(Vec2 location, int whichPlayer);
+
+	//scene effect
+	void halfFlash(int whichHalf);   //闪光弹
+
+	void changePos(int whichHalf);    //换位卡
+
+	void triggerRich(int whichHalf);   //土豪卡
+
+	void triggerInvincible(int whichHalf);  //无敌卡
+
+	void updateRich1(float time);  
+	void updateRich2(float time);
+	void updateInvincible1(float time);
+	void updateInvincible2(float time);
+
+
+
+	//test////////////////////////////
+	//static void handletest(int type, int direction, void *arg);
+	//void handle(int type, int direction);
 
 private:
 	Vec2 _sP1Pos;
@@ -44,10 +77,11 @@ private:
 
 	int m_targetNum;
 
-	bool m_p1NextFake;
-	bool m_p2NextFake;
-	bool m_p1CurFake;
-	bool m_p2CurFake;
+	Money_Type m_p1NextMType;
+	Money_Type m_p2NextMType;
+	Money_Type m_p1CurMType;
+	Money_Type m_p2CurMType;
+
 	bool m_p1NeedRand;
 	bool m_p2NeedRand;
 
@@ -65,6 +99,27 @@ private:
 	//transh can
 	Sprite*  m_transhCan1;
 	Sprite*  m_transhCan2;
+	Sprite*  m_cat1;
+	Sprite*  m_cat2;
+
+
+	float m_pro[6];
+
+	//是否交换位置
+	bool m_isP1Swapped;
+	bool m_isP2Swapped;
+
+	//是否破损
+	bool m_isP1Old;
+	bool m_isP2Old;
+
+	//是否分数翻倍
+	bool m_isP1Double;
+	bool m_isP2Double;
+
+	//是否出于无敌状态
+	bool m_isP1Invincible;
+	bool m_isP2Invincible;
 
 };
 #endif

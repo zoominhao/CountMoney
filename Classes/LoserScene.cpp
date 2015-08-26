@@ -4,20 +4,12 @@
 #include "MCUtil.h"
 #include "AudioControl.h"
 
-USING_NS_CC;
 
 Scene* LoserScene::createScene()
 {
-	// 'scene' is an autorelease object
 	auto scene = Scene::create();
-
-	// 'layer' is an autorelease object
 	auto layer = LoserScene::create();
-
-	// add layer as a child to scene
 	scene->addChild(layer);
-
-	// return the scene
 	return scene;
 }
 
@@ -85,6 +77,7 @@ bool LoserScene::init()
 	touchlistenter->onTouchEnded = CC_CALLBACK_2(LoserScene::onTouchEnded, this);
 	touchlistenter->onTouchMoved = CC_CALLBACK_2(LoserScene::onTouchMoved, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(touchlistenter, this);
+
 
 	//³õÊ¼»¯
 	m_count_flag = false;
@@ -180,9 +173,10 @@ void LoserScene::onTouchEnded(Touch* touch, Event* event)
 	switch (MCUtil::direction(_spos, pos))
 	{
 	case UP:
-		m_player->MoneySingle()->MoneySprite()->setName("up");
 		m_player->MoneySingle()->moneyFly(0.0, 400.0 - (pos.y - _spos.y)*0.5, 0.1);
 		m_player->addTotalMoney(100);
+		m_player->removeChildByName("up");
+		m_player->MoneySingle()->setName("up");
 		break;
 	default:
 		m_player->removeChild(m_player->MoneySingle());

@@ -21,7 +21,7 @@ public:
 	void changeFakeWrongLabel();
 
 	void addTotalMoneyLabel();
-	void addSingleMoneyLabel(bool isFake, const char* name = "center", Vec2 pos = Vec2(0,0));
+	void addSingleMoneyLabel(bool isFake, const char* name = "center", Vec2 pos = Vec2(0, 0));
 	void addSingleMoneyMLabel(Money_Type moneyType, const char* name = "center", Vec2 pos = Vec2(0, 0));
 	void setSingleMoneyName(const char* name = "");
 

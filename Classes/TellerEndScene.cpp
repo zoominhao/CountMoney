@@ -56,8 +56,11 @@ bool TellerEndScene::init()
 
 void TellerEndScene::restartButton(Ref *pSender, ui::Widget::TouchEventType type)
 {
-	auto scene = TellerScene::createScene();
-	Director::getInstance()->replaceScene(scene);
+	if (type == ui::Widget::TouchEventType::ENDED)
+	{
+		auto scene = TellerScene::createScene();
+		Director::getInstance()->replaceScene(scene);
+	}
 
 }
 

@@ -56,8 +56,11 @@ bool MultiEndScene::init()
 
 void MultiEndScene::restartButton(Ref *pSender, ui::Widget::TouchEventType type)
 {
-	auto scene =  MultiScene::createScene();
-	Director::getInstance()->replaceScene(scene);
+	if (type == ui::Widget::TouchEventType::ENDED)
+	{
+		auto scene = MultiScene::createScene();
+		Director::getInstance()->replaceScene(scene);
+	}
 }
 
 void MultiEndScene::returnButton(Ref *pSender, ui::Widget::TouchEventType type)
