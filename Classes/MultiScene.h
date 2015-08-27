@@ -5,6 +5,7 @@
 #include "Player.h"
 #include "MCUtil.h"
 #include "WebClient.h"
+#include "WebClient.h"
 
 USING_NS_CC;
 
@@ -35,6 +36,10 @@ private:
 	void addTranshCan();
 	void addCat();
 
+
+	//add target frame
+	void addTargetFrame();
+
 	//Ìí¼ÓµÀ¾ß
 	void randNewSingleMoney(int whichPlayer);
 	void initProArr();
@@ -58,7 +63,6 @@ private:
 	void updateRich2(float time);
 	void updateInvincible1(float time);
 	void updateInvincible2(float time);
-
 
 
 	//test////////////////////////////

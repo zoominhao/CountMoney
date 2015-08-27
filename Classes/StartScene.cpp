@@ -37,8 +37,8 @@ bool StartScene::init()
 	ui::Button *Btn_Double = dynamic_cast<ui::Button*>(uilayer->getChildByName("DoubleCount"));
 	Btn_Double->addTouchEventListener(CC_CALLBACK_2(StartScene::MultiScene, this));
 
-	ui::Button *Btn_No = dynamic_cast<ui::Button*>(uilayer->getChildByName("NoCount"));
-	Btn_No->addTouchEventListener(CC_CALLBACK_2(StartScene::LeaveScene, this));
+	/*ui::Button *Btn_No = dynamic_cast<ui::Button*>(uilayer->getChildByName("NoCount"));
+	Btn_No->addTouchEventListener(CC_CALLBACK_2(StartScene::LeaveScene, this));*/
 
 
 

@@ -31,8 +31,8 @@ private:
 	void returnCallback(Ref* pSender);
 	void pauseCallback(Ref* pSender);
 
-	//add Cat
-	void addCounter();
+	//add 
+	void addTimerFrame();
 
 	void addTranshCan();
 
@@ -53,10 +53,11 @@ private:
 	CMTimer* m_cmTimer;
 	//Íæ¼Ò
 	Player*  m_player;
-	//counter animation
-	Sprite*  m_counter;
+
 	//transh can
 	Sprite*  m_transhCan;
+	Sprite*  m_timerFrame;
+
 };
 
 #endif // __MAIN_SCENE_H__

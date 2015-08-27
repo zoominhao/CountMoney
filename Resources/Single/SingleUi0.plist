@@ -4,16 +4,16 @@
 	<dict>
 		<key>frames</key>
 		<dict>
-			<key>background_w.png</key>
+			<key>single_bg.png</key>
 			<dict>
 				<key>width</key>
 				<integer>768</integer>
 				<key>height</key>
-				<integer>1025</integer>
+				<integer>1024</integer>
 				<key>originalWidth</key>
 				<integer>768</integer>
 				<key>originalHeight</key>
-				<integer>1025</integer>
+				<integer>1024</integer>
 				<key>x</key>
 				<integer>0</integer>
 				<key>y</key>
@@ -23,16 +23,16 @@
 				<key>offsetY</key>
 				<real>0</real>
 			</dict>
-			<key>dsMode_1.png</key>
+			<key>button_normal.png</key>
 			<dict>
 				<key>width</key>
-				<integer>480</integer>
+				<integer>253</integer>
 				<key>height</key>
-				<integer>120</integer>
+				<integer>87</integer>
 				<key>originalWidth</key>
-				<integer>480</integer>
+				<integer>253</integer>
 				<key>originalHeight</key>
-				<integer>120</integer>
+				<integer>87</integer>
 				<key>x</key>
 				<integer>770</integer>
 				<key>y</key>
@@ -42,18 +42,18 @@
 				<key>offsetY</key>
 				<real>0</real>
 			</dict>
-			<key>dsMode_2.png</key>
+			<key>loser_btn.png</key>
 			<dict>
 				<key>width</key>
-				<integer>480</integer>
+				<integer>299</integer>
 				<key>height</key>
-				<integer>120</integer>
+				<integer>294</integer>
 				<key>originalWidth</key>
-				<integer>480</integer>
+				<integer>299</integer>
 				<key>originalHeight</key>
-				<integer>120</integer>
+				<integer>294</integer>
 				<key>x</key>
-				<integer>1252</integer>
+				<integer>1025</integer>
 				<key>y</key>
 				<integer>0</integer>
 				<key>offsetX</key>
@@ -61,115 +61,39 @@
 				<key>offsetY</key>
 				<real>0</real>
 			</dict>
-			<key>gyMode_1.png</key>
+			<key>counter_btn.png</key>
 			<dict>
 				<key>width</key>
-				<integer>480</integer>
+				<integer>299</integer>
 				<key>height</key>
-				<integer>120</integer>
+				<integer>294</integer>
 				<key>originalWidth</key>
-				<integer>480</integer>
+				<integer>299</integer>
 				<key>originalHeight</key>
-				<integer>120</integer>
+				<integer>294</integer>
 				<key>x</key>
+				<integer>1326</integer>
+				<key>y</key>
 				<integer>0</integer>
-				<key>y</key>
-				<integer>1027</integer>
 				<key>offsetX</key>
 				<real>0</real>
 				<key>offsetY</key>
 				<real>0</real>
 			</dict>
-			<key>gyMode_2.png</key>
+			<key>wj_btn.png</key>
 			<dict>
 				<key>width</key>
-				<integer>480</integer>
+				<integer>299</integer>
 				<key>height</key>
-				<integer>120</integer>
+				<integer>294</integer>
 				<key>originalWidth</key>
-				<integer>480</integer>
+				<integer>299</integer>
 				<key>originalHeight</key>
-				<integer>120</integer>
+				<integer>294</integer>
 				<key>x</key>
-				<integer>482</integer>
+				<integer>1627</integer>
 				<key>y</key>
-				<integer>1027</integer>
-				<key>offsetX</key>
-				<real>0</real>
-				<key>offsetY</key>
-				<real>0</real>
-			</dict>
-			<key>wjMode_1.png</key>
-			<dict>
-				<key>width</key>
-				<integer>480</integer>
-				<key>height</key>
-				<integer>120</integer>
-				<key>originalWidth</key>
-				<integer>480</integer>
-				<key>originalHeight</key>
-				<integer>120</integer>
-				<key>x</key>
-				<integer>964</integer>
-				<key>y</key>
-				<integer>1027</integer>
-				<key>offsetX</key>
-				<real>0</real>
-				<key>offsetY</key>
-				<real>0</real>
-			</dict>
-			<key>wjMode_2.png</key>
-			<dict>
-				<key>width</key>
-				<integer>480</integer>
-				<key>height</key>
-				<integer>120</integer>
-				<key>originalWidth</key>
-				<integer>480</integer>
-				<key>originalHeight</key>
-				<integer>120</integer>
-				<key>x</key>
-				<integer>1446</integer>
-				<key>y</key>
-				<integer>1027</integer>
-				<key>offsetX</key>
-				<real>0</real>
-				<key>offsetY</key>
-				<real>0</real>
-			</dict>
-			<key>return_1.png</key>
-			<dict>
-				<key>width</key>
-				<integer>480</integer>
-				<key>height</key>
-				<integer>120</integer>
-				<key>originalWidth</key>
-				<integer>480</integer>
-				<key>originalHeight</key>
-				<integer>120</integer>
-				<key>x</key>
 				<integer>0</integer>
-				<key>y</key>
-				<integer>1149</integer>
-				<key>offsetX</key>
-				<real>0</real>
-				<key>offsetY</key>
-				<real>0</real>
-			</dict>
-			<key>return_2.png</key>
-			<dict>
-				<key>width</key>
-				<integer>480</integer>
-				<key>height</key>
-				<integer>120</integer>
-				<key>originalWidth</key>
-				<integer>480</integer>
-				<key>originalHeight</key>
-				<integer>120</integer>
-				<key>x</key>
-				<integer>482</integer>
-				<key>y</key>
-				<integer>1149</integer>
 				<key>offsetX</key>
 				<real>0</real>
 				<key>offsetY</key>

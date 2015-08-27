@@ -4,16 +4,16 @@
 	<dict>
 		<key>frames</key>
 		<dict>
-			<key>background.png</key>
+			<key>start_bg.png</key>
 			<dict>
 				<key>width</key>
 				<integer>768</integer>
 				<key>height</key>
-				<integer>1025</integer>
+				<integer>1024</integer>
 				<key>originalWidth</key>
 				<integer>768</integer>
 				<key>originalHeight</key>
-				<integer>1025</integer>
+				<integer>1024</integer>
 				<key>x</key>
 				<integer>0</integer>
 				<key>y</key>
@@ -23,16 +23,16 @@
 				<key>offsetY</key>
 				<real>0</real>
 			</dict>
-			<key>doubleCount_1.png</key>
+			<key>icon_setting.png</key>
 			<dict>
 				<key>width</key>
-				<integer>480</integer>
+				<integer>74</integer>
 				<key>height</key>
-				<integer>120</integer>
+				<integer>74</integer>
 				<key>originalWidth</key>
-				<integer>480</integer>
+				<integer>74</integer>
 				<key>originalHeight</key>
-				<integer>120</integer>
+				<integer>74</integer>
 				<key>x</key>
 				<integer>770</integer>
 				<key>y</key>
@@ -42,18 +42,18 @@
 				<key>offsetY</key>
 				<real>0</real>
 			</dict>
-			<key>doubleCount_2.png</key>
+			<key>icon_message.png</key>
 			<dict>
 				<key>width</key>
-				<integer>480</integer>
+				<integer>74</integer>
 				<key>height</key>
-				<integer>120</integer>
+				<integer>74</integer>
 				<key>originalWidth</key>
-				<integer>480</integer>
+				<integer>74</integer>
 				<key>originalHeight</key>
-				<integer>120</integer>
+				<integer>74</integer>
 				<key>x</key>
-				<integer>1252</integer>
+				<integer>846</integer>
 				<key>y</key>
 				<integer>0</integer>
 				<key>offsetX</key>
@@ -61,153 +61,39 @@
 				<key>offsetY</key>
 				<real>0</real>
 			</dict>
-			<key>singleCount_1.png</key>
+			<key>single_btn.png</key>
 			<dict>
 				<key>width</key>
-				<integer>480</integer>
+				<integer>144</integer>
 				<key>height</key>
-				<integer>120</integer>
+				<integer>35</integer>
 				<key>originalWidth</key>
-				<integer>480</integer>
+				<integer>144</integer>
 				<key>originalHeight</key>
-				<integer>120</integer>
+				<integer>35</integer>
 				<key>x</key>
+				<integer>922</integer>
+				<key>y</key>
 				<integer>0</integer>
-				<key>y</key>
-				<integer>1027</integer>
 				<key>offsetX</key>
 				<real>0</real>
 				<key>offsetY</key>
 				<real>0</real>
 			</dict>
-			<key>singleCount_2.png</key>
+			<key>pk_btn.png</key>
 			<dict>
 				<key>width</key>
-				<integer>480</integer>
+				<integer>144</integer>
 				<key>height</key>
-				<integer>120</integer>
+				<integer>35</integer>
 				<key>originalWidth</key>
-				<integer>480</integer>
+				<integer>144</integer>
 				<key>originalHeight</key>
-				<integer>120</integer>
+				<integer>35</integer>
 				<key>x</key>
-				<integer>482</integer>
+				<integer>1068</integer>
 				<key>y</key>
-				<integer>1027</integer>
-				<key>offsetX</key>
-				<real>0</real>
-				<key>offsetY</key>
-				<real>0</real>
-			</dict>
-			<key>info_icon1.png</key>
-			<dict>
-				<key>width</key>
-				<integer>114</integer>
-				<key>height</key>
-				<integer>114</integer>
-				<key>originalWidth</key>
-				<integer>114</integer>
-				<key>originalHeight</key>
-				<integer>114</integer>
-				<key>x</key>
-				<integer>964</integer>
-				<key>y</key>
-				<integer>1027</integer>
-				<key>offsetX</key>
-				<real>0</real>
-				<key>offsetY</key>
-				<real>0</real>
-			</dict>
-			<key>info_icon2.png</key>
-			<dict>
-				<key>width</key>
-				<integer>114</integer>
-				<key>height</key>
-				<integer>114</integer>
-				<key>originalWidth</key>
-				<integer>114</integer>
-				<key>originalHeight</key>
-				<integer>114</integer>
-				<key>x</key>
-				<integer>1080</integer>
-				<key>y</key>
-				<integer>1027</integer>
-				<key>offsetX</key>
-				<real>0</real>
-				<key>offsetY</key>
-				<real>0</real>
-			</dict>
-			<key>set_icon1.png</key>
-			<dict>
-				<key>width</key>
-				<integer>114</integer>
-				<key>height</key>
-				<integer>114</integer>
-				<key>originalWidth</key>
-				<integer>114</integer>
-				<key>originalHeight</key>
-				<integer>114</integer>
-				<key>x</key>
-				<integer>1196</integer>
-				<key>y</key>
-				<integer>1027</integer>
-				<key>offsetX</key>
-				<real>0</real>
-				<key>offsetY</key>
-				<real>0</real>
-			</dict>
-			<key>set_icon2.png</key>
-			<dict>
-				<key>width</key>
-				<integer>114</integer>
-				<key>height</key>
-				<integer>114</integer>
-				<key>originalWidth</key>
-				<integer>114</integer>
-				<key>originalHeight</key>
-				<integer>114</integer>
-				<key>x</key>
-				<integer>1312</integer>
-				<key>y</key>
-				<integer>1027</integer>
-				<key>offsetX</key>
-				<real>0</real>
-				<key>offsetY</key>
-				<real>0</real>
-			</dict>
-			<key>noCount_1.png</key>
-			<dict>
-				<key>width</key>
-				<integer>480</integer>
-				<key>height</key>
-				<integer>120</integer>
-				<key>originalWidth</key>
-				<integer>480</integer>
-				<key>originalHeight</key>
-				<integer>120</integer>
-				<key>x</key>
-				<integer>1428</integer>
-				<key>y</key>
-				<integer>1027</integer>
-				<key>offsetX</key>
-				<real>0</real>
-				<key>offsetY</key>
-				<real>0</real>
-			</dict>
-			<key>noCount_2.png</key>
-			<dict>
-				<key>width</key>
-				<integer>480</integer>
-				<key>height</key>
-				<integer>120</integer>
-				<key>originalWidth</key>
-				<integer>480</integer>
-				<key>originalHeight</key>
-				<integer>120</integer>
-				<key>x</key>
 				<integer>0</integer>
-				<key>y</key>
-				<integer>1149</integer>
 				<key>offsetX</key>
 				<real>0</real>
 				<key>offsetY</key>

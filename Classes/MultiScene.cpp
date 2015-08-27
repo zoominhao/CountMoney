@@ -49,16 +49,24 @@ bool MultiScene::init()
 	m_player1 = Player::create();
 	m_player1->createPlayer(2);
 	m_player1->MoneyTotal()->MoneySprite()->setScale(0.5);
-	m_player1->setTotalMoneySpritePos(0, -100);
-	m_player1->setTotalMoneyNumPos(-50, visibleSize.height / 2 - 70);
+	m_player1->setTotalMoneySpritePos(0, -130);    
+	m_player1->setTotalMoneyNumPos(0,  -20);
+	m_player1->setScoreFontSize(20);
+	m_player1->ScoreFrame()->setPosition(visibleSize.width / 2, origin.y + 50);
+	m_player1->ScoreFrame()->setScale(0.335);
 	this->addChild(m_player1, 1);
 
 	m_player2 = Player::create();
 	m_player2->createPlayer(2);
 	m_player2->MoneyTotal()->MoneySprite()->setScale(0.5);
-	m_player2->setTotalMoneySpritePos(0, visibleSize.width - 65);
-	m_player2->setTotalMoneyNumPos(-200, visibleSize.height / 2 + 30);
+	m_player2->MoneyTotal()->MoneySprite()->setRotation(270);
+	m_player2->setTotalMoneySpritePos(0, visibleSize.width - 95);  
+	m_player2->setTotalMoneyNumPos(0, visibleSize.height - 115);
+	m_player2->setScoreFontSize(20);
 	m_player2->setTotalMoneyNumRot(180);
+	m_player2->ScoreFrame()->setPosition(visibleSize.width / 2, visibleSize.height - 50);
+	m_player2->ScoreFrame()->setRotation(180);
+	m_player2->ScoreFrame()->setScale(0.335);
 	this->addChild(m_player2, 1);
 
 	addTranshCan();
@@ -105,8 +113,7 @@ bool MultiScene::init()
 
 
 	///////////////test////////////////////////
-	//WebClient::getinstance().start();
-
+	WebClient::getinstance().start();
 	//WebClient::getinstance().regidterFightCallback(handletest, this);
 	///////////////test////////////////////////
 
@@ -115,7 +122,7 @@ bool MultiScene::init()
 
 void MultiScene::setBgImage()
 {
-	auto sprite = Sprite::create("background_multi.png");
+	auto sprite = Sprite::create("multi/multi_bg.png");
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
@@ -145,7 +152,7 @@ void MultiScene::onTouchesBegan(const std::vector<Touch*>& touches, Event* event
 
 			if (m_p1NeedRand)
 			{
-				m_player1->addSingleMoneyMLabel(m_p1CurMType, "center", Vec2(0, -100));
+				m_player1->addSingleMoneyMLabel(m_p1CurMType, "center", Vec2(5, -110));
 				m_player1->MoneySingle()->MoneySprite()->setScale(0.5);
 				randNewSingleMoney(1);
 			}
@@ -160,7 +167,8 @@ void MultiScene::onTouchesBegan(const std::vector<Touch*>& touches, Event* event
 
 			if (m_p2NeedRand)
 			{
-				m_player2->addSingleMoneyMLabel(m_p2CurMType, "center", Vec2(0, 702));
+				m_player2->addSingleMoneyMLabel(m_p2CurMType, "center", Vec2(-5, 693));
+				m_player2->MoneySingle()->MoneySprite()->setRotation(270);
 				m_player2->MoneySingle()->MoneySprite()->setScale(0.5);
 				randNewSingleMoney(2);
 			}
@@ -436,14 +444,14 @@ void MultiScene::addControlBtns(int whichPlayer)
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
 	auto returnItem = MenuItemImage::create(
-		"return_icon1.png",
-		"return_icon2.png",
+		"multi/icon_back.png",
+		"multi/icon_back.png",
 		CC_CALLBACK_1(MultiScene::returnCallback, this));
 
 
 	auto pauseItem = MenuItemImage::create(
-		"pause_icon1.png",
-		"pause_icon2.png",
+		"multi/icon_pause.png",
+		"multi/icon_pause.png",
 		CC_CALLBACK_1(MultiScene::pauseCallback, this));
 
 	if (whichPlayer == 1)
@@ -502,6 +510,32 @@ void MultiScene::addCat()
 	m_cat2->setRotation(180);
 	m_cat2->setPosition(Vec2(origin.x + 100, origin.y + visibleSize.height - 200));
 	this->addChild(m_cat2, 1);
+}
+
+void MultiScene::addTargetFrame()
+{
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+	//cat 1
+	m_cat1 = Sprite::create("cat_m.png");
+	m_cat1->setScale(0.6);
+	m_cat1->setPosition(Vec2(origin.x + visibleSize.width - 100, origin.y + visibleSize.height / 2 - 300));
+	this->addChild(m_cat1, 1);
+
+	//cat 2
+	m_cat2 = Sprite::create("cat_m.png");
+	m_cat2->setScale(0.6);
+	m_cat2->setRotation(180);
+	m_cat2->setPosition(Vec2(origin.x + 100, origin.y + visibleSize.height - 200));
+	this->addChild(m_cat2, 1);
+
+/*
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+	m_timerFrame = Sprite::create("multi/timer.png");
+	m_timerFrame->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - 75));
+	this->addChild(m_timerFrame, 1);*/
 }
 
 
@@ -795,7 +829,7 @@ void MultiScene::halfFlash(int whichHalf)
 		pos = Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 4 * 3);
 	}
 
-	CCSprite * sp = CCSprite::create("blink.png");
+	CCSprite * sp = CCSprite::create("multi/blink.png");
 	sp->setPosition(pos);
 	this->addChild(sp, 2, "blink");
 	//ActionInterval * fadeout = FadeOut::create(10.0f);
@@ -897,6 +931,7 @@ void MultiScene::updateInvincible2(float time)
 	m_isP2Invincible = false;
 	//CCLOG("P2 END!");
 }
+
 
 
 

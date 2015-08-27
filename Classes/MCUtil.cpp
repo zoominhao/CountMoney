@@ -24,7 +24,7 @@ MCDirection MCUtil::direction(Vec2 pos1, Vec2 pos2)
 
 const float MCUtil::m = 3.4;
 
-const std::string MCUtil::filename[18] = { "money/total_100.jpg", "money/total_fake_100.jpg", "money/single_100.jpg", "money/single_fake_100.jpg",
+const std::string MCUtil::filename[18] = { "money/total_100.png", "money/total_fake_100.png", "money/single_100.png", "money/single_fake_100.png",
 "money/total_tool1.jpg", "money/single_tool1.jpg", "money/total_tool2.jpg", "money/single_tool2.jpg", "money/total_tool3.jpg" ,
 "money/single_tool3.jpg", "money/total_tool4.jpg", "money/single_tool4.jpg", "money/total_tool5.jpg", "money/single_tool5.jpg", "money/single_5.jpg", 
 "money/single_10.jpg", "money/single_20.jpg", "money/single_50.jpg" };

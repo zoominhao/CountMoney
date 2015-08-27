@@ -26,8 +26,8 @@ bool LoserScene::init()
 
 
 	auto returnItem = MenuItemImage::create(
-		"return_icon1.png",
-		"return_icon2.png",
+		"loser/icon_back.png",
+		"loser/icon_back.png",
 		CC_CALLBACK_1(LoserScene::returnCallback, this));
 
 	returnItem->setPosition(Vec2(origin.x + returnItem->getContentSize().width / 2,
@@ -35,8 +35,8 @@ bool LoserScene::init()
 
 
 	auto pauseItem = MenuItemImage::create(
-		"pause_icon1.png",
-		"pause_icon2.png",
+		"loser/icon_pause.png",
+		"loser/icon_pause.png",
 		CC_CALLBACK_1(LoserScene::pauseCallback, this));
 
 	pauseItem->setPosition(Vec2(origin.x + visibleSize.width - pauseItem->getContentSize().width / 2,
@@ -53,12 +53,13 @@ bool LoserScene::init()
 	//add background image
 	setBgImage();
 
-	//add cat
-	addCat();
+	addTimerFrame();
 
 	//添加玩家，该场景为单人模式
 	m_player = Player::create();
 	m_player->createPlayer(1);
+	m_player->setTotalMoneySpritePos(0, -20);
+	//m_player->setTotalMoneyNumPos(-100, 10);
 	this->addChild(m_player, 1);
 
 	//添加计时器
@@ -117,14 +118,14 @@ void LoserScene::returnCallback(Ref* pSender)
 void LoserScene::setBgImage()
 {
 	// add "Main Scene" splash screen"
-	//auto sprite = Sprite::create("bg_pic.jpg");
-	auto sprite = LayerColor::create(ccc4(0xff, 0xff, 0xff, 0xff), 768, 1024);
+	auto sprite = Sprite::create("loser/loser_bg.png");
+	//auto sprite = LayerColor::create(ccc4(0xff, 0xff, 0xff, 0xff), 768, 1024);
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	// position the sprite on the center of the screen
-	sprite->setPosition(ccp(origin.x + visibleSize.width / 2 - sprite->getContentSize().width / 2,
-		origin.y + visibleSize.height / 2 - sprite->getContentSize().height / 2));
+	sprite->setPosition(ccp(origin.x + visibleSize.width / 2,
+		origin.y + visibleSize.height / 2));
 
 	// add the sprite as a child to this layer
 	this->addChild(sprite, 0);
@@ -139,7 +140,7 @@ bool LoserScene::onTouchBegan(Touch* touch, Event* event)
 		m_count_flag = true;
 		m_cmTimer->startTimer();
 		m_effect_id = AudioControl::playEffectMusic();
-		m_player->addSingleMoneyLabel(false, "center");
+		m_player->addSingleMoneyLabel(false, "center", Vec2(12.0, 0.0));
 	}
 
 	return true;
@@ -190,13 +191,13 @@ void LoserScene::onTouchEnded(Touch* touch, Event* event)
 	m_player->changeTotalMoneyLabel();
 }
 
-void LoserScene::addCat()
+
+void LoserScene::addTimerFrame()
 {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
-	m_cat = Sprite::create("cat.png");
-	m_cat->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 + 200));
-	this->addChild(m_cat, 1);
+	m_timerFrame = Sprite::create("loser/timer.png");
+	m_timerFrame->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - 75));
+	this->addChild(m_timerFrame, 1);
 }
-
 

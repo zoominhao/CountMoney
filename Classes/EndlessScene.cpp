@@ -31,8 +31,8 @@ bool EndlessScene::init()
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
 	auto returnItem = MenuItemImage::create(
-		"return_icon1.png",
-		"return_icon2.png",
+		"endless/icon_back.png",
+		"endless/icon_back.png",
 		CC_CALLBACK_1(EndlessScene::returnCallback, this));
 
 	returnItem->setPosition(Vec2(origin.x + returnItem->getContentSize().width / 2,
@@ -40,8 +40,8 @@ bool EndlessScene::init()
 
 
 	auto pauseItem = MenuItemImage::create(
-		"pause_icon1.png",
-		"pause_icon2.png",
+		"endless/icon_pause.png",
+		"endless/icon_pause.png",
 		CC_CALLBACK_1(EndlessScene::pauseCallback, this));
 
 	pauseItem->setPosition(Vec2(origin.x + visibleSize.width - pauseItem->getContentSize().width / 2,
@@ -59,10 +59,12 @@ bool EndlessScene::init()
 	setBgImage();
 	addCatAnimation();
 	addTranshCan();
+	addTimerFrame();
 
 	//添加玩家，该场景为单人模式
 	m_player = Player::create();
 	m_player->createPlayer(4);
+	m_player->setTotalMoneySpritePos(0, -20);
 	this->addChild(m_player, 1);
 
 	//添加计时器
@@ -109,12 +111,13 @@ bool EndlessScene::init()
 
 void EndlessScene::setBgImage()
 {
-	auto sprite = LayerColor::create(ccc4(0xff, 0xff, 0xff, 0xff), 768, 1024);
+	//auto sprite = LayerColor::create(ccc4(0xff, 0xff, 0xff, 0xff), 768, 1024);
+	auto sprite = Sprite::create("endless/endless_bg.png");
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-	sprite->setPosition(ccp(origin.x + visibleSize.width / 2 - sprite->getContentSize().width / 2,
-		origin.y + visibleSize.height / 2 - sprite->getContentSize().height / 2));
+	sprite->setPosition(ccp(origin.x + visibleSize.width / 2,
+		origin.y + visibleSize.height / 2));
 
 	this->addChild(sprite, 0);
 }
@@ -131,10 +134,9 @@ bool EndlessScene::onTouchBegan(Touch* touch, Event* event)
 		m_effect_id = AudioControl::playEffectMusic();
 		if (m_needRand)
 		{
-			m_player->addSingleMoneyMLabel(m_moneyType, "center");
+			m_player->addSingleMoneyMLabel(m_moneyType, "center", Vec2(12.0, 0.0));
 			randNewSingleMoney();
 		}
-		
 	}
 	return true;
 }
@@ -393,6 +395,15 @@ void EndlessScene::addTranshCan()
 	m_transhCan->setScale(0.6);
 	m_transhCan->setPosition(Vec2(origin.x + visibleSize.width - 100, origin.y + visibleSize.height / 2 - 300));
 	this->addChild(m_transhCan, 1);
+}
+
+void EndlessScene::addTimerFrame()
+{
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+	m_timerFrame = Sprite::create("endless/timer.png");
+	m_timerFrame->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - 75));
+	this->addChild(m_timerFrame, 1);
 }
 
 

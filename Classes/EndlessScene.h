@@ -36,6 +36,9 @@ private:
 	void randNewSingleMoney();
 	void initProArr();
 
+	//add timer frame
+	void addTimerFrame();
+
 private:
 	Vec2 _spos;
 	Vec2 _curPos;
@@ -68,7 +71,7 @@ private:
 
 	float m_pro[5][5];
 
-
+	Sprite*  m_timerFrame;
 };
 
 #endif // __ENDLESS_SCENE_H__

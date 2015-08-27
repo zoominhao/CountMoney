@@ -4,16 +4,16 @@
 	<dict>
 		<key>frames</key>
 		<dict>
-			<key>background_w.png</key>
+			<key>background.png</key>
 			<dict>
 				<key>width</key>
 				<integer>768</integer>
 				<key>height</key>
-				<integer>1025</integer>
+				<integer>1024</integer>
 				<key>originalWidth</key>
 				<integer>768</integer>
 				<key>originalHeight</key>
-				<integer>1025</integer>
+				<integer>1024</integer>
 				<key>x</key>
 				<integer>0</integer>
 				<key>y</key>
@@ -23,16 +23,16 @@
 				<key>offsetY</key>
 				<real>0</real>
 			</dict>
-			<key>restart_btn1.png</key>
+			<key>restart_btn.png</key>
 			<dict>
 				<key>width</key>
-				<integer>480</integer>
+				<integer>253</integer>
 				<key>height</key>
-				<integer>120</integer>
+				<integer>87</integer>
 				<key>originalWidth</key>
-				<integer>480</integer>
+				<integer>253</integer>
 				<key>originalHeight</key>
-				<integer>120</integer>
+				<integer>87</integer>
 				<key>x</key>
 				<integer>770</integer>
 				<key>y</key>
@@ -42,58 +42,20 @@
 				<key>offsetY</key>
 				<real>0</real>
 			</dict>
-			<key>restart_btn2.png</key>
+			<key>return_btn.png</key>
 			<dict>
 				<key>width</key>
-				<integer>480</integer>
+				<integer>253</integer>
 				<key>height</key>
-				<integer>120</integer>
+				<integer>87</integer>
 				<key>originalWidth</key>
-				<integer>480</integer>
+				<integer>253</integer>
 				<key>originalHeight</key>
-				<integer>120</integer>
+				<integer>87</integer>
 				<key>x</key>
-				<integer>1252</integer>
+				<integer>1025</integer>
 				<key>y</key>
 				<integer>0</integer>
-				<key>offsetX</key>
-				<real>0</real>
-				<key>offsetY</key>
-				<real>0</real>
-			</dict>
-			<key>return_btn1.png</key>
-			<dict>
-				<key>width</key>
-				<integer>480</integer>
-				<key>height</key>
-				<integer>120</integer>
-				<key>originalWidth</key>
-				<integer>480</integer>
-				<key>originalHeight</key>
-				<integer>120</integer>
-				<key>x</key>
-				<integer>0</integer>
-				<key>y</key>
-				<integer>1027</integer>
-				<key>offsetX</key>
-				<real>0</real>
-				<key>offsetY</key>
-				<real>0</real>
-			</dict>
-			<key>return_btn2.png</key>
-			<dict>
-				<key>width</key>
-				<integer>480</integer>
-				<key>height</key>
-				<integer>120</integer>
-				<key>originalWidth</key>
-				<integer>480</integer>
-				<key>originalHeight</key>
-				<integer>120</integer>
-				<key>x</key>
-				<integer>482</integer>
-				<key>y</key>
-				<integer>1027</integer>
 				<key>offsetX</key>
 				<real>0</real>
 				<key>offsetY</key>

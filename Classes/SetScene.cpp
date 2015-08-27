@@ -25,8 +25,8 @@ bool SetScene::init()
 
 	//Ìí¼Ó·µ»Ø°´Å¥
 	auto returnItem = MenuItemImage::create(
-		"return_icon1.png",
-		"return_icon2.png",
+		"Set/icon_back.png",
+		"Set/icon_back.png",
 		CC_CALLBACK_1(SetScene::returnCallback, this));
 
 	returnItem->setPosition(origin.x + 60, origin.y + visibleSize.height - 60);
@@ -39,14 +39,14 @@ bool SetScene::init()
 		bgMusicBtn = Sprite::create("Set/off.jpg");
 	else
 		bgMusicBtn = Sprite::create("Set/on.jpg");
-	bgMusicBtn->setPosition(origin.x + visibleSize.width / 2 + 40, origin.y + visibleSize.height / 2 + 100);
+	bgMusicBtn->setPosition(origin.x + visibleSize.width / 2 + 40, origin.y + visibleSize.height / 2 + 140);
 	this->addChild(bgMusicBtn, 1);
 
 	if (AudioControl::isEffectStopped)
 		effectBtn = Sprite::create("Set/off.jpg");
 	else
 		effectBtn = Sprite::create("Set/on.jpg");
-	effectBtn->setPosition(origin.x + visibleSize.width / 2 + 40, origin.y + visibleSize.height / 2 - 50);
+	effectBtn->setPosition(origin.x + visibleSize.width / 2 + 40, origin.y + visibleSize.height / 2 - 25);
 	this->addChild(effectBtn, 1);
 
 
@@ -116,7 +116,7 @@ void SetScene::setBgImage()
 {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
-	auto sprite = Sprite::create("Set/background_sw.png");
+	auto sprite = Sprite::create("Set/set_bg.png");
 	sprite->setPosition(ccp(origin.x + visibleSize.width / 2,
 		origin.y + visibleSize.height / 2));
 

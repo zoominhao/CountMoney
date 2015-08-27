@@ -26,8 +26,9 @@ private:
 	void returnCallback(Ref* pSender);
 	void pauseCallback(Ref* pSender);
 
-	//add Cat
-	void addCat();
+	//add timer frame
+	void addTimerFrame();
+
 
 private:
 	Vec2 _spos;
@@ -41,8 +42,8 @@ private:
 	CMTimer* m_cmTimer;
 	//Íæ¼Ò
 	Player*  m_player;
-	//cat animation
-	Sprite*  m_cat;
+	
+	Sprite*  m_timerFrame;
 };
 
 #endif // __LOSER_SCENE_H__

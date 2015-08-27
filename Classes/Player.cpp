@@ -17,6 +17,7 @@ void Player::createPlayer(int mode)
 	
 	addTotalMoneyLabel();
 	displayTotalMoney();
+	addScoreFrame();
 	/*if (mode == 2)
 		displayFakeWrong();*/
 	m_totalMoneyNum = 0;
@@ -26,14 +27,14 @@ void Player::createPlayer(int mode)
 
 void Player::displayTotalMoney()
 {
-	m_totalMoneyNumLabel = Label::createWithTTF("0", "fonts/Marker Felt.ttf", 24);
+	m_totalMoneyNumLabel = Label::createWithTTF("score: 0", "fonts/Marker Felt.ttf", 40);
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-	m_totalMoneyNumLabel->setPosition(origin.x + visibleSize.width * 0.67, origin.y + 20);
-	m_totalMoneyNumLabel->setColor(Color3B(0.0, 0.0, 0.0));
+	m_totalMoneyNumLabel->setPosition(origin.x + visibleSize.width * 0.5, origin.y + 65);
+	m_totalMoneyNumLabel->setColor(Color3B(106.0, 57.0, 6.0));
 
-	this->addChild(m_totalMoneyNumLabel, 1);
+	this->addChild(m_totalMoneyNumLabel, 3);
 }
 
 void Player::displayFakeWrong()
@@ -67,8 +68,8 @@ void Player::addTotalMoneyLabel()
 
 void Player::changeTotalMoneyLabel()
 {
-	char totalMoneyStr[10];
-	sprintf(totalMoneyStr, "%d", m_totalMoneyNum);
+	char totalMoneyStr[20];
+	sprintf(totalMoneyStr, "score: %d", m_totalMoneyNum);
 	m_totalMoneyNumLabel->setString(totalMoneyStr);
 }
 
@@ -144,6 +145,21 @@ void Player::setFakeWrongNumPos(float detax, float detay)
 void Player::setTotalMoneyNumRot(float detaRot)
 {
 	m_totalMoneyNumLabel->setRotation(detaRot);
+}
+
+void Player::addScoreFrame()
+{
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+	m_scoreFrame = Sprite::create("score.png");
+	m_scoreFrame->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + 70));
+	m_scoreFrame->setScale(0.67);
+	this->addChild(m_scoreFrame, 2);
+}
+
+void Player::setScoreFramePos(float detax, float detay)
+{
+	m_scoreFrame->setPosition(m_scoreFrame->getPositionX() + detax, m_scoreFrame->getPositionY() + detay);
 }
 
 

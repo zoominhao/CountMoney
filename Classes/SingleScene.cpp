@@ -3,6 +3,7 @@
 #include "LoserScene.h"
 #include "TellerScene.h"
 #include "EndlessScene.h"
+#include "MultiScene.h"
 
 
 
@@ -30,6 +31,8 @@ bool SingleScene::init()
 
 
 	//给开始按钮添加事件监听  
+	ui::Button *Btn_Double = dynamic_cast<ui::Button*>(uilayer->getChildByName("DoubleMode"));
+	Btn_Double->addTouchEventListener(CC_CALLBACK_2(SingleScene::DoubleScene, this));
 
 	ui::Button *Btn_DS = dynamic_cast<ui::Button*>(uilayer->getChildByName("DSMode"));
 	Btn_DS->addTouchEventListener(CC_CALLBACK_2(SingleScene::DSScene, this));
@@ -41,14 +44,21 @@ bool SingleScene::init()
 	ui::Button *Btn_WJ = dynamic_cast<ui::Button*>(uilayer->getChildByName("WJMode"));
 	Btn_WJ->addTouchEventListener(CC_CALLBACK_2(SingleScene::WJScene, this));
 
-	ui::Button *Btn_Return = dynamic_cast<ui::Button*>(uilayer->getChildByName("Return"));
-	Btn_Return->addTouchEventListener(CC_CALLBACK_2(SingleScene::StartScene, this));
+	/*ui::Button *Btn_Return = dynamic_cast<ui::Button*>(uilayer->getChildByName("Return"));
+	Btn_Return->addTouchEventListener(CC_CALLBACK_2(SingleScene::StartScene, this));*/
 
 	return true;
 }
 
 
-
+void SingleScene::DoubleScene(Ref *pSender, ui::Widget::TouchEventType type)
+{
+	if (type == ui::Widget::TouchEventType::ENDED)
+	{
+		auto scene = MultiScene::createScene();
+		Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
+	}
+}
 
 void SingleScene::DSScene(Ref *pSender, ui::Widget::TouchEventType type)
 {
@@ -85,5 +95,7 @@ void SingleScene::StartScene(Ref *pSender, ui::Widget::TouchEventType type)
 		Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
 	}
 }
+
+
 
 

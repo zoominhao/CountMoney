@@ -8,6 +8,7 @@
 #include <sys/socket.h>  
 #include <netinet/in.h>  
 #include <arpa/inet.h>  
+#include <unistd.h>
 #endif  
 
 #include <string>
@@ -46,9 +47,6 @@ public:
 	
 	~WebClient();
 
-	void test(cocos2d::Label *l);
-	// for test
-	cocos2d::Label *label;
 
 	void start();
 	void send(const std::string& data);

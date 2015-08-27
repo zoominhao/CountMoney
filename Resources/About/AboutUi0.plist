@@ -4,16 +4,16 @@
 	<dict>
 		<key>frames</key>
 		<dict>
-			<key>background.png</key>
+			<key>about_bg.png</key>
 			<dict>
 				<key>width</key>
 				<integer>768</integer>
 				<key>height</key>
-				<integer>1025</integer>
+				<integer>1024</integer>
 				<key>originalWidth</key>
 				<integer>768</integer>
 				<key>originalHeight</key>
-				<integer>1025</integer>
+				<integer>1024</integer>
 				<key>x</key>
 				<integer>0</integer>
 				<key>y</key>
@@ -23,37 +23,18 @@
 				<key>offsetY</key>
 				<real>0</real>
 			</dict>
-			<key>return_icon1.png</key>
+			<key>icon_back.png</key>
 			<dict>
 				<key>width</key>
-				<integer>114</integer>
+				<integer>74</integer>
 				<key>height</key>
-				<integer>114</integer>
+				<integer>74</integer>
 				<key>originalWidth</key>
-				<integer>114</integer>
+				<integer>74</integer>
 				<key>originalHeight</key>
-				<integer>114</integer>
+				<integer>74</integer>
 				<key>x</key>
 				<integer>770</integer>
-				<key>y</key>
-				<integer>0</integer>
-				<key>offsetX</key>
-				<real>0</real>
-				<key>offsetY</key>
-				<real>0</real>
-			</dict>
-			<key>return_icon2.png</key>
-			<dict>
-				<key>width</key>
-				<integer>114</integer>
-				<key>height</key>
-				<integer>114</integer>
-				<key>originalWidth</key>
-				<integer>114</integer>
-				<key>originalHeight</key>
-				<integer>114</integer>
-				<key>x</key>
-				<integer>886</integer>
 				<key>y</key>
 				<integer>0</integer>
 				<key>offsetX</key>

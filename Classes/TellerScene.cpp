@@ -37,8 +37,8 @@ bool TellerScene::init()
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
 	auto returnItem = MenuItemImage::create(
-		"return_icon1.png",
-		"return_icon2.png",
+		"teller/icon_back.png",
+		"teller/icon_back.png",
 		CC_CALLBACK_1(TellerScene::returnCallback, this));
 
 	returnItem->setPosition(Vec2(origin.x + returnItem->getContentSize().width / 2,
@@ -46,8 +46,8 @@ bool TellerScene::init()
 
 
 	auto pauseItem = MenuItemImage::create(
-		"pause_icon1.png",
-		"pause_icon2.png",
+		"teller/icon_pause.png",
+		"teller/icon_pause.png",
 		CC_CALLBACK_1(TellerScene::pauseCallback, this));
 
 	pauseItem->setPosition(Vec2(origin.x + visibleSize.width - pauseItem->getContentSize().width / 2,
@@ -67,12 +67,13 @@ bool TellerScene::init()
 	setBgImage();
 
 	//
-	addCounter();
 	addTranshCan();
+	addTimerFrame();
 
 	//添加玩家，该场景为单人模式
 	m_player = Player::create();
 	m_player->createPlayer(2);
+	m_player->setTotalMoneySpritePos(0, -20);
 	this->addChild(m_player, 1);
 
 	//添加计时器
@@ -106,13 +107,13 @@ bool TellerScene::init()
 
 void TellerScene::setBgImage()
 {
-	auto sprite = LayerColor::create(ccc4(0xff, 0xff, 0xff, 0xff), 768, 1024);
+	auto sprite = Sprite::create("teller/teller_bg.png");
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	// position the sprite on the center of the screen
-	sprite->setPosition(ccp(origin.x + visibleSize.width / 2 - sprite->getContentSize().width / 2,
-		origin.y + visibleSize.height / 2 - sprite->getContentSize().height / 2));
+	sprite->setPosition(ccp(origin.x + visibleSize.width / 2,
+		origin.y + visibleSize.height / 2));
 
 	// add the sprite as a child to this layer
 	this->addChild(sprite, 0);
@@ -130,7 +131,7 @@ bool TellerScene::onTouchBegan(Touch* touch, Event* event)
 		m_effect_id = AudioControl::playEffectMusic();
 		if (m_needRand)
 		{
-			m_player->addSingleMoneyLabel(m_curFake, "center");
+			m_player->addSingleMoneyLabel(m_curFake, "center", Vec2(12.0, 0.0));
 			int x = rand() % 100;
 			if (x > 70)
 			{
@@ -240,14 +241,6 @@ void TellerScene::pauseCallback(Ref* pSender)
 	Director::sharedDirector()->pushScene(scene);
 }
 
-void TellerScene::addCounter()
-{
-	Size visibleSize = Director::getInstance()->getVisibleSize();
-	Vec2 origin = Director::getInstance()->getVisibleOrigin();
-	m_counter = Sprite::create("counter.jpg");
-	m_counter->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 + 200));
-	this->addChild(m_counter, 1);
-}
 
 void TellerScene::addTranshCan()
 {
@@ -259,8 +252,11 @@ void TellerScene::addTranshCan()
 	this->addChild(m_transhCan, 1);
 }
 
-
-
-
-
-
+void TellerScene::addTimerFrame()
+{
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+	m_timerFrame = Sprite::create("teller/timer.png");
+	m_timerFrame->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - 75));
+	this->addChild(m_timerFrame, 1);
+}

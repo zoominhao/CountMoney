@@ -7,7 +7,8 @@
 #define DEFAULT_PORT 8080
 //#define DEFAULT_ADDR "10.66.227.70"
 //#define DEFAULT_ADDR "10.12.194.26"
-#define DEFAULT_ADDR "192.168.1.102"
+//#define DEFAULT_ADDR "192.168.1.102"
+#define DEFAULT_ADDR "10.66.237.210"
 
 
 WebClient::WebClient()
@@ -25,21 +26,16 @@ WebClient::~WebClient()
 
 }
 
-void WebClient::test(cocos2d::Label *l)
-{
-	this->label = l;
-}
-
 void WebClient::getMessage(int socket)
 {
-	while (1)
+	while (true)
 	{
 		FD_ZERO(&fdset);
 		FD_SET(socket, &fdset);
 
 		fd_set fd_pre = fdset;
 		int ret = select(socket + 1, &fdset, NULL, NULL, NULL);  // windows ignore the 1st param
-		if (ret == SOCKET_ERROR)
+		if (ret == -1)
 		{
 			cocos2d::MessageBox("err select", "");
 			return ;
@@ -75,7 +71,7 @@ void WebClient::getMessage(int socket)
 			case EVENT_WEAPON_4:
 			{
 				int ret = recv(socket, buf, sizeof(char), 0);
-				char direction = (char)buf;
+				char direction = *buf;
 				handle_fight_event(event, direction);
 				break;
 			}
@@ -107,19 +103,15 @@ void WebClient::start()
 	wVersionRequested = MAKEWORD(1, 1);
 	ret = WSAStartup(wVersionRequested, &wsaData);
 	if (ret != 0) {
-		//MessageBox("WSAStartup", "ERROR");
 		cocos2d::MessageBox("@WSAStartup2", "DEBUG");
 		return;
 	}
 	if (LOBYTE(wsaData.wVersion) != 1 ||
 		HIBYTE(wsaData.wVersion) != 1) {
 		WSACleanup();
-		//MessageBox("LOBYTE HIBYTE", "ERROR");
 		return;
 	}
 #endif  
-	//cocos2d::MessageBox("@1", "DEBUG");
-
 	socket = ::socket(AF_INET, SOCK_STREAM, 0);
 	if (socket < 0)
 	{
@@ -127,23 +119,27 @@ void WebClient::start()
 		cocos2d::MessageBox("@2", "DEBUG"); 
 		return;
 	}
-	//cocos2d::MessageBox("@3", "DEBUG");
 	struct sockaddr_in servaddr;
 
 	memset(&servaddr, 0, sizeof(servaddr));
 	servaddr.sin_family = AF_INET;
+#ifdef _WIN32  
 	servaddr.sin_addr.S_un.S_addr = inet_addr(DEFAULT_ADDR);
+#else  
+	servaddr.sin_addr.s_addr = inet_addr(DEFAULT_ADDR);
+#endif  
 	servaddr.sin_port = htons(DEFAULT_PORT);
 	ret = connect(socket, (struct sockaddr *) &servaddr, sizeof(servaddr));
-	//cocos2d::MessageBox("@4", "DEBUG");
 	if (ret < 0) {
+#ifdef _WIN32  
 		closesocket(socket);
+#else  
+		close(socket);
+#endif  
 		cocos2d::MessageBox("@close socket", "DEBUG");
 		return;
-		//MessageBox("connect error", "ERROR");
 	}
 	status = 0;
-	//cocos2d::MessageBox("@5", "DEBUG");
 	std::thread thread_getMsg(&WebClient::getMessage, this, socket);
 	thread_getMsg.detach();
 	return;
