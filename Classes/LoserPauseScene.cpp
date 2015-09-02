@@ -1,6 +1,7 @@
 #include "LoserPauseScene.h"
 #include "LoserScene.h"
-
+#include "AudioControl.h"
+#include "SingleScene.h"
 
 
 Scene* LoserPauseScene::createScene(RenderTexture* sqr, int score)
@@ -9,24 +10,24 @@ Scene* LoserPauseScene::createScene(RenderTexture* sqr, int score)
 	auto layer = LoserPauseScene::create();
 	scene->addChild(layer, 1);
 
-	char scoreStr[20];
-	sprintf(scoreStr, "%d", score);
-	auto scoreLabel = Label::createWithTTF(scoreStr, "fonts/Marker Felt.ttf", 70);
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto origin = Director::getInstance()->getVisibleOrigin();
 
-	scoreLabel->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 + 80);
-	scoreLabel->setColor(Color3B(255.0, 0.0, 255.0));
 
-	scene->addChild(scoreLabel, 1);
+	/*char scoreStr[20];
+	sprintf(scoreStr, "å½“å‰åˆ†æ•°: %d", score);
+	auto scoreLabel = Label::createWithTTF(scoreStr, "fonts/arial.ttf", 50);
+	scoreLabel->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 - 100);
+	scoreLabel->setColor(Color3B(255.0, 255.0, 255.0));
+	scene->addChild(scoreLabel, 1);*/
 
-	//²¢½áÊø½çÃæ½ØÍ¼Ìí¼Óµ½GameEnd³¡¾°²ãÖĞ  
-	//µÃµ½´°¿ÚµÄ´óĞ¡  
+	//å¹¶ç»“æŸç•Œé¢æˆªå›¾æ·»åŠ åˆ°GameEndåœºæ™¯å±‚ä¸­  
+	//å¾—åˆ°çª—å£çš„å¤§å°  
 	Sprite *back_spr = Sprite::createWithTexture(sqr->getSprite()->getTexture());
 	//Sprite *back_spr = Sprite::create("bg_pic.jpg");
-	back_spr->setPosition(ccp(visibleSize.width / 2, visibleSize.height / 2 + 15)); //·ÅÖÃÎ»ÖÃ,Õâ¸öÏà¶ÔÓÚÖĞĞÄÎ»ÖÃ¡£  
-	back_spr->setFlipY(true);            //·­×ª£¬ÒòÎªUI×ø±êºÍOpenGL×ø±ê²»Í¬  
-	back_spr->setColor(Color3B::GRAY);   //Í¼Æ¬ÑÕÉ«±ä»ÒÉ«  
+	back_spr->setPosition(ccp(visibleSize.width / 2, visibleSize.height / 2 + 15)); //æ”¾ç½®ä½ç½®,è¿™ä¸ªç›¸å¯¹äºä¸­å¿ƒä½ç½®ã€‚  
+	back_spr->setFlipY(true);            //ç¿»è½¬ï¼Œå› ä¸ºUIåæ ‡å’ŒOpenGLåæ ‡ä¸åŒ  
+	back_spr->setColor(Color3B::GRAY);   //å›¾ç‰‡é¢œè‰²å˜ç°è‰²  
 	//back_spr->setColor(Color3B(255,0,0));
 	scene->addChild(back_spr);
 
@@ -41,27 +42,21 @@ bool LoserPauseScene::init()
 	auto origin = Director::getInstance()->getVisibleOrigin();
 
 
-	auto continueItem = MenuItemImage::create(
-		"start_icon1.png",
-		"start_icon2.png",
-		CC_CALLBACK_1(LoserPauseScene::continueCallback, this));
+	//åŠ è½½cocos studioåˆ¶ä½œçš„ç•Œé¢  
+	auto uilayer = cocostudio::GUIReader::getInstance()->widgetFromJsonFile("pause/PauseUi_1.ExportJson");
+	uilayer->setPosition(ccp(origin.x, origin.y));
 
-	continueItem->setPosition(Vec2(origin.x + visibleSize.width / 2 - continueItem->getContentSize().width / 2,
-		origin.y + visibleSize.height / 2));
+	this->addChild(uilayer);
 
+	//ç»™å¼€å§‹æŒ‰é’®æ·»åŠ äº‹ä»¶ç›‘å¬  
+	ui::Button *Btn_Return = dynamic_cast<ui::Button*>(uilayer->getChildByName("Return"));
+	Btn_Return->addTouchEventListener(CC_CALLBACK_2(LoserPauseScene::returnCallback, this));
 
-	auto restartItem = MenuItemImage::create(
-		"restart_icon1.png",
-		"restart_icon2.png",
-		CC_CALLBACK_1(LoserPauseScene::restartCallback, this));
+	ui::Button *Btn_Continue = dynamic_cast<ui::Button*>(uilayer->getChildByName("Continue"));
+	Btn_Continue->addTouchEventListener(CC_CALLBACK_2(LoserPauseScene::continueCallback, this));
 
-	restartItem->setPosition(Vec2(origin.x + visibleSize.width / 2 + restartItem->getContentSize().width / 2,
-		origin.y + visibleSize.height / 2));
-
-	// create menu, it's an autorelease object
-	auto menu = Menu::create(continueItem, restartItem, NULL);
-	menu->setPosition(Vec2::ZERO);
-	this->addChild(menu, 1);
+	ui::Button *Btn_Restart = dynamic_cast<ui::Button*>(uilayer->getChildByName("Restart"));
+	Btn_Restart->addTouchEventListener(CC_CALLBACK_2(LoserPauseScene::restartCallback, this));
 
 
 	return true;
@@ -69,16 +64,33 @@ bool LoserPauseScene::init()
 
 
 
-
-void LoserPauseScene::continueCallback(Ref *pSender)
+void LoserPauseScene::continueCallback(Ref *pSender, ui::Widget::TouchEventType type)
 {
-	Director::sharedDirector()->popScene();
+	if (type == ui::Widget::TouchEventType::ENDED)
+	{
+		Director::sharedDirector()->popScene();
+		AudioControl::playBgMusic(LOSER);
+	}
 }
 
-void LoserPauseScene::restartCallback(Ref *pSender)
+
+
+void LoserPauseScene::restartCallback(Ref *pSender, ui::Widget::TouchEventType type)
 {
-	auto scene = LoserScene::createScene();
-	Director::getInstance()->replaceScene(scene);
+	if (type == ui::Widget::TouchEventType::ENDED)
+	{
+		auto scene = LoserScene::createScene();
+		Director::getInstance()->replaceScene(scene);
+	}
+}
+
+void LoserPauseScene::returnCallback(Ref *pSender, ui::Widget::TouchEventType type)
+{
+	if (type == ui::Widget::TouchEventType::ENDED)
+	{
+		auto scene = SingleScene::createScene();
+		Director::getInstance()->replaceScene(scene);
+	}
 }
 
 

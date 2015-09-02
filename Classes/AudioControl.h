@@ -1,6 +1,7 @@
 #ifndef __AUDIO_CONTROL_H__
 #define __AUDIO_CONTROL_H__
 
+/*
 #if   (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
 #define EFFECT_FILE  "count.wav" //"effect2.ogg"  
 #elif (CC_TARCET_PLATFORM == CC_PLATFORM_MARMALADE)
@@ -15,7 +16,32 @@
 #define BGMUSIC_FILE   "bg_music.wav" //"background.ogg"
 #else
 #define BGMUSIC_FILE   "bg_music.wav" //"background.mp3"
-#endif
+#endif*/
+
+#define LOSER_BGM "audio/loser_BGM.mp3"
+#define TELLER_BGM "audio/teller_BGM.mp3"
+#define ENDLESS_BGM "audio/endless_BGM.mid"
+#define DOUBLE_BGM "audio/pk_BGM.mp3"
+
+#define COUNT_EFFECT "audio/count.mp3"
+#define CLICK_EFFECT "audio/button_click.wav"
+#define OVER_EFFECT "audio/gameover.mp3"
+#define READY_EFFECT "audio/ready.mp3"
+
+#define ENDLESS_WIN_EFFECT "audio/endless_win.mp3"
+#define ENDLESS_LOSE_EFFECT "audio/endless_lose.mp3"
+
+#define BUFFER_EFFECT "audio/buff.mp3"
+#define DEBUFFER_EFFECT "audio/debuff.mp3"
+
+typedef enum 
+{
+	LOSER,
+	TELLER,
+	ENDLESS,
+	PK_OFFLINE,
+	PK_ONLINE,
+} CMMODE;
 
 #include "cocos2d.h"
 #include "CMTimer.h"
@@ -29,10 +55,16 @@ public:
 	AudioControl();
 	~AudioControl();
 	static void preLoad();
-	static void playBgMusic();
-	static int playEffectMusic();
+	static void playBgMusic(CMMODE mode);
+	static int playCountEffect();
+	static int playClickEffect();
+	static int playOverEffect();
+	static int playReadyEffect();
+	static int playBufferEffect();
+	static int playDebufferEffect();
+	static int playEndlessEffect(bool flag);
 	static void stopEffectMusic(int id);
-	static void stopAllEffcts();
+	
 
 	static void setMCEffectsVolume(float vol);
 	static void setBGMusicVolume(float vol);

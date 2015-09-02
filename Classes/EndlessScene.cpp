@@ -53,11 +53,11 @@ bool EndlessScene::init()
 	this->addChild(menu, 1);
 
 	//preload audio
-	AudioControl::preLoad();
+	//AudioControl::preLoad();
 
 	//add background image
 	setBgImage();
-	addCatAnimation();
+	//addCatAnimation();
 	addTranshCan();
 	addTimerFrame();
 
@@ -75,7 +75,7 @@ bool EndlessScene::init()
 
 
 	//播放背景音乐
-	AudioControl::playBgMusic();
+	AudioControl::playBgMusic(ENDLESS);
 
 	//注册单点触屏事件
 	auto touchlistenter = EventListenerTouchOneByOne::create();
@@ -125,13 +125,16 @@ void EndlessScene::setBgImage()
 
 bool EndlessScene::onTouchBegan(Touch* touch, Event* event)
 {
+	if (m_count_flag)
+		return false;
+	
 	_spos = touch->getLocation();
 	_curPos = _spos;
 	if (m_player->MoneyTotal()->isOnMoney(_spos))
 	{
 		m_count_flag = true;
 		m_cmTimer->startTimer();
-		m_effect_id = AudioControl::playEffectMusic();
+		m_effect_id = AudioControl::playCountEffect();
 		if (m_needRand)
 		{
 			m_player->addSingleMoneyMLabel(m_moneyType, "center", Vec2(12.0, 0.0));
@@ -176,8 +179,9 @@ void EndlessScene::onTouchEnded(Touch* touch, Event* event)
 		}
 		if (m_player->totalMoneyNum() == m_targetNum)
 		{ 
+			AudioControl::playEndlessEffect(true);
 			m_stage++;
-			m_targetNum += 5 * (25 + 10 * m_stage + rand() % 11 - 5);
+			m_targetNum = 5 * (25 + 10 * m_stage + rand() % 11 - 5);
 			char targetNumStr[30];
 			sprintf(targetNumStr, "Target: %d", m_targetNum);
 			m_targetLabel->setString(targetNumStr);
@@ -189,18 +193,26 @@ void EndlessScene::onTouchEnded(Touch* touch, Event* event)
 			m_player->addTotalMoney(-1 * m_targetNum);
 			m_player->changeTotalMoneyLabel();
 
-			if (m_stage<10)
-				m_cmTimer->setTotalTime(floor(m_time_per_count * (0.5954 * m_stage + 4.1887)));
+
+			if (m_stage < 10)
+				m_cmTimer->setTotalTime(floor(m_time_per_count * (0.154 * m_stage + 4.6157)));
 			else
-				m_cmTimer->setTotalTime(floor(m_time_per_count * (0.5954 * m_stage + 4.1887)-( m_stage - 9) * 0.3));
+				m_cmTimer->setTotalTime(floor(m_time_per_count * (0.154 * m_stage + 4.6157) - (m_stage - 9) * 0.1));
 		}
 		else if (m_player->totalMoneyNum() > m_targetNum)
 		{
-			
+			AudioControl::stopBGMusic();
 			char stageNumStr[100];
 			sprintf(stageNumStr, "Fail In Stage %d", m_stage + 1);
 			auto scene = EndlessEndScene::createScene(stageNumStr);
 			Director::getInstance()->replaceScene(scene);
+			AudioControl::playEndlessEffect(false);
+/*
+	#ifdef _WIN32  
+			Sleep(100);
+	#else  
+			sleep(0.1);
+	#endif  */
 		}
 		m_player->removeChildByName("up");
 		m_player->MoneySingle()->setName("up");
@@ -208,7 +220,7 @@ void EndlessScene::onTouchEnded(Touch* touch, Event* event)
 		break;
 	case RIGHT:
 		//m_player->MoneySingle()->MoneySprite()->setName("right");
-		m_player->MoneySingle()->moneyFakeFly(220.0, 0.0, 0.1);
+		m_player->MoneySingle()->moneyHFakeFly(220.0, 0.0, 0.1);
 		if (m_isEmpty)
 		{
 			m_transhCan->setTexture("f_trashCan.png");
@@ -230,7 +242,7 @@ void EndlessScene::onTouchEnded(Touch* touch, Event* event)
 
 	if (m_needRand)
 		m_moneyType = m_nextMoneyType;
-	AudioControl::stopEffectMusic(m_effect_id);
+	//AudioControl::stopEffectMusic(m_effect_id);
 	m_player->changeTotalMoneyLabel();
 }
 
@@ -248,16 +260,9 @@ void EndlessScene::onTouchMoved(Touch* touch, Event* event)
 
 void EndlessScene::returnCallback(Ref* pSender)
 {
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_WP8) || (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
-	MessageBox("You pressed the close button. Windows Store Apps do not implement a close button.", "Alert");
-	return;
-#endif
+	AudioControl::stopBGMusic();
 	auto scene = SingleScene::createScene();
 	Director::getInstance()->replaceScene(scene);
-
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-	exit(0);
-#endif
 }
 
 void EndlessScene::pauseCallback(Ref* pSender)
@@ -272,6 +277,8 @@ void EndlessScene::pauseCallback(Ref* pSender)
 
 	auto scene = EndlessPauseScene::createScene(renderTexture, m_player->totalMoneyNum());
 	Director::sharedDirector()->pushScene(scene);
+
+	AudioControl::stopBGMusic();
 }
 
 void EndlessScene::addCatAnimation()
@@ -284,7 +291,7 @@ void EndlessScene::addCatAnimation()
 	this->addChild(m_cat, 1);
 	//将图片加载到精灵帧缓存池  
 	SpriteFrameCache *m_frameCache = SpriteFrameCache::sharedSpriteFrameCache();
-	m_frameCache->addSpriteFramesWithFile("catanimation.plist", "catanimation.png");
+	m_frameCache->addSpriteFramesWithFile("endless/catanimation.plist", "endless/catanimation.png");
 	//用一个列表保存所有的CCSpriteFrameCache  
 	Vector<SpriteFrame*> frameArray;
 	for (unsigned int i = 1; i <= 9; i++)
@@ -348,27 +355,27 @@ void EndlessScene::randNewSingleMoney()
 	int x = rand() % 100;
 	if (x <= m_pro[rowIndex][0])
 	{
-		m_player->MoneyTotal()->changeMoney(Real_100_S);
+		m_player->MoneyTotal()->changeMoney(Real_100_T);
 		m_nextMoneyType = Real_100_S;
 	}
 	else if (x <= m_pro[rowIndex][1])
 	{
-		m_player->MoneyTotal()->changeMoney(Real_50_S);
+		m_player->MoneyTotal()->changeMoney(Real_50_T);
 		m_nextMoneyType = Real_50_S;
 	}
 	else if (x <= m_pro[rowIndex][2])
 	{
-		m_player->MoneyTotal()->changeMoney(Real_20_S);
+		m_player->MoneyTotal()->changeMoney(Real_20_T);
 		m_nextMoneyType = Real_20_S;
 	}
 	else if (x <= m_pro[rowIndex][3])
 	{
-		m_player->MoneyTotal()->changeMoney(Real_10_S);
+		m_player->MoneyTotal()->changeMoney(Real_10_T);
 		m_nextMoneyType = Real_10_S;
 	}
 	else
 	{
-		m_player->MoneyTotal()->changeMoney(Real_5_S);
+		m_player->MoneyTotal()->changeMoney(Real_5_T);
 		m_nextMoneyType = Real_5_S;
 	}
 }

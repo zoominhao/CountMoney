@@ -36,6 +36,8 @@ private:
 
 	void addTranshCan();
 
+	void readyGoAct();
+
 private:
 	Vec2 _spos;
 	Vec2 _curPos;
@@ -57,6 +59,8 @@ private:
 	//transh can
 	Sprite*  m_transhCan;
 	Sprite*  m_timerFrame;
+
+	bool     m_enabled;
 
 };
 

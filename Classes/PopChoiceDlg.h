@@ -12,8 +12,8 @@ public:
 	virtual bool init();
 	CREATE_FUNC(PopChoiceDlg);
 
-		void setTitle(const char* titleStr);    //设置对话框的title
-		void setContent(const char* contentStr);  //设置对话框的文本内容
+	void setTitle(const char* titleStr);    //设置对话框的title
+	void setContent(const char* contentStr);  //设置对话框的文本内容
 
 private:
 	virtual bool onTouchBegan(Touch* touch, Event* event);
@@ -29,5 +29,7 @@ private:
 	Sprite * m_bgSprite;	//对话框的背景精灵
 	LabelBMFont * m_title;
 	LabelTTF * m_content;
+
+
 };
 #endif

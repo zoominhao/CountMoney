@@ -45,6 +45,13 @@ public:
 	void setStageNum(int stageNum){ m_stageNum = stageNum; }
 	int stageNum(){ return m_stageNum; }
 
+	void reset();
+	void setAllowed(bool flag){ m_allowed = flag; }
+	bool allowed(){ return m_allowed; }
+
+	void setWin(int oppScore);
+	int Win();
+
 private:
 	void displayTotalMoney();
 	void displayFakeWrong();
@@ -63,7 +70,11 @@ private:
 
 	Sprite*  m_scoreFrame;
 	
-	int m_stageNum;
+	int    m_stageNum;
+	bool   m_allowed;
+
+
+	int   m_oppScore;
 };
 
 #endif // __PLAYER_H__

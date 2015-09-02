@@ -1,6 +1,7 @@
 #include "SetScene.h"
 #include "StartScene.h"
 #include "AudioControl.h"
+#include "AboutScene.h"
 
 USING_NS_CC;
 
@@ -20,113 +21,73 @@ bool SetScene::init()
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto origin = Director::getInstance()->getVisibleOrigin();
 
+	//加载cocos studio制作的界面  
+	auto uilayer = cocostudio::GUIReader::getInstance()->widgetFromJsonFile("Set/SetUi_1.ExportJson");
+	uilayer->setPosition(ccp(origin.x, origin.y));
 
-	setBgImage();
+	this->addChild(uilayer);
 
-	//添加返回按钮
-	auto returnItem = MenuItemImage::create(
-		"Set/icon_back.png",
-		"Set/icon_back.png",
-		CC_CALLBACK_1(SetScene::returnCallback, this));
+	//给开始按钮添加事件监听  
+	ui::Button *Btn_Return = dynamic_cast<ui::Button*>(uilayer->getChildByName("Return"));
+	Btn_Return->addTouchEventListener(CC_CALLBACK_2(SetScene::returnCallback, this));
 
-	returnItem->setPosition(origin.x + 60, origin.y + visibleSize.height - 60);
+	ui::Button *Btn_Info = dynamic_cast<ui::Button*>(uilayer->getChildByName("Info"));
+	Btn_Info->addTouchEventListener(CC_CALLBACK_2(SetScene::infoScene, this));
 
-	auto menu = Menu::create(returnItem, NULL);
-	menu->setPosition(Vec2::ZERO);
-	this->addChild(menu, 1);
+	ui::CheckBox *Check_Effect = dynamic_cast<ui::CheckBox*>(uilayer->getChildByName("Effect"));
+	Check_Effect->addEventListenerCheckBox(this, ui::SEL_SelectedStateEvent(&SetScene::effectCallback));
 
-	if (AudioControl::isBGMusicStopped)
-		bgMusicBtn = Sprite::create("Set/off.jpg");
-	else
-		bgMusicBtn = Sprite::create("Set/on.jpg");
-	bgMusicBtn->setPosition(origin.x + visibleSize.width / 2 + 40, origin.y + visibleSize.height / 2 + 140);
-	this->addChild(bgMusicBtn, 1);
+	ui::CheckBox *Check_BGM = dynamic_cast<ui::CheckBox*>(uilayer->getChildByName("BGM"));
+	Check_BGM->addEventListenerCheckBox(this, ui::SEL_SelectedStateEvent(&SetScene::BGMCallback));
 
 	if (AudioControl::isEffectStopped)
-		effectBtn = Sprite::create("Set/off.jpg");
-	else
-		effectBtn = Sprite::create("Set/on.jpg");
-	effectBtn->setPosition(origin.x + visibleSize.width / 2 + 40, origin.y + visibleSize.height / 2 - 25);
-	this->addChild(effectBtn, 1);
-
-
-	//注册单点触屏事件
-	auto touchlistenter = EventListenerTouchOneByOne::create();
-	touchlistenter->setSwallowTouches(true);
-
-	touchlistenter->onTouchBegan = CC_CALLBACK_2(SetScene::onTouchBegan, this);
-	touchlistenter->onTouchEnded = CC_CALLBACK_2(SetScene::onTouchEnded, this);
-	touchlistenter->onTouchMoved = CC_CALLBACK_2(SetScene::onTouchMoved, this);
-	_eventDispatcher->addEventListenerWithSceneGraphPriority(touchlistenter, this);
-
-	isBGMusicStopped = false;
-	isEffectStopped = false;
-
-	return true;
-}
-
-
-
-bool SetScene::onTouchBegan(Touch* touch, Event* event)
-{
-	CCLOG("touched");
-	if (bgMusicBtn->getBoundingBox().containsPoint(touch->getLocation()))
 	{
-		AudioControl::isBGMusicStopped = !AudioControl::isBGMusicStopped;
-		if (AudioControl::isBGMusicStopped)
-		{
-			bgMusicBtn->setTexture("Set/off.jpg");
-			AudioControl::stopBGMusic();
-		}
-		else
-		{
-			bgMusicBtn->setTexture("Set/on.jpg");
-		}
+		Check_Effect->setSelectedState(true);
 	}
-
-	if (effectBtn->getBoundingBox().containsPoint(touch->getLocation()))
+	if (AudioControl::isBGMusicStopped)
 	{
-		AudioControl::isEffectStopped = !AudioControl::isEffectStopped;
-		if (AudioControl::isEffectStopped)
-		{
-			effectBtn->setTexture("Set/off.jpg");
-			AudioControl::stopMCEffects();
-		}
-		else
-		{
-			effectBtn->setTexture("Set/on.jpg");
-		}
+		Check_BGM->setSelectedState(true);
 	}
 
 	return true;
-	
 }
 
-void SetScene::onTouchMoved(Touch* touch, Event* event)
-{
 
+
+void SetScene::returnCallback(Ref *pSender, ui::Widget::TouchEventType type)
+{
+	if (type == ui::Widget::TouchEventType::ENDED)
+	{
+		auto scene = StartScene::createScene();
+		Director::sharedDirector()->replaceScene(scene);
+	}
 }
 
-void SetScene::onTouchEnded(Touch* touch, Event* event)
+void SetScene::infoScene(Ref *pSender, ui::Widget::TouchEventType type)
 {
-
+	if (type == ui::Widget::TouchEventType::ENDED)
+	{
+		auto scene = AboutScene::createScene();
+		Director::sharedDirector()->replaceScene(scene);
+	}
 }
 
-void SetScene::setBgImage()
+void SetScene::effectCallback(Ref *pSender, ui::CheckBoxEventType type)
 {
-	Size visibleSize = Director::getInstance()->getVisibleSize();
-	Vec2 origin = Director::getInstance()->getVisibleOrigin();
-	auto sprite = Sprite::create("Set/set_bg.png");
-	sprite->setPosition(ccp(origin.x + visibleSize.width / 2,
-		origin.y + visibleSize.height / 2));
-
-	this->addChild(sprite, 0);
+	AudioControl::isEffectStopped = !AudioControl::isEffectStopped;
+	if (AudioControl::isEffectStopped)
+	{
+		AudioControl::stopMCEffects();
+	}
 }
 
-void SetScene::returnCallback(Ref* pSender)
+void SetScene::BGMCallback(Ref *pSender, ui::CheckBoxEventType type)
 {
-	auto scene = StartScene::createScene();
-	Director::sharedDirector()->replaceScene(scene);
+	AudioControl::isBGMusicStopped = !AudioControl::isBGMusicStopped;
+	if (AudioControl::isBGMusicStopped)
+	{
+		AudioControl::stopBGMusic();
+	}
 }
 
 

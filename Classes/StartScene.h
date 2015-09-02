@@ -17,10 +17,12 @@ public:
 private:
 	void SingleScene(Ref *pSender, ui::Widget::TouchEventType type);
 	void MultiScene(Ref *pSender, ui::Widget::TouchEventType type);
-	void LeaveScene(Ref *pSender, ui::Widget::TouchEventType type);
+	void NetScene(Ref *pSender, ui::Widget::TouchEventType type);
 
-	void InfoScene(Ref *pSender, ui::Widget::TouchEventType type);
+	void RankScene(Ref *pSender, ui::Widget::TouchEventType type);
 	void SetScene(Ref *pSender, ui::Widget::TouchEventType type);
+
+	void multiOpenAct();
 
 };
 #endif

@@ -29,6 +29,8 @@ private:
 	//add timer frame
 	void addTimerFrame();
 
+	void readyGoAct();
+
 
 private:
 	Vec2 _spos;
@@ -44,6 +46,8 @@ private:
 	Player*  m_player;
 	
 	Sprite*  m_timerFrame;
+
+	bool     m_enabled;
 };
 
 #endif // __LOSER_SCENE_H__

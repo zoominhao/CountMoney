@@ -4,8 +4,9 @@
 #include "cocos2d.h"
 #include "Player.h"
 #include "MCUtil.h"
-#include "WebClient.h"
-#include "WebClient.h"
+
+#define WeightDis 200
+#define PoorNum  -500
 
 USING_NS_CC;
 
@@ -29,16 +30,19 @@ private:
 	void addControlBtns(int whichPlayer);
 	void addTargetNumLabel(int whichPlayer, const char* str);
 
+	void addCurScore();
+	void changeCurScore(int whichPlayer);
+
+	void addStatus();
+
 	void returnCallback(Ref* pSender);
 	void pauseCallback(Ref* pSender);
 
 
-	void addTranshCan();
-	void addCat();
+	void addGateWay();
+	void addWallet();
 
 
-	//add target frame
-	void addTargetFrame();
 
 	//添加道具
 	void randNewSingleMoney(int whichPlayer);
@@ -51,23 +55,30 @@ private:
 	void returnPos(Vec2 location, int whichPlayer);
 
 	//scene effect
-	void halfFlash(int whichHalf);   //闪光弹
+	void halfSmoke(int whichHalf);   //迷雾
+	void updateSmoke1(float time);
+	void updateSmoke2(float time);
 
-	void changePos(int whichHalf);    //换位卡
+	void changePos(int whichHalf);    //换位
+
+
+	void increaseWeight(int whichHalf);    //加重
+	void updateWeight1(float time);
+	void updateWeight2(float time);
+	
+	void triggerPoor(int whichHalf);   //穷神
+	void updatePoor1(float time);
+	void updatePoor2(float time);
 
 	void triggerRich(int whichHalf);   //土豪卡
+	void updateRich1(float time);
+	void updateRich2(float time);
 
 	void triggerInvincible(int whichHalf);  //无敌卡
-
-	void updateRich1(float time);  
-	void updateRich2(float time);
 	void updateInvincible1(float time);
 	void updateInvincible2(float time);
 
-
-	//test////////////////////////////
-	//static void handletest(int type, int direction, void *arg);
-	//void handle(int type, int direction);
+	void initStatus();
 
 private:
 	Vec2 _sP1Pos;
@@ -89,8 +100,6 @@ private:
 	bool m_p1NeedRand;
 	bool m_p2NeedRand;
 
-	bool m_isp1Empty;
-	bool m_isp2Empty;
 
 	//audio effect
 	int m_effect_id1;
@@ -100,30 +109,34 @@ private:
 	Player*  m_player1;
 	Player*  m_player2;
 
-	//transh can
-	Sprite*  m_transhCan1;
-	Sprite*  m_transhCan2;
-	Sprite*  m_cat1;
-	Sprite*  m_cat2;
+	//
+	Sprite*  m_gateWay1;
+	Sprite*  m_gateWay2;
+	Sprite*  m_wallet1;
+	Sprite*  m_wallet2;
+
+	//记分
+	Label* m_p1Label1;
+	Label* m_p1Label2;
+	Label* m_p2Label1;
+	Label* m_p2Label2;
+
+	float m_pro[7];
 
 
-	float m_pro[6];
+	//状态栏
+	bool m_p1Status[6];
+	bool m_p2Status[6];
+	int m_p1Occupied[6];
+	int m_p2Occupied[6];
+	bool m_occupiedP1[6];
+	bool m_occupiedP2[6];
 
-	//是否交换位置
-	bool m_isP1Swapped;
-	bool m_isP2Swapped;
 
-	//是否破损
-	bool m_isP1Old;
-	bool m_isP2Old;
+	Vec2 m_p1StatusPos[6];
+	Vec2 m_p2StatusPos[6];
 
-	//是否分数翻倍
-	bool m_isP1Double;
-	bool m_isP2Double;
-
-	//是否出于无敌状态
-	bool m_isP1Invincible;
-	bool m_isP2Invincible;
+	std::string m_status_file[6];
 
 };
 #endif

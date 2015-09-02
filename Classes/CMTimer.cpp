@@ -2,11 +2,15 @@
 #include "LoserEndScene.h"
 #include "TellerEndScene.h"
 #include "EndlessEndScene.h"
+#include "OnlineEndScene.h"
+#include "WebClient.h"
+#include "AudioControl.h"
 
 
 CMTimer::CMTimer() :m_timerLabel(NULL), m_totaltime(10.0), m_starter(true), m_ender(false)
 {
 	m_timeLeft = m_totaltime;
+	m_allowed = true;
 }
 
 CMTimer::~CMTimer()
@@ -51,11 +55,19 @@ void CMTimer::updatetime(float time)
 
 void CMTimer::startTimer()
 {
-	if (m_starter)
+	if (m_starter && m_allowed)
 	{
 		//m_totaltime = 10.0;
 		m_starter = false;
-		schedule(schedule_selector(CMTimer::updatetime), 0.01f);
+		this->schedule(schedule_selector(CMTimer::updatetime), 0.01f);
+	}
+}
+
+void CMTimer::stopTimer()
+{
+	if (!m_starter)
+	{
+		this->unschedule(schedule_selector(CMTimer::updatetime));
 	}
 }
 
@@ -65,20 +77,51 @@ void CMTimer::switchScene()
 	Scene* scene;
 	if (m_sceneMode == 1)
 	{
+		AudioControl::stopBGMusic();
 		sprintf(displayStr, "Score: %d", m_player_status->totalMoneyNum());
 		scene = LoserEndScene::createScene(displayStr);
+		AudioControl::playOverEffect();
 	}
 	else if (m_sceneMode == 2)
 	{
+		AudioControl::stopBGMusic();
 		sprintf(displayStr, "Score: %d", m_player_status->totalMoneyNum());
 		scene = TellerEndScene::createScene(displayStr);
+		AudioControl::playOverEffect();
 	}
 	else if (m_sceneMode == 3)
 	{
+		AudioControl::stopBGMusic();
 		sprintf(displayStr, "Fail In Stage %d ", m_player_status->stageNum() + 1);
 		scene = EndlessEndScene::createScene(displayStr);
+		AudioControl::playEndlessEffect(false);
+	}
+	else if (m_sceneMode == 4)
+	{
+		WebClient::getinstance().unregisterMethod();
+	#ifdef _WIN32  
+		Sleep(100);
+	#else  
+		sleep(0.1);
+	#endif  
+		
+		AudioControl::stopBGMusic();
+		if (m_player_status->Win() == 1)
+		{
+			scene = OnlineEndScene::createScene("You Win!");
+		}
+		else if (m_player_status->Win() == -1)
+		{
+			scene = OnlineEndScene::createScene("You Lose!");
+		}
+		else
+		{
+			scene = OnlineEndScene::createScene("Tie!");
+		}
 	}
 	 
 
 	Director::getInstance()->replaceScene(scene);
 }
+
+

@@ -42,16 +42,16 @@
 				<key>offsetY</key>
 				<real>0</real>
 			</dict>
-			<key>icon_message.png</key>
+			<key>icon_rank.png</key>
 			<dict>
 				<key>width</key>
-				<integer>74</integer>
+				<integer>85</integer>
 				<key>height</key>
-				<integer>74</integer>
+				<integer>76</integer>
 				<key>originalWidth</key>
-				<integer>74</integer>
+				<integer>85</integer>
 				<key>originalHeight</key>
-				<integer>74</integer>
+				<integer>76</integer>
 				<key>x</key>
 				<integer>846</integer>
 				<key>y</key>
@@ -64,15 +64,15 @@
 			<key>single_btn.png</key>
 			<dict>
 				<key>width</key>
-				<integer>144</integer>
+				<integer>253</integer>
 				<key>height</key>
-				<integer>35</integer>
+				<integer>87</integer>
 				<key>originalWidth</key>
-				<integer>144</integer>
+				<integer>253</integer>
 				<key>originalHeight</key>
-				<integer>35</integer>
+				<integer>87</integer>
 				<key>x</key>
-				<integer>922</integer>
+				<integer>933</integer>
 				<key>y</key>
 				<integer>0</integer>
 				<key>offsetX</key>
@@ -83,15 +83,53 @@
 			<key>pk_btn.png</key>
 			<dict>
 				<key>width</key>
-				<integer>144</integer>
+				<integer>253</integer>
 				<key>height</key>
-				<integer>35</integer>
+				<integer>87</integer>
 				<key>originalWidth</key>
-				<integer>144</integer>
+				<integer>253</integer>
 				<key>originalHeight</key>
-				<integer>35</integer>
+				<integer>87</integer>
 				<key>x</key>
-				<integer>1068</integer>
+				<integer>1188</integer>
+				<key>y</key>
+				<integer>0</integer>
+				<key>offsetX</key>
+				<real>0</real>
+				<key>offsetY</key>
+				<real>0</real>
+			</dict>
+			<key>net_btn.png</key>
+			<dict>
+				<key>width</key>
+				<integer>253</integer>
+				<key>height</key>
+				<integer>87</integer>
+				<key>originalWidth</key>
+				<integer>253</integer>
+				<key>originalHeight</key>
+				<integer>87</integer>
+				<key>x</key>
+				<integer>1443</integer>
+				<key>y</key>
+				<integer>0</integer>
+				<key>offsetX</key>
+				<real>0</real>
+				<key>offsetY</key>
+				<real>0</real>
+			</dict>
+			<key>name.png</key>
+			<dict>
+				<key>width</key>
+				<integer>300</integer>
+				<key>height</key>
+				<integer>191</integer>
+				<key>originalWidth</key>
+				<integer>300</integer>
+				<key>originalHeight</key>
+				<integer>191</integer>
+				<key>x</key>
+				<integer>1698</integer>
 				<key>y</key>
 				<integer>0</integer>
 				<key>offsetX</key>

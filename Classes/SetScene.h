@@ -2,6 +2,9 @@
 #define _SET_SCENE_H_
 
 #include "cocos2d.h"
+#include "cocostudio/CocoStudio.h"
+#include "ui/CocosGUI.h"
+
 
 USING_NS_CC;
 
@@ -13,19 +16,11 @@ public:
 	CREATE_FUNC(SetScene);
 
 private:
-	void returnCallback(Ref* pSender);
+	void returnCallback(Ref *pSender, ui::Widget::TouchEventType type);
+	void infoScene(Ref *pSender, ui::Widget::TouchEventType type);
 
-	void setBgImage();
+	void effectCallback(Ref *pSender, ui::CheckBoxEventType type);
+	void BGMCallback(Ref *pSender, ui::CheckBoxEventType type);
 
-	bool isBGMusicStopped;
-	bool isEffectStopped;
-
-	virtual bool onTouchBegan(Touch* touch, Event* event);
-	virtual void onTouchMoved(Touch* touch, Event* event);
-	virtual void onTouchEnded(Touch* touch, Event* event);
-
-
-	Sprite* bgMusicBtn;
-	Sprite* effectBtn;
 };
 #endif

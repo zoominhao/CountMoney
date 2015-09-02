@@ -48,7 +48,7 @@ bool LoserScene::init()
 	this->addChild(menu, 1);
 
 	//preload audio
-	AudioControl::preLoad();
+	//AudioControl::preLoad();
 
 	//add background image
 	setBgImage();
@@ -67,8 +67,9 @@ bool LoserScene::init()
 	m_cmTimer->createLabel(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - 80), m_player, 1);
 	this->addChild(m_cmTimer, 2);
 
+
 	//播放背景音乐
-	AudioControl::playBgMusic();
+	//AudioControl::playBgMusic(LOSER);
 
 	//注册单点触屏事件
 	auto touchlistenter = EventListenerTouchOneByOne::create();
@@ -79,9 +80,10 @@ bool LoserScene::init()
 	touchlistenter->onTouchMoved = CC_CALLBACK_2(LoserScene::onTouchMoved, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(touchlistenter, this);
 
-
+	readyGoAct();
 	//初始化
 	m_count_flag = false;
+	m_enabled = false;
 
 	return true;
 }
@@ -99,20 +101,15 @@ void LoserScene::pauseCallback(Ref* pSender)
 
 	auto scene = LoserPauseScene::createScene(renderTexture, m_player->totalMoneyNum());
 	Director::sharedDirector()->pushScene(scene);
+
+	AudioControl::stopBGMusic();
 }
 
 void LoserScene::returnCallback(Ref* pSender)
 {
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_WP8) || (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
-	MessageBox("You pressed the close button. Windows Store Apps do not implement a close button.", "Alert");
-	return;
-#endif
+	AudioControl::stopBGMusic();
 	auto scene = SingleScene::createScene();
 	Director::getInstance()->replaceScene(scene);
-
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-	exit(0);
-#endif
 }
 
 void LoserScene::setBgImage()
@@ -133,13 +130,17 @@ void LoserScene::setBgImage()
 
 bool LoserScene::onTouchBegan(Touch* touch, Event* event)
 {
+	if (!m_enabled)
+		return false;
+
+	if (m_count_flag)
+		return false;
 	_spos = touch->getLocation();
 	_curPos = _spos;
 	if (m_player->MoneyTotal()->isOnMoney(_spos))
 	{
 		m_count_flag = true;
-		m_cmTimer->startTimer();
-		m_effect_id = AudioControl::playEffectMusic();
+		m_effect_id = AudioControl::playCountEffect();
 		m_player->addSingleMoneyLabel(false, "center", Vec2(12.0, 0.0));
 	}
 
@@ -181,13 +182,13 @@ void LoserScene::onTouchEnded(Touch* touch, Event* event)
 		break;
 	default:
 		m_player->removeChild(m_player->MoneySingle());
-		AudioControl::stopEffectMusic(m_effect_id);
+		//AudioControl::stopEffectMusic(m_effect_id);
 		return;
 		break;
 	}
 
 	//m_player->removeChild(m_player->MoneySingle());
-	AudioControl::stopEffectMusic(m_effect_id);
+	//AudioControl::stopEffectMusic(m_effect_id);
 	m_player->changeTotalMoneyLabel();
 }
 
@@ -199,5 +200,43 @@ void LoserScene::addTimerFrame()
 	m_timerFrame = Sprite::create("loser/timer.png");
 	m_timerFrame->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - 75));
 	this->addChild(m_timerFrame, 1);
+}
+
+void LoserScene::readyGoAct()
+{
+
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+	auto m_ready = Sprite::create();
+	m_ready->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 + 100));
+	m_ready->setScale(0.5);
+	this->addChild(m_ready, 1, "ready");
+	//将图片加载到精灵帧缓存池  
+	SpriteFrameCache *m_frameCache = SpriteFrameCache::sharedSpriteFrameCache();
+	m_frameCache->addSpriteFramesWithFile("ready/ready.plist", "ready/ready.png");
+	//用一个列表保存所有的CCSpriteFrameCache  
+	Vector<SpriteFrame*> frameArray;
+	for (unsigned int i = 1; i <= 5; i++)
+	{
+		SpriteFrame* frame = m_frameCache->spriteFrameByName(String::createWithFormat("%d.png", i)->getCString());
+		frameArray.pushBack(frame);
+	}
+	//使用列表创建动画对象  
+	Animation* animation = Animation::createWithSpriteFrames(frameArray, 0.4f, 1);
+
+	//将动画包装成一个动作  
+	Animate* act = Animate::create(animation);
+
+	CCCallFunc * funcall = CCCallFunc::create([&](){
+		this->removeChildByName("ready");
+		AudioControl::playBgMusic(LOSER);
+		m_enabled = true;
+		m_cmTimer->startTimer();
+	});
+	CCFiniteTimeAction * seq = CCSequence::create(act, funcall, NULL);
+	m_ready->runAction(seq);
+	
+	AudioControl::playReadyEffect();
 }
 

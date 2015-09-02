@@ -3,7 +3,7 @@
 
 Player::Player() :m_totalMoneyNumLabel(NULL), m_fakeWrongNumLabel(NULL), m_totalMoneyNum(0), m_fakeWrongNum(0)
 {
-
+	m_allowed = true;
 }
 
 Player::~Player()
@@ -11,6 +11,14 @@ Player::~Player()
 
 }
 
+void Player::reset()
+{
+	m_totalMoneyNum = 0;
+	m_fakeWrongNum = 0;
+	m_stageNum = 0;
+	changeTotalMoneyLabel();
+	this->removeChild(m_money_single);
+}
 
 void Player::createPlayer(int mode)
 {
@@ -23,6 +31,7 @@ void Player::createPlayer(int mode)
 	m_totalMoneyNum = 0;
 	m_fakeWrongNum = 0;
 	m_stageNum = 0;
+	m_oppScore = 0;
 }
 
 void Player::displayTotalMoney()
@@ -51,6 +60,8 @@ void Player::displayFakeWrong()
 
 void Player::addTotalMoney(int deta)
 {
+	if (!m_allowed)
+		return;
 	m_totalMoneyNum += deta;
 	if (m_totalMoneyNum < 0)
 		m_totalMoneyNum = 0;
@@ -75,6 +86,8 @@ void Player::changeTotalMoneyLabel()
 
 void Player::addFakeWrong(int deta)
 {
+	if (!m_allowed)
+		return;
 	m_fakeWrongNum += deta;
 }
 
@@ -87,6 +100,8 @@ void Player::changeFakeWrongLabel()
 
 void Player::addSingleMoneyLabel(bool isFake, const char* name, Vec2 pos)
 {
+	if (!m_allowed)
+		return;
 	//add single money
 	//if (this->getChildByName(rmname))
 	//	this->removeChildByName(rmname, true);
@@ -105,6 +120,8 @@ void Player::addSingleMoneyLabel(bool isFake, const char* name, Vec2 pos)
 
 void Player::addSingleMoneyMLabel(Money_Type moneyType, const char* name, Vec2 pos)
 {
+	if (!m_allowed)
+		return;
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
@@ -162,4 +179,23 @@ void Player::setScoreFramePos(float detax, float detay)
 	m_scoreFrame->setPosition(m_scoreFrame->getPositionX() + detax, m_scoreFrame->getPositionY() + detay);
 }
 
+void Player::setWin(int oppScore)
+{
+	m_oppScore = oppScore;
+}
 
+int Player::Win()
+{
+	if (m_totalMoneyNum > m_oppScore)
+	{
+		return 1;
+	}
+	else if (m_totalMoneyNum < m_oppScore)
+	{
+		return  -1;
+	}
+	else
+	{
+		return  0;
+	}
+}

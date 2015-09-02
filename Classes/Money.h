@@ -19,10 +19,16 @@ typedef enum{
 	Tool_4_S,
 	Tool_5_T,
 	Tool_5_S,
+	Tool_6_T,
+	Tool_6_S,
+	Real_5_T,
 	Real_5_S,
+	Real_10_T,
 	Real_10_S,
+	Real_20_T,
 	Real_20_S,
-	Real_50_S
+	Real_50_T,
+	Real_50_S,
 }Money_Type;
 
 class Money: public Node
@@ -39,6 +45,7 @@ public:
 
 	void moneyFly(float detax, float detay, float detat);
 	void moneyFakeFly(float detax, float detay, float detat);
+	void moneyHFakeFly(float detax, float detay, float detat);
 	void moneyMove(float x, float y, float detat);
 
 	void setPos(float detax, float detay);

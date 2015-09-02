@@ -15,11 +15,10 @@ public:
 	CREATE_FUNC(SingleScene);
 
 private:
-	void DoubleScene(Ref *pSender, ui::Widget::TouchEventType type);
+	void StartScene(Ref *pSender, ui::Widget::TouchEventType type);
 	void DSScene(Ref *pSender, ui::Widget::TouchEventType type);
 	void GYScene(Ref *pSender, ui::Widget::TouchEventType type);
 	void WJScene(Ref *pSender, ui::Widget::TouchEventType type);
-	void StartScene(Ref *pSender, ui::Widget::TouchEventType type);
 
 };
 #endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __WEB_CLIENT_H__
+#define __WEB_CLIENT_H__
 
 #ifdef _WIN32  
 #include <winsock2.h>  
@@ -8,33 +9,49 @@
 #include <sys/socket.h>  
 #include <netinet/in.h>  
 #include <arpa/inet.h>  
+#include <fcntl.h>
 #include <unistd.h>
 #endif  
 
 #include <string>
 #include <mutex>
 
-// for test
-#include "cocos2d.h"
 
-#define EVENT_REGIST 0X00
-#define EVENT_LOGIN  0X01
+/*
+typedef enum{
+	EVENT_REGIST,
+	EVENT_LOGIN,
+	EVENT_UPLOAD_1,
+	EVENT_UPLOAD_2,
+	EVENT_QUERY_1,
+	EVENT_QUERY_2
+} MCUSER;*/
 
-#define EVENT_UPLOAD_1 0X0100
-#define EVENT_UPLOAD_1 0X0200
-#define EVENT_UPLOAD_1 0X0300
+typedef enum{
+	EVENT_TOOL_1,
+	EVENT_TOOL_2,
+	EVENT_TOOL_3,
+	EVENT_TOOL_4,
+	EVENT_MONEY_REAL,
+	EVENT_MONEY_FAKE,
+	EVENT_NO_PAIR,
+	EVENT_LOSE,
+	EVENT_START,
+} MCFIGHT;
 
-#define EVENT_QUERY_1 0X010000
-#define EVENT_QUERY_2 0X020000
-#define EVENT_QUERY_3 0X030000
 
-#define EVENT_WEAPON_1 0X01000000
-#define EVENT_WEAPON_2 0X02000000
-#define EVENT_WEAPON_3 0X03000000
-#define EVENT_WEAPON_4 0X04000000
+class WebClientMethod
+{
+public:
+	virtual ~WebClientMethod(){};
 
-#define EVENT_FIGHT 0X10000000
-
+	virtual void onFight(MCFIGHT  fight_event, bool toMe) = 0;
+	virtual void onOpponentExit() = 0;
+	virtual void onMatch() = 0;
+	virtual void onWait() = 0;
+	virtual void onStart() = 0;
+	virtual void onError(const std::string message) = 0;
+};
 
 class WebClient
 {
@@ -44,26 +61,36 @@ public:
 		static WebClient instance;
 		return instance;
 	}
-	
+
 	~WebClient();
 
-
+	void registerMethod(WebClientMethod* CbObj);
+	void unregisterMethod();
 	void start();
-	void send(const std::string& data);
+	void shutdown();
+	void shutdown2();
+	void pause();
+	void conti();
+	void sendCountEvent(MCFIGHT fight_event, bool toMe = false);
+	
 
-	void regidterFightCallback(void(*handleFightMsg)(int type, int direction, void *arg), void *arg);
 private:
 	WebClient();
 	void getMessage(int socket);
-	void handle_fight_event(int type, char direction);
+	void send(const char *data, int size);
+	void close();
+	void partExit();
+	bool connect();
 
-	void(*fight)(int type, int direction, void *arg);
-	void *fight_data;
+
+	bool createSocket();
 
 	static WebClient *instance;
-	int status;// 0: OK ; -1: NULL
+	int status;      // 0: OK ; -1: close
 	int socket;
 	std::mutex mutex;
 	fd_set fdset;
+	WebClientMethod* m_CbObj;
 };
 
+#endif // __WEB_CLIENT_H__

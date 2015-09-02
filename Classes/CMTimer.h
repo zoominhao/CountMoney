@@ -19,6 +19,10 @@ public:
 	void setTotalTime(float totaltime){ m_totaltime = totaltime; m_timeLeft = m_totaltime; }
 
 	void startTimer();
+	void stopTimer();
+
+	void setAllowed(bool flag) { m_allowed = flag; }
+
 
 private:
 	void updatetime(float time);
@@ -36,6 +40,10 @@ private:
 
 	Player*  m_player_status;
 	int m_sceneMode;
+
+	bool   m_allowed;
+
+	std::string m_schedule_key;
 };
 
 #endif // __CMTIMER_H__

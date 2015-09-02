@@ -23,7 +23,6 @@ bool AboutScene::init()
 
 	this->addChild(uilayer);
 
-
 	//给开始按钮添加事件监听  
 	ui::Button *Btn_Return = dynamic_cast<ui::Button*>(uilayer->getChildByName("Return"));
 	Btn_Return->addTouchEventListener(CC_CALLBACK_2(AboutScene::StartScene, this));
