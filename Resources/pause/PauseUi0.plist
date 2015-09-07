@@ -61,7 +61,7 @@
 				<key>offsetY</key>
 				<real>0</real>
 			</dict>
-			<key>return.png</key>
+			<key>return_w.png</key>
 			<dict>
 				<key>width</key>
 				<integer>120</integer>
@@ -80,7 +80,7 @@
 				<key>offsetY</key>
 				<real>0</real>
 			</dict>
-			<key>restart.png</key>
+			<key>restart_w.png</key>
 			<dict>
 				<key>width</key>
 				<integer>120</integer>
@@ -99,7 +99,7 @@
 				<key>offsetY</key>
 				<real>0</real>
 			</dict>
-			<key>continue.png</key>
+			<key>continue_w.png</key>
 			<dict>
 				<key>width</key>
 				<integer>118</integer>

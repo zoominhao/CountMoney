@@ -67,6 +67,7 @@ void CMTimer::stopTimer()
 {
 	if (!m_starter)
 	{
+		m_starter = true;
 		this->unschedule(schedule_selector(CMTimer::updatetime));
 	}
 }
@@ -92,7 +93,7 @@ void CMTimer::switchScene()
 	else if (m_sceneMode == 3)
 	{
 		AudioControl::stopBGMusic();
-		sprintf(displayStr, "Fail In Stage %d ", m_player_status->stageNum() + 1);
+		sprintf(displayStr, "Fail In Level %d ", m_player_status->stageNum() + 1);
 		scene = EndlessEndScene::createScene(displayStr);
 		AudioControl::playEndlessEffect(false);
 	}

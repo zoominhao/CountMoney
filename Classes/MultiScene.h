@@ -5,8 +5,8 @@
 #include "Player.h"
 #include "MCUtil.h"
 
-#define WeightDis 200
-#define PoorNum  -500
+#define WeightDis 250
+#define PoorNum  -300
 
 USING_NS_CC;
 
@@ -34,6 +34,8 @@ private:
 	void changeCurScore(int whichPlayer);
 
 	void addStatus();
+
+	void addPlayerName();
 
 	void returnCallback(Ref* pSender);
 	void pauseCallback(Ref* pSender);

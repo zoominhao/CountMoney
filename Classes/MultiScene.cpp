@@ -73,6 +73,7 @@ bool MultiScene::init()
 	addGateWay();
 
 	addCurScore();
+	addPlayerName();
 
 	//²¥·Å±³¾°ÒôÀÖ
 	AudioControl::playBgMusic(PK_OFFLINE);
@@ -616,13 +617,13 @@ void MultiScene::randNewSingleMoney(int whichPlayer)
 
 void MultiScene::initProArr()
 {
-	m_pro[0] = 2;   //ÃÔÎí
-	m_pro[1] = 4;    //»»Î»
-	m_pro[2] = 6;  //¼ÓÖØ
-	m_pro[3] = 8;  //ÇîÉñ
-	m_pro[4] = 10;   //Ë«±¶
-	m_pro[5] = 12;   //ÃâÒß
-	m_pro[6] = 12;   //¼ÙÇ®
+	m_pro[0] = 3;   //ÃÔÎí
+	m_pro[1] = 5;    //»»Î»
+	m_pro[2] = 8;  //¼ÓÖØ
+	m_pro[3] = 19;  //ÇîÉñ
+	m_pro[4] = 21;   //Ë«±¶
+	m_pro[5] = 23;   //ÃâÒß
+	m_pro[6] = 23;   //¼ÙÇ®
 }
 
 void MultiScene::giveOpponent(MCDirection direction, Vec2 location, int whichPlayer)
@@ -1287,7 +1288,7 @@ void MultiScene::triggerInvincible(int whichHalf)
 		this->addChild(sprite1, 1, "tool6_1");
 		m_p1Status[5] = true;
 
-		scheduleOnce(schedule_selector(MultiScene::updateInvincible1), 6.0f);
+		scheduleOnce(schedule_selector(MultiScene::updateInvincible1), 4.0f);
 
 	}
 	if (whichHalf == 2 && !m_p2Status[5])
@@ -1309,7 +1310,7 @@ void MultiScene::triggerInvincible(int whichHalf)
 		this->addChild(sprite2, 1, "tool6_2");
 
 		m_p2Status[5] = true;
-		scheduleOnce(schedule_selector(MultiScene::updateInvincible2), 6.0f);
+		scheduleOnce(schedule_selector(MultiScene::updateInvincible2), 4.0f);
 	}
 }
 
@@ -1367,6 +1368,27 @@ void MultiScene::initStatus()
 		sprite2->setScale(0.3);
 		this->addChild(sprite2, 1);
 	}*/
+}
+
+void MultiScene::addPlayerName()
+{
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+
+	auto pname1 = Label::createWithTTF("Player1", "fonts/Marker Felt.ttf", 40);
+	auto pname2 = Label::createWithTTF("Player2", "fonts/Marker Felt.ttf", 40);
+
+	pname1->setPosition(origin.x + 60, origin.y + 40);
+	pname2->setPosition(origin.x + visibleSize.width - 60, origin.y + visibleSize.height - 40);
+	pname2->setRotation(180);
+
+	pname1->setColor(Color3B(151.0, 36.0, 9.0));
+	pname2->setColor(Color3B(39.0, 93.0, 139.0));
+
+
+	this->addChild(pname1, 1);
+	this->addChild(pname2, 1);
 }
 
 

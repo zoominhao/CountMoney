@@ -6,6 +6,9 @@
 #include "OnlineScene.h"
 #include "AudioControl.h"
 
+#include "MCManual.h"
+#include "MultiManualScene.h"
+
 
 Scene* StartScene::createScene()
 {
@@ -33,6 +36,13 @@ bool StartScene::init()
 	//preload audio
 	AudioControl::preLoad();
 
+	//setKeypadEnabled(true);
+
+	auto listener = EventListenerKeyboard::create();
+	listener->onKeyReleased = CC_CALLBACK_2(StartScene::onKeyReleased, this);
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
+
+	MCManual::readUserProfile();
 	//给开始按钮添加事件监听  
 
 	ui::Button *Btn_Single = dynamic_cast<ui::Button*>(uilayer->getChildByName("SingleCount"));
@@ -68,10 +78,20 @@ void StartScene::SingleScene(Ref *pSender, ui::Widget::TouchEventType type)
 
 void StartScene::MultiScene(Ref *pSender, ui::Widget::TouchEventType type)
 {
+
 	if (type == ui::Widget::TouchEventType::ENDED)
 	{
-		AudioControl::playClickEffect();
-		multiOpenAct();
+		if (MCManual::novice[3])
+		{
+			AudioControl::playClickEffect();
+			auto multiManuals = MultiManualScene::createScene();
+			Director::sharedDirector()->replaceScene(multiManuals);
+		}
+		else
+		{
+			AudioControl::playClickEffect();
+			multiOpenAct();
+		}
 	}
 }
 
@@ -80,8 +100,10 @@ void StartScene::NetScene(Ref *pSender, ui::Widget::TouchEventType type)
 	if (type == ui::Widget::TouchEventType::ENDED)
 	{
 		AudioControl::playClickEffect();
-		auto scene = OnlineScene::createScene();
-		Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
+		//auto scene = OnlineScene::createScene();
+		//Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
+		//MessageBox("coming soon ...","Info");
+		MessageBox("坐等服务器到位 ...", "信息");
 	}
 	
 }
@@ -90,8 +112,9 @@ void StartScene::RankScene(Ref *pSender, ui::Widget::TouchEventType type)
 {
 	if (type == ui::Widget::TouchEventType::ENDED)
 	{
-		auto scene = AboutScene::createScene();
-		Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
+		//auto scene = AboutScene::createScene();
+		//Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
+		MessageBox("坐等服务器到位 ...", "信息");
 	}
 }
 
@@ -145,6 +168,19 @@ void StartScene::multiOpenAct()
 	svs->runAction(seq);
 	
 }
+
+void StartScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
+{
+	if (keyCode == EventKeyboard::KeyCode::KEY_BACK)
+	{
+		CCDirector::sharedDirector()->end();
+		#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+			exit(0);
+		#endif
+	}
+}
+
+
 
 
 

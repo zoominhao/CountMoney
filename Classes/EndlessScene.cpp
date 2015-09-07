@@ -102,6 +102,7 @@ bool EndlessScene::init()
 	srand((unsigned)time(NULL));
 	addTargetNumLabel();
 	addStageLabel();
+	m_enabled = true;
 
 	return true;
 }
@@ -125,6 +126,8 @@ void EndlessScene::setBgImage()
 
 bool EndlessScene::onTouchBegan(Touch* touch, Event* event)
 {
+	if (!m_enabled)
+		return false;
 	if (m_count_flag)
 		return false;
 	
@@ -180,30 +183,21 @@ void EndlessScene::onTouchEnded(Touch* touch, Event* event)
 		if (m_player->totalMoneyNum() == m_targetNum)
 		{ 
 			AudioControl::playEndlessEffect(true);
-			m_stage++;
+			m_stage++;         //นýนุ
 			m_targetNum = 5 * (25 + 10 * m_stage + rand() % 11 - 5);
-			char targetNumStr[30];
-			sprintf(targetNumStr, "Target: %d", m_targetNum);
-			m_targetLabel->setString(targetNumStr);
-			m_player->setStageNum(m_stage);
-			char stageStr[30];
-			sprintf(stageStr, "Stage: %d", m_stage + 1);
-			m_stageLabel->setString(stageStr);
 
-			m_player->addTotalMoney(-1 * m_targetNum);
-			m_player->changeTotalMoneyLabel();
-
-
+			float timeLimit;
 			if (m_stage < 10)
-				m_cmTimer->setTotalTime(floor(m_time_per_count * (0.154 * m_stage + 4.6157)));
+				timeLimit = floor(m_time_per_count * (0.154 * m_stage + 4.6157));
 			else
-				m_cmTimer->setTotalTime(floor(m_time_per_count * (0.154 * m_stage + 4.6157) - (m_stage - 9) * 0.1));
+				timeLimit = floor(m_time_per_count * (0.154 * m_stage + 4.6157) - (m_stage - 9) * 0.1);
+			playStageEffect(m_stage, m_targetNum, timeLimit);
 		}
 		else if (m_player->totalMoneyNum() > m_targetNum)
 		{
 			AudioControl::stopBGMusic();
 			char stageNumStr[100];
-			sprintf(stageNumStr, "Fail In Stage %d", m_stage + 1);
+			sprintf(stageNumStr, "Fail In Level %d", m_stage + 1);
 			auto scene = EndlessEndScene::createScene(stageNumStr);
 			Director::getInstance()->replaceScene(scene);
 			AudioControl::playEndlessEffect(false);
@@ -328,7 +322,7 @@ void EndlessScene::addTargetNumLabel()
 void EndlessScene::addStageLabel()
 {
 	char stageStr[30];
-	sprintf(stageStr, "Current Stage: %d", m_stage + 1);
+	sprintf(stageStr, "Level: %d", m_stage + 1);
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
@@ -411,6 +405,87 @@ void EndlessScene::addTimerFrame()
 	m_timerFrame = Sprite::create("endless/timer.png");
 	m_timerFrame->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - 75));
 	this->addChild(m_timerFrame, 1);
+}
+
+void EndlessScene::playStageEffect(int level, int target, float timelimit)
+{
+	m_enabled = false;
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+	auto levelBg = Sprite::create("endless/levelSlide.png");
+	levelBg->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2));
+
+
+	char levelStr[10];
+	sprintf(levelStr, "%d", level);
+	auto levelLabel = Label::createWithTTF(levelStr, "fonts/Marker Felt.ttf", 40);
+	levelLabel->setPosition(origin.x + visibleSize.width / 2 - 40, origin.y + visibleSize.height / 2 - 50);
+	levelLabel->setColor(Color3B(67.0, 72.0, 88.0));
+	levelBg->addChild(levelLabel);
+
+
+	char targetStr[10];
+	sprintf(targetStr, "%d", target);
+	auto targetLabel = Label::createWithTTF(targetStr, "fonts/Marker Felt.ttf", 40);
+	targetLabel->setPosition(origin.x + visibleSize.width / 2 - 70, origin.y + visibleSize.height / 2 - 210);
+	targetLabel->setColor(Color3B(67.0, 72.0, 88.0));
+	levelBg->addChild(targetLabel);
+
+	char tlStr[10];
+	sprintf(tlStr, "%4.2f", timelimit);
+	auto tlLabel = Label::createWithTTF(tlStr, "fonts/Marker Felt.ttf", 40);
+	tlLabel->setPosition(origin.x + visibleSize.width / 2 - 130, origin.y + visibleSize.height / 2 - 290);
+	tlLabel->setColor(Color3B(67.0, 72.0, 88.0));
+	levelBg->addChild(tlLabel);
+
+	m_cmTimer->stopTimer();
+	m_cmTimer->setTotalTime(timelimit);
+
+	this->addChild(levelBg, 3, "levelbg");
+
+	levelBg->setScale(0.0f);	
+	CCActionInterval *scaleto = CCScaleTo::create(0.5f, 1.0f);
+	CCActionInterval *delaytime = CCDelayTime::create(1.0f);
+
+	CCCallFunc * funcall = CCCallFunc::create([&](){
+		this->removeChildByName("levelbg");
+		char targetNumStr[30];
+		sprintf(targetNumStr, "Target: %d", m_targetNum);
+		m_targetLabel->setString(targetNumStr);
+		m_player->setStageNum(m_stage);
+		char stageStr[30];
+		sprintf(stageStr, "Level: %d", m_stage + 1);
+		m_stageLabel->setString(stageStr);
+
+		m_player->addTotalMoney(-1 * m_targetNum);
+		m_player->changeTotalMoneyLabel();
+
+		m_cmTimer->startTimer();
+		m_enabled = true;
+
+	});
+	CCFiniteTimeAction * seq = CCSequence::create(scaleto, delaytime, funcall, NULL);
+
+	levelBg->runAction(seq);
+
+	//scheduleOnce(schedule_selector(EndlessScene::removeStageEffect), 1.0f);
+}
+
+void EndlessScene::removeStageEffect(float time)
+{
+	this->removeChildByName("levelbg");
+	char targetNumStr[30];
+	sprintf(targetNumStr, "Target: %d", m_targetNum);
+	m_targetLabel->setString(targetNumStr);
+	m_player->setStageNum(m_stage);
+	char stageStr[30];
+	sprintf(stageStr, "Level: %d", m_stage + 1);
+	m_stageLabel->setString(stageStr);
+
+	m_player->addTotalMoney(-1 * m_targetNum);
+	m_player->changeTotalMoneyLabel();
+
+	m_cmTimer->startTimer();
 }
 
 

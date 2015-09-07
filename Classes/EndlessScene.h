@@ -39,6 +39,9 @@ private:
 	//add timer frame
 	void addTimerFrame();
 
+	void playStageEffect(int level, int target, float timelimit);
+	void removeStageEffect(float time);
+
 private:
 	Vec2 _spos;
 	Vec2 _curPos;
@@ -72,6 +75,7 @@ private:
 	float m_pro[5][5];
 
 	Sprite*  m_timerFrame;
+	bool     m_enabled;
 };
 
 #endif // __ENDLESS_SCENE_H__

@@ -4,6 +4,10 @@
 #include "TellerScene.h"
 #include "EndlessScene.h"
 #include "AudioControl.h"
+#include "MCManual.h"
+#include "LoserManualScene.h"
+#include "TellerManualScene.h"
+#include "EndlessManualScene.h"
 
 
 
@@ -52,9 +56,19 @@ void SingleScene::DSScene(Ref *pSender, ui::Widget::TouchEventType type)
 {
 	if (type == ui::Widget::TouchEventType::ENDED)
 	{
-		AudioControl::playClickEffect();
-		auto scene = LoserScene::createScene();
-		Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
+		if (MCManual::novice[0])
+		{
+			AudioControl::playClickEffect();
+			auto loserManuals = LoserManualScene::createScene();
+			Director::sharedDirector()->replaceScene(loserManuals);
+		}
+		else
+		{
+			AudioControl::playClickEffect();
+			auto scene = LoserScene::createScene();
+			Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
+		}
+		
 	}
 }
 
@@ -62,9 +76,19 @@ void SingleScene::GYScene(Ref *pSender, ui::Widget::TouchEventType type)
 {
 	if (type == ui::Widget::TouchEventType::ENDED)
 	{
-		AudioControl::playClickEffect();
-		auto scene = TellerScene::createScene();
-		Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
+		if (MCManual::novice[1])
+		{
+			AudioControl::playClickEffect();
+			auto tellerManuals = TellerManualScene::createScene();
+			Director::sharedDirector()->replaceScene(tellerManuals);
+		}
+		else
+		{
+			AudioControl::playClickEffect();
+			auto scene = TellerScene::createScene();
+			Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
+		}
+		
 	}
 }
 
@@ -72,9 +96,18 @@ void SingleScene::WJScene(Ref *pSender, ui::Widget::TouchEventType type)
 {
 	if (type == ui::Widget::TouchEventType::ENDED)
 	{
-		AudioControl::playClickEffect();
-		auto scene = EndlessScene::createScene();
-		Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
+		if (MCManual::novice[2])
+		{
+			AudioControl::playClickEffect();
+			auto endlessManuals = EndlessManualScene::createScene();
+			Director::sharedDirector()->replaceScene(endlessManuals);
+		}
+		else
+		{
+			AudioControl::playClickEffect();
+			auto scene = EndlessScene::createScene();
+			Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
+		}
 	}
 }
 
@@ -87,6 +120,7 @@ void SingleScene::StartScene(Ref *pSender, ui::Widget::TouchEventType type)
 		Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
 	}
 }
+
 
 
 

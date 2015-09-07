@@ -14,6 +14,9 @@ public:
 	virtual bool init();
 	CREATE_FUNC(StartScene);
 
+
+	virtual void onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event);
+
 private:
 	void SingleScene(Ref *pSender, ui::Widget::TouchEventType type);
 	void MultiScene(Ref *pSender, ui::Widget::TouchEventType type);
