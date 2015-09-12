@@ -58,8 +58,8 @@ void OnlineEndScene::restartButton(Ref *pSender, ui::Widget::TouchEventType type
 {
 	if (type == ui::Widget::TouchEventType::ENDED)
 	{
-		auto scene = OnlineScene::createScene();
-		Director::getInstance()->replaceScene(scene);
+		//auto scene = OnlineScene::createScene();
+		//Director::getInstance()->replaceScene(scene);
 	}
 }
 

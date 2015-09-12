@@ -15,8 +15,16 @@ void AudioControl::preLoad()
 	SimpleAudioEngine::sharedEngine()->preloadBackgroundMusic(CCFileUtils::sharedFileUtils()->fullPathForFilename(TELLER_BGM).c_str());
 	SimpleAudioEngine::sharedEngine()->preloadBackgroundMusic(CCFileUtils::sharedFileUtils()->fullPathForFilename(ENDLESS_BGM).c_str());
 	SimpleAudioEngine::sharedEngine()->preloadBackgroundMusic(CCFileUtils::sharedFileUtils()->fullPathForFilename(DOUBLE_BGM).c_str());
+	SimpleAudioEngine::sharedEngine()->preloadBackgroundMusic(CCFileUtils::sharedFileUtils()->fullPathForFilename(LOGIN_BGM).c_str());
 	//ÒôÐ§
 	SimpleAudioEngine::sharedEngine()->preloadEffect(CCFileUtils::sharedFileUtils()->fullPathForFilename(COUNT_EFFECT).c_str());
+	SimpleAudioEngine::sharedEngine()->preloadEffect(CCFileUtils::sharedFileUtils()->fullPathForFilename(CLICK_EFFECT).c_str());
+	SimpleAudioEngine::sharedEngine()->preloadEffect(CCFileUtils::sharedFileUtils()->fullPathForFilename(OVER_EFFECT).c_str());
+	SimpleAudioEngine::sharedEngine()->preloadEffect(CCFileUtils::sharedFileUtils()->fullPathForFilename(READY_EFFECT).c_str());
+	SimpleAudioEngine::sharedEngine()->preloadEffect(CCFileUtils::sharedFileUtils()->fullPathForFilename(ENDLESS_WIN_EFFECT).c_str());
+	SimpleAudioEngine::sharedEngine()->preloadEffect(CCFileUtils::sharedFileUtils()->fullPathForFilename(ENDLESS_LOSE_EFFECT).c_str());
+	SimpleAudioEngine::sharedEngine()->preloadEffect(CCFileUtils::sharedFileUtils()->fullPathForFilename(BUFFER_EFFECT).c_str());
+	SimpleAudioEngine::sharedEngine()->preloadEffect(CCFileUtils::sharedFileUtils()->fullPathForFilename(DEBUFFER_EFFECT).c_str());
 }
 
 
@@ -45,7 +53,9 @@ void AudioControl::playBgMusic(CMMODE mode)
 	case PK_ONLINE:
 		SimpleAudioEngine::sharedEngine()->playBackgroundMusic(CCFileUtils::sharedFileUtils()->fullPathForFilename(DOUBLE_BGM).c_str(), true);
 		break;
-
+	case LOGIN:
+		SimpleAudioEngine::sharedEngine()->playBackgroundMusic(CCFileUtils::sharedFileUtils()->fullPathForFilename(LOGIN_BGM).c_str(), true);
+		break;
 	default:
 		SimpleAudioEngine::sharedEngine()->playBackgroundMusic(CCFileUtils::sharedFileUtils()->fullPathForFilename(LOSER_BGM).c_str(), true);
 		break;

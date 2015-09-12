@@ -2,12 +2,19 @@
 #include "StartScene.h"
 #include "TellerScene.h"
 #include "SimpleAudioEngine.h"
+#include "PopInputDlg.h"
  
 
 using namespace CocosDenshion;
 
+int TellerEndScene::m_score = 0;
 
-Scene* TellerEndScene::createScene(const char* resultstr)
+TellerEndScene::~TellerEndScene()
+{
+	WebClient::getinstance().shutdown();
+}
+
+Scene* TellerEndScene::createScene(const char* resultstr, int result)
 {
 	auto scene = Scene::create();
 	auto layer = TellerEndScene::create();
@@ -20,12 +27,15 @@ Scene* TellerEndScene::createScene(const char* resultstr)
 	auto scoreLabel = Label::createWithTTF(resultstr, "fonts/Marker Felt.ttf", 50);
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
-	//Ìí¼ÓµÃ·Ö
+	//æ·»åŠ å¾—åˆ†
 	scoreLabel->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - 200);
 	//scoreLabel->setColor(Color3B(255.0, 255.0, 255.0));
 	scoreLabel->setColor(Color3B::GRAY);
 
 	scene->addChild(scoreLabel, 1);
+
+	m_score = result;
+	WebClient::getinstance().sendScore(GY, m_score);
 
 	return scene;
 }
@@ -36,20 +46,27 @@ bool TellerEndScene::init()
 		return false;
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto origin = Director::getInstance()->getVisibleOrigin();
-	//¼ÓÔØcocos studioÖÆ×÷µÄ½çÃæ  
+	//åŠ è½½cocos studioåˆ¶ä½œçš„ç•Œé¢  
 	auto uilayer = cocostudio::GUIReader::getInstance()->widgetFromJsonFile("End/EndUi_1.ExportJson");
 	uilayer->setPosition(ccp(origin.x + visibleSize.width / 2 - uilayer->getContentSize().width / 2, 
 		origin.y + visibleSize.height / 2 - uilayer->getContentSize().height / 2));
 	this->addChild(uilayer);
 	
 
-	//¸ø¿ªÊ¼°´Å¥Ìí¼ÓÊÂ¼ş¼àÌı  
+	//ç»™å¼€å§‹æŒ‰é’®æ·»åŠ äº‹ä»¶ç›‘å¬  
 
-	ui::Button *Btn_Restart = dynamic_cast<ui::Button*>(uilayer->getChildByName("Restart"));
+	Btn_Restart = dynamic_cast<ui::Button*>(uilayer->getChildByName("Restart"));
 	Btn_Restart->addTouchEventListener(CC_CALLBACK_2(TellerEndScene::restartButton, this));
+	Btn_Restart->setEnabled(false);
 
-	ui::Button *Btn_Return = dynamic_cast<ui::Button*>(uilayer->getChildByName("Return"));
+	Btn_Return = dynamic_cast<ui::Button*>(uilayer->getChildByName("Return"));
 	Btn_Return->addTouchEventListener(CC_CALLBACK_2(TellerEndScene::returnButton, this));
+	Btn_Return->setEnabled(false);
+
+	WebClient::getinstance().registerMethod(this);
+	WebClient::getinstance().start();
+	isPop = false;
+	scheduleOnce(schedule_selector(TellerEndScene::updatePopDlg), 0.1f);
 
 	return true;
 }
@@ -71,23 +88,36 @@ void TellerEndScene::returnButton(Ref *pSender, ui::Widget::TouchEventType type)
 		auto scene = StartScene::createScene();
 		Director::getInstance()->replaceScene(scene);
 	}
-/*
-	switch (type)
+}
+
+void TellerEndScene::onSendScore(bool levelup) {
+	//log("onSendScore");
+	if (levelup)
 	{
-	case ui::Widget::TouchEventType::BEGAN:
-		CCLOG("Button Down");//°´Å¥°´ÏÂ  
-		break;
-	case ui::Widget::TouchEventType::MOVED:
-		CCLOG("Button Down and Mouse move");//°´Å¥°´ÏÂÒÆ¶¯  
-		break;
-	case ui::Widget::TouchEventType::ENDED:
-		CCLOG("Button Up");//·Å¿ª°´Å¥  
-		
-		break;
-	case ui::Widget::TouchEventType::CANCELED:
-		CCLOG("Button Cancel");//È¡Ïû°´Å¥  
-		break;
-	default:
-		break;
-	}*/
+		//CCLOG("true");
+		isPop = levelup;
+	}
+
+}
+
+
+void TellerEndScene::onError(const std::string message){
+	// TODO: åœ¨è¿™é‡ŒåŠ ç½‘ç»œå¼‚å¸¸messageboxå¤„ç†æç¤º,åªè¦messageä¸ä¸ºç©ºï¼Œåˆ™æç¤ºç”¨æˆ·ç½‘ç»œå¼‚å¸¸
+	//log("onError: ");
+	//log(message.c_str());
+	MessageBox(message.c_str(), "Info");
+};
+
+void TellerEndScene::updatePopDlg(float time)
+{
+	if (isPop)
+	{
+		isPop = false;
+		auto scene = PopInputDlg::createScene(GY, m_score);
+		this->addChild(scene);
+	}
+
+	Btn_Restart->setEnabled(true);
+	Btn_Return->setEnabled(true);
+
 }

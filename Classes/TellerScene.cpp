@@ -3,6 +3,7 @@
 #include "SingleScene.h"
 #include "MCUtil.h"
 #include "AudioControl.h"
+#include "MCManual.h"
 
 #include <iostream>
 
@@ -81,11 +82,11 @@ bool TellerScene::init()
 	m_cmTimer->createLabel(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - 80), m_player, 2);
 	this->addChild(m_cmTimer, 2);
 	
-	//ready go
-	AudioControl::playReadyEffect();
+
 
     //播放背景音乐
 	//AudioControl::playBgMusic(TELLER);
+	AudioControl::stopBGMusic();
 
 	//注册单点触屏事件
 	auto touchlistenter = EventListenerTouchOneByOne::create();   
@@ -103,9 +104,19 @@ bool TellerScene::init()
 	m_isEmpty = true;
 	m_needRand = true;
 	m_enabled = false;
+	m_fakeStage = false;
 
 	srand((unsigned)time(NULL));
-	readyGoAct();
+
+	if (MCManual::novice[1])
+	{
+		manualAct1();
+	}
+	else
+	{
+		readyGoAct();
+	}
+
 
     return true;
 }
@@ -142,6 +153,10 @@ bool TellerScene::onTouchBegan(Touch* touch, Event* event)
 		{
 			m_player->addSingleMoneyLabel(m_curFake, "center", Vec2(12.0, 0.0));
 			int x = rand() % 100;
+			if (MCManual::novice[1])
+			{
+				x = 100;
+			}
 			if (x > 70)
 			{
 				m_player->MoneyTotal()->changeMoney(Fake_100_T);
@@ -180,33 +195,70 @@ void TellerScene::onTouchEnded(Touch* touch, Event* event)
 	switch (MCUtil::direction(_spos, pos))
 	{
 	case UP:
-		m_player->MoneySingle()->moneyFly(0.0, 400.0 - (pos.y - _spos.y)*0.5, 0.1);
-		if (m_curFake)   //出现假钞
+		if (MCManual::novice[1] && m_fakeStage)
 		{
-			m_player->addFakeWrong(1);
-			m_player->addTotalMoney(-200);
-			//m_player->changeFakeWrongLabel();
+			if (pos.y - _spos.y > 0)
+			{
+				m_player->MoneySingle()->MoneySprite()->setPositionY(m_player->MoneySingle()->MoneySprite()->getPositionY() - (pos.y - _spos.y)*0.5);
+			}
+			m_needRand = false;
 		}
 		else
 		{
-			m_player->addTotalMoney(100);
-		}
+			m_player->MoneySingle()->moneyFly(0.0, 400.0 - (pos.y - _spos.y)*0.5, 0.1);
+			if (m_curFake)   //出现假钞
+			{
+				m_player->addFakeWrong(1);
+				m_player->addTotalMoney(-200);
+				//m_player->changeFakeWrongLabel();
+			}
+			else
+			{
+				m_player->addTotalMoney(100);
+			}
 
-		m_player->removeChildByName("up");
-		m_player->MoneySingle()->setName("up");
-		m_needRand = true;
+			m_player->removeChildByName("up");
+			m_player->MoneySingle()->setName("up");
+
+			if (MCManual::novice[1] && !m_fakeStage)
+			{
+				m_enabled = false;
+				manualAct2();
+			}
+
+			m_needRand = true;
+		}
+		
 		break;
 	case RIGHT:
-		m_player->MoneySingle()->moneyHFakeFly(220.0, 0.0, 0.1);
-		
-		if (m_isEmpty)
+		if (MCManual::novice[1] && !m_fakeStage)
 		{
-			m_transhCan->setTexture("f_trashCan.png");
-			m_isEmpty = false;
+			if (pos.y - _spos.y > 0)
+			{
+				m_player->MoneySingle()->MoneySprite()->setPositionY(m_player->MoneySingle()->MoneySprite()->getPositionY() - (pos.y - _spos.y)*0.5);
+			}
+			m_needRand = false;
 		}
-		m_player->removeChildByName("right");
-		m_player->MoneySingle()->setName("right");
-		m_needRand = true;
+		else
+		{
+			m_player->MoneySingle()->moneyHFakeFly(220.0, 0.0, 0.1);
+
+			if (m_isEmpty)
+			{
+				m_transhCan->setTexture("f_trashCan.png");
+				m_isEmpty = false;
+			}
+			m_player->removeChildByName("right");
+			m_player->MoneySingle()->setName("right");
+
+			if (MCManual::novice[1] && m_fakeStage)
+			{
+				m_enabled = false;
+				manualAct3();
+			}
+
+			m_needRand = true;
+		}
 		break;
 	default:
 		if (pos.y - _spos.y > 0)
@@ -300,4 +352,130 @@ void TellerScene::readyGoAct()
 	m_ready->runAction(seq);
 
 	AudioControl::playReadyEffect();
+}
+
+void TellerScene::manualAct1()
+{
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+	auto manual_mask = Sprite::create("manual/mask.png");
+	manual_mask->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2);
+	this->addChild(manual_mask, 5, "manual_mask");
+
+
+	CCSprite* gesture = CCSprite::create("manual/gesture.png");
+	gesture->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 4 - 50);
+	this->addChild(gesture, 5, "gesture");
+
+	CCSprite* up_count = CCSprite::create("manual/up_count.png");
+	up_count->setPosition(origin.x + visibleSize.width / 2 + 120, origin.y + visibleSize.height / 4 + 170);
+	this->addChild(up_count, 5, "up_count");
+
+	CCActionInterval * moveup = CCMoveBy::create(1.1f, ccp(0, 200));
+	CCActionInterval * movedown = CCMoveBy::create(0.15f, ccp(0, -200));
+
+	CCCallFunc * funcall = CCCallFunc::create([&](){
+		this->removeChildByName("manual_mask");
+		this->removeChildByName("gesture");
+		this->removeChildByName("up_count");
+		m_enabled = true;
+	});
+
+	CCFiniteTimeAction * seq = CCSequence::create(moveup, movedown, moveup, funcall, NULL);
+	gesture->runAction(seq);
+}
+
+void TellerScene::manualAct2()
+{
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+	auto manual_mask = Sprite::create("manual/mask.png");
+	manual_mask->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2);
+	this->addChild(manual_mask, 5, "manual_mask");
+
+
+	CCSprite* timer_frame = CCSprite::create("manual/redFrame.png");
+	timer_frame->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - 75);
+	timer_frame->setScale(1.1, 0.86);
+	this->addChild(timer_frame, 5, "timer_frame");
+
+	CCSprite* teller_tip1 = CCSprite::create("manual/tellerTip1.png");
+	teller_tip1->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - 220);
+	this->addChild(teller_tip1, 5, "tellertip1");
+
+	scheduleOnce(schedule_selector(TellerScene::updateManualAct1), 4.0f);
+}
+
+void TellerScene::updateManualAct1(float time)
+{
+	this->removeChildByName("timer_frame");
+	this->removeChildByName("tellertip1");
+
+
+	//add new tips
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+	CCSprite* teller_tip2 = CCSprite::create("manual/tellerTip2.png");
+	teller_tip2->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - 220);
+	this->addChild(teller_tip2, 5, "tellertip2");
+	
+	scheduleOnce(schedule_selector(TellerScene::updateManualAct2), 1.5f);
+}
+
+void TellerScene::updateManualAct2(float time)
+{
+	this->removeChildByName("tellertip2");
+
+	//add new tips
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+	CCSprite* teller_tip3 = CCSprite::create("manual/tellerTip3.png");
+	teller_tip3->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 );
+	this->addChild(teller_tip3, 5, "tellertip3");
+
+	CCSprite* gesture = CCSprite::create("manual/gesture.png");
+	gesture->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 4 - 50);
+	this->addChild(gesture, 5, "gesture");
+
+	CCActionInterval * moveright = CCMoveBy::create(1.35f, ccp(150, 0));
+	CCActionInterval * moveleft = CCMoveBy::create(0.3f, ccp(-150, 0));
+
+	CCCallFunc * funcall = CCCallFunc::create([&](){
+		this->removeChildByName("manual_mask");
+		this->removeChildByName("gesture");
+		this->removeChildByName("tellertip3");
+		m_enabled = true;
+		m_fakeStage = true;
+	});
+
+	CCFiniteTimeAction * seq = CCSequence::create(moveright, moveleft, moveright, funcall, NULL);
+	gesture->runAction(seq);
+
+}
+
+void TellerScene::manualAct3()
+{
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+	auto manual_mask = Sprite::create("manual/mask.png");
+	manual_mask->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2);
+	this->addChild(manual_mask, 5, "manual_mask");
+
+
+	CCSprite* teller_tip4 = CCSprite::create("manual/tellerTip4.png");
+	teller_tip4->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2  + 200);
+	this->addChild(teller_tip4, 5, "tellertip4");
+
+	scheduleOnce(schedule_selector(TellerScene::updateManualAct3), 2.0f);
+}
+
+void TellerScene::updateManualAct3(float time)
+{
+	this->removeChildByName("manual_mask");
+	this->removeChildByName("tellertip4");
+	MCManual::writeUserProfile(MANUAL_TELLER, false);
+	readyGoAct();
 }

@@ -15,17 +15,25 @@ Scene* MultiEndScene::createScene(const char* resultstr)
 
 
 	SimpleAudioEngine::sharedEngine()->stopAllEffects();
-
-
-	auto scoreLabel = Label::createWithTTF(resultstr, "fonts/Marker Felt.ttf", 24);
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
-	//Ìí¼ÓµÃ·Ö
+	Sprite *scoreSp;
+	if (strcmp(resultstr, "0") == 0)
+		scoreSp = Sprite::create("multi/tie.png");
+	else if (strcmp(resultstr, "1") == 0)
+		scoreSp = Sprite::create("multi/player1win.png");
+	else
+		scoreSp = Sprite::create("multi/player2win.png");
+
+	scoreSp->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - 200);
+	scene->addChild(scoreSp, 1);
+	/*auto scoreLabel = Label::createWithTTF(resultstr, "fonts/Marker Felt.ttf", 24);
+	//æ·»åŠ å¾—åˆ†
 	scoreLabel->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height  - 200);
 	//scoreLabel->setColor(Color3B(255.0, 255.0, 255.0));
 	scoreLabel->setColor(Color3B::GRAY);
 
-	scene->addChild(scoreLabel, 1);
+	scene->addChild(scoreLabel, 1);*/
 
 	return scene;
 }
@@ -36,14 +44,14 @@ bool MultiEndScene::init()
 		return false;
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto origin = Director::getInstance()->getVisibleOrigin();
-	//¼ÓÔØcocos studioÖÆ×÷µÄ½çÃæ  
+	//åŠ è½½cocos studioåˆ¶ä½œçš„ç•Œé¢  
 	auto uilayer = cocostudio::GUIReader::getInstance()->widgetFromJsonFile("End/EndUi_1.ExportJson");
 	uilayer->setPosition(ccp(origin.x + visibleSize.width / 2 - uilayer->getContentSize().width / 2, 
 		origin.y + visibleSize.height / 2 - uilayer->getContentSize().height / 2));
 	this->addChild(uilayer);
 	
 
-	//¸ø¿ªÊ¼°´Å¥Ìí¼ÓÊÂ¼ş¼àÌı  
+	//ç»™å¼€å§‹æŒ‰é’®æ·»åŠ äº‹ä»¶ç›‘å¬  
 
 	ui::Button *Btn_Restart = dynamic_cast<ui::Button*>(uilayer->getChildByName("Restart"));
 	Btn_Restart->addTouchEventListener(CC_CALLBACK_2(MultiEndScene::restartButton, this));
@@ -74,17 +82,17 @@ void MultiEndScene::returnButton(Ref *pSender, ui::Widget::TouchEventType type)
 	switch (type)
 	{
 	case ui::Widget::TouchEventType::BEGAN:
-		CCLOG("Button Down");//°´Å¥°´ÏÂ  
+		CCLOG("Button Down");//æŒ‰é’®æŒ‰ä¸‹  
 		break;
 	case ui::Widget::TouchEventType::MOVED:
-		CCLOG("Button Down and Mouse move");//°´Å¥°´ÏÂÒÆ¶¯  
+		CCLOG("Button Down and Mouse move");//æŒ‰é’®æŒ‰ä¸‹ç§»åŠ¨  
 		break;
 	case ui::Widget::TouchEventType::ENDED:
-		CCLOG("Button Up");//·Å¿ª°´Å¥  
+		CCLOG("Button Up");//æ”¾å¼€æŒ‰é’®  
 		
 		break;
 	case ui::Widget::TouchEventType::CANCELED:
-		CCLOG("Button Cancel");//È¡Ïû°´Å¥  
+		CCLOG("Button Cancel");//å–æ¶ˆæŒ‰é’®  
 		break;
 	default:
 		break;

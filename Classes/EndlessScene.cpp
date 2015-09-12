@@ -5,6 +5,8 @@
 #include "EndLessEndScene.h"
 #include "EndLessPauseScene.h"
 
+#include "MCManual.h"
+
 #include<math.h>
 
 USING_NS_CC;
@@ -75,6 +77,7 @@ bool EndlessScene::init()
 
 
 	//播放背景音乐
+	AudioControl::stopBGMusic();
 	AudioControl::playBgMusic(ENDLESS);
 
 	//注册单点触屏事件
@@ -104,6 +107,14 @@ bool EndlessScene::init()
 	addStageLabel();
 	m_enabled = true;
 
+	m_stageCount = 0;
+
+	if (MCManual::novice[2])
+	{ 
+		manualAct1();
+	}
+	
+
 	return true;
 }
 
@@ -126,7 +137,7 @@ void EndlessScene::setBgImage()
 
 bool EndlessScene::onTouchBegan(Touch* touch, Event* event)
 {
-	if (!m_enabled)
+	if (!m_enabled || (MCManual::novice[2] && m_stageCount == 0))
 		return false;
 	if (m_count_flag)
 		return false;
@@ -136,7 +147,10 @@ bool EndlessScene::onTouchBegan(Touch* touch, Event* event)
 	if (m_player->MoneyTotal()->isOnMoney(_spos))
 	{
 		m_count_flag = true;
-		m_cmTimer->startTimer();
+		if (!MCManual::novice[2])
+		{
+			m_cmTimer->startTimer();
+		}
 		m_effect_id = AudioControl::playCountEffect();
 		if (m_needRand)
 		{
@@ -159,9 +173,19 @@ void EndlessScene::onTouchEnded(Touch* touch, Event* event)
 	switch (MCUtil::direction(_spos, pos))
 	{
 	case UP:
-		m_player->MoneySingle()->moneyFly(0.0, 400.0 - (pos.y - _spos.y)*0.5, 0.1);
-		switch (m_moneyType)
+		if (MCManual::novice[2] && m_stageCount == 2)
 		{
+			if (pos.y - _spos.y > 0)
+			{
+				m_player->MoneySingle()->MoneySprite()->setPositionY(m_player->MoneySingle()->MoneySprite()->getPositionY() - (pos.y - _spos.y)*0.5);
+			}
+			m_needRand = false;
+		}
+		else
+		{
+			m_player->MoneySingle()->moneyFly(0.0, 400.0 - (pos.y - _spos.y)*0.5, 0.1);
+			switch (m_moneyType)
+			{
 			case Real_100_S:
 				m_player->addTotalMoney(100);
 				break;
@@ -179,50 +203,75 @@ void EndlessScene::onTouchEnded(Touch* touch, Event* event)
 				break;
 			default:
 				break;
-		}
-		if (m_player->totalMoneyNum() == m_targetNum)
-		{ 
-			AudioControl::playEndlessEffect(true);
-			m_stage++;         //过关
-			m_targetNum = 5 * (25 + 10 * m_stage + rand() % 11 - 5);
+			}
+			if (m_player->totalMoneyNum() == m_targetNum)
+			{
+				AudioControl::playEndlessEffect(true);
+				m_stage++;         //过关
+				m_targetNum = 5 * (25 + 10 * m_stage + rand() % 11 - 5);
 
-			float timeLimit;
-			if (m_stage < 10)
-				timeLimit = floor(m_time_per_count * (0.154 * m_stage + 4.6157));
-			else
-				timeLimit = floor(m_time_per_count * (0.154 * m_stage + 4.6157) - (m_stage - 9) * 0.1);
-			playStageEffect(m_stage, m_targetNum, timeLimit);
+				float timeLimit;
+				if (m_stage < 10)
+					timeLimit = floor(m_time_per_count * (0.154 * m_stage + 4.6157));
+				else
+					timeLimit = floor(m_time_per_count * (0.154 * m_stage + 4.6157) - (m_stage - 9) * 0.1);
+				playStageEffect(m_stage, m_targetNum, timeLimit);
+			}
+			else if (m_player->totalMoneyNum() > m_targetNum)
+			{
+				AudioControl::stopBGMusic();
+				char stageNumStr[100];
+				sprintf(stageNumStr, "Fail In Level %d", m_stage + 1);
+				auto scene = EndlessEndScene::createScene(stageNumStr, m_stage + 1);
+				Director::getInstance()->replaceScene(scene);
+				AudioControl::playEndlessEffect(false);
+			}
+			m_player->removeChildByName("up");
+			m_player->MoneySingle()->setName("up");
+
+			if (MCManual::novice[2] && m_stageCount == 1)
+			{
+				m_stageCount = 0;
+				manualAct2();
+			}
+			if (MCManual::novice[2] && m_stageCount == 3)
+			{
+				manualAct4();
+			}
+
+			m_needRand = true;
 		}
-		else if (m_player->totalMoneyNum() > m_targetNum)
-		{
-			AudioControl::stopBGMusic();
-			char stageNumStr[100];
-			sprintf(stageNumStr, "Fail In Level %d", m_stage + 1);
-			auto scene = EndlessEndScene::createScene(stageNumStr);
-			Director::getInstance()->replaceScene(scene);
-			AudioControl::playEndlessEffect(false);
-/*
-	#ifdef _WIN32  
-			Sleep(100);
-	#else  
-			sleep(0.1);
-	#endif  */
-		}
-		m_player->removeChildByName("up");
-		m_player->MoneySingle()->setName("up");
-		m_needRand = true;
+		
 		break;
 	case RIGHT:
-		//m_player->MoneySingle()->MoneySprite()->setName("right");
-		m_player->MoneySingle()->moneyHFakeFly(220.0, 0.0, 0.1);
-		if (m_isEmpty)
+		if (MCManual::novice[2] && m_stageCount != 2)
 		{
-			m_transhCan->setTexture("f_trashCan.png");
-			m_isEmpty = false;
+			if (pos.y - _spos.y > 0)
+			{
+				m_player->MoneySingle()->MoneySprite()->setPositionY(m_player->MoneySingle()->MoneySprite()->getPositionY() - (pos.y - _spos.y)*0.5);
+			}
+			m_needRand = false;
 		}
-		m_player->removeChildByName("right");
-		m_player->MoneySingle()->setName("right");
-		m_needRand = true;
+		else
+		{
+			m_player->MoneySingle()->moneyHFakeFly(220.0, 0.0, 0.1);
+			if (m_isEmpty)
+			{
+				m_transhCan->setTexture("f_trashCan.png");
+				m_isEmpty = false;
+			}
+			m_player->removeChildByName("right");
+			m_player->MoneySingle()->setName("right");
+
+			if (MCManual::novice[2] && m_stageCount == 2)
+			{
+				m_stageCount = 0;
+				manualAct3();
+			}
+
+			m_needRand = true;
+		}
+		
 		break;
 	default:
 		if (pos.y - _spos.y > 0)
@@ -307,6 +356,10 @@ void EndlessScene::addTargetNumLabel()
 {
 	int x = rand() % 30;
 	m_targetNum = 5 * (25 + rand() % 11 - 5);
+	if (MCManual::novice[2])
+	{
+		m_targetNum = 110;
+	}
 	char targetNumStr[30];
 	sprintf(targetNumStr, "Target: %d", m_targetNum);
 
@@ -315,7 +368,7 @@ void EndlessScene::addTargetNumLabel()
 
 	m_targetLabel = Label::createWithTTF(targetNumStr, "fonts/Marker Felt.ttf", 50);
 	m_targetLabel->setPosition(origin.x + visibleSize.width / 2 - 200, origin.y + visibleSize.height - 200);
-	m_targetLabel->setColor(Color3B(0.0, 0.0, 0.0));
+	m_targetLabel->setColor(MCUtil::m_targetColor);
 	this->addChild(m_targetLabel, 1);
 }
 
@@ -329,7 +382,7 @@ void EndlessScene::addStageLabel()
 
 	m_stageLabel = Label::createWithTTF(stageStr, "fonts/Marker Felt.ttf", 50);
 	m_stageLabel->setPosition(origin.x + visibleSize.width / 2 + 200, origin.y + visibleSize.height - 200);
-	m_stageLabel->setColor(Color3B(0.0, 0.0, 0.0));
+	m_stageLabel->setColor(MCUtil::m_targetColor);
 	this->addChild(m_stageLabel, 1);
 }
 
@@ -347,6 +400,19 @@ void EndlessScene::randNewSingleMoney()
 	else
 		rowIndex = 4;
 	int x = rand() % 100;
+
+	if (MCManual::novice[2])
+	{
+		if (m_stageCount == 1)
+		{
+			x = m_pro[rowIndex][2];  // 20
+		}
+		else if (m_stageCount == 2)
+		{
+			x = m_pro[rowIndex][3];  // 10
+		}
+	}
+
 	if (x <= m_pro[rowIndex][0])
 	{
 		m_player->MoneyTotal()->changeMoney(Real_100_T);
@@ -488,7 +554,144 @@ void EndlessScene::removeStageEffect(float time)
 	m_cmTimer->startTimer();
 }
 
+void EndlessScene::manualAct1()
+{
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
+	auto manual_mask = Sprite::create("manual/mask.png");
+	manual_mask->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2);
+	this->addChild(manual_mask, 5, "manual_mask");
+
+
+	CCSprite* gesture = CCSprite::create("manual/gesture.png");
+	gesture->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 4 - 50);
+	this->addChild(gesture, 5, "gesture");
+
+	CCSprite* up_count = CCSprite::create("manual/up_count.png");
+	up_count->setPosition(origin.x + visibleSize.width / 2 + 120, origin.y + visibleSize.height / 4 + 170);
+	this->addChild(up_count, 5, "up_count");
+
+	CCActionInterval * moveup = CCMoveBy::create(1.1f, ccp(0, 200));
+	CCActionInterval * movedown = CCMoveBy::create(0.15f, ccp(0, -200));
+
+	CCCallFunc * funcall = CCCallFunc::create([&](){
+		this->removeChildByName("manual_mask");
+		this->removeChildByName("gesture");
+		this->removeChildByName("up_count");
+		m_stageCount = 1;
+	});
+
+	CCFiniteTimeAction * seq = CCSequence::create(moveup, movedown, moveup, funcall, NULL);
+	gesture->runAction(seq);
+}
+
+void EndlessScene::manualAct2()
+{
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+	auto manual_mask = Sprite::create("manual/mask.png");
+	manual_mask->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2);
+	this->addChild(manual_mask, 5, "manual_mask");
+
+
+	CCSprite* target_frame = CCSprite::create("manual/redFrame.png");
+	target_frame->setPosition(origin.x + 180, origin.y + visibleSize.height - 200);
+	target_frame->setScale(1.1, 0.7);
+	this->addChild(target_frame, 5, "target_frame");
+
+	CCSprite* endless_tip1 = CCSprite::create("manual/endlessTip1.png");
+	endless_tip1->setPosition(origin.x + visibleSize.width / 2 - 50, origin.y + visibleSize.height - 300);
+	this->addChild(endless_tip1, 5, "endlesstip1");
+
+	CCSprite* endless_tip2 = CCSprite::create("manual/endlessTip2.png");
+	endless_tip2->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2);
+	this->addChild(endless_tip2, 5, "endlesstip2");
+
+	scheduleOnce(schedule_selector(EndlessScene::updateManualAct1), 1.0f);
+}
+
+void EndlessScene::manualAct3()
+{
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+	auto manual_mask = Sprite::create("manual/mask.png");
+	manual_mask->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2);
+	this->addChild(manual_mask, 5, "manual_mask");
+
+
+	CCSprite* endless_tip3 = CCSprite::create("manual/endlessTip3.png");
+	endless_tip3->setPosition(origin.x + visibleSize.width / 2 , origin.y + visibleSize.height / 2);
+	this->addChild(endless_tip3, 5, "endlesstip3");
+
+	CCSprite* gesture = CCSprite::create("manual/gesture.png");
+	gesture->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 4 - 50);
+	this->addChild(gesture, 5, "gesture");
+
+	CCActionInterval * moveup = CCMoveBy::create(1.5f, ccp(0, 200));
+	CCActionInterval * movedown = CCMoveBy::create(0.2f, ccp(0, -200));
+
+	CCCallFunc * funcall = CCCallFunc::create([&](){
+		this->removeChildByName("manual_mask");
+		this->removeChildByName("gesture");
+		this->removeChildByName("endlesstip3");
+		m_stageCount = 3;
+	});
+
+	CCFiniteTimeAction * seq = CCSequence::create(moveup, movedown, moveup, funcall, NULL);
+	gesture->runAction(seq);
+
+}
+
+void EndlessScene::updateManualAct1(float time)
+{
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+	CCSprite* gesture = CCSprite::create("manual/gesture.png");
+	gesture->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 4 - 50);
+	this->addChild(gesture, 5, "gesture");
+
+	CCActionInterval* moveright = CCMoveBy::create(1.5f, ccp(150, 0));
+	CCActionInterval* moveleft = CCMoveBy::create(0.2f, ccp(-150, 0));
+
+	CCCallFunc * funcall = CCCallFunc::create([&](){
+		this->removeChildByName("manual_mask");
+		this->removeChildByName("gesture");
+		this->removeChildByName("endlesstip1");
+		this->removeChildByName("endlesstip2");
+		this->removeChildByName("target_frame");
+		m_stageCount = 2;
+	});
+
+	CCFiniteTimeAction * seq = CCSequence::create(moveright, moveleft, moveright, funcall, NULL);
+	gesture->runAction(seq);
+	
+}
+
+
+void EndlessScene::manualAct4()
+{
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+	//引导结束的提示
+	CCSprite* endless_tip4 = CCSprite::create("manual/endlessTip4.png");
+	endless_tip4->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - 160);
+	this->addChild(endless_tip4, 5, "endlesstip4");
+
+	scheduleOnce(schedule_selector(EndlessScene::updateManualAct2), 2.0f);
+}
+
+
+
+
+void EndlessScene::updateManualAct2(float time)
+{
+	this->removeChildByName("endlesstip4");
+	MCManual::writeUserProfile(MANUAL_ENDLESS, false);
+}
 
 
 

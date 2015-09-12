@@ -61,14 +61,14 @@
 				<key>offsetY</key>
 				<real>0</real>
 			</dict>
-			<key>single_btn.png</key>
+			<key>start_single.png</key>
 			<dict>
 				<key>width</key>
-				<integer>253</integer>
+				<integer>188</integer>
 				<key>height</key>
 				<integer>87</integer>
 				<key>originalWidth</key>
-				<integer>253</integer>
+				<integer>188</integer>
 				<key>originalHeight</key>
 				<integer>87</integer>
 				<key>x</key>
@@ -80,18 +80,18 @@
 				<key>offsetY</key>
 				<real>0</real>
 			</dict>
-			<key>pk_btn.png</key>
+			<key>start_multi.png</key>
 			<dict>
 				<key>width</key>
-				<integer>253</integer>
+				<integer>188</integer>
 				<key>height</key>
 				<integer>87</integer>
 				<key>originalWidth</key>
-				<integer>253</integer>
+				<integer>188</integer>
 				<key>originalHeight</key>
 				<integer>87</integer>
 				<key>x</key>
-				<integer>1188</integer>
+				<integer>1123</integer>
 				<key>y</key>
 				<integer>0</integer>
 				<key>offsetX</key>
@@ -99,18 +99,18 @@
 				<key>offsetY</key>
 				<real>0</real>
 			</dict>
-			<key>net_btn.png</key>
+			<key>start_net.png</key>
 			<dict>
 				<key>width</key>
-				<integer>253</integer>
+				<integer>188</integer>
 				<key>height</key>
 				<integer>87</integer>
 				<key>originalWidth</key>
-				<integer>253</integer>
+				<integer>188</integer>
 				<key>originalHeight</key>
 				<integer>87</integer>
 				<key>x</key>
-				<integer>1443</integer>
+				<integer>1313</integer>
 				<key>y</key>
 				<integer>0</integer>
 				<key>offsetX</key>
@@ -118,18 +118,18 @@
 				<key>offsetY</key>
 				<real>0</real>
 			</dict>
-			<key>name.png</key>
+			<key>d_manual.png</key>
 			<dict>
 				<key>width</key>
-				<integer>300</integer>
+				<integer>40</integer>
 				<key>height</key>
-				<integer>191</integer>
+				<integer>40</integer>
 				<key>originalWidth</key>
-				<integer>300</integer>
+				<integer>40</integer>
 				<key>originalHeight</key>
-				<integer>191</integer>
+				<integer>40</integer>
 				<key>x</key>
-				<integer>1698</integer>
+				<integer>1503</integer>
 				<key>y</key>
 				<integer>0</integer>
 				<key>offsetX</key>

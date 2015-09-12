@@ -38,6 +38,15 @@ private:
 
 	void readyGoAct();
 
+
+	//manual
+	void manualAct1();
+	void manualAct2();
+	void manualAct3();
+	void updateManualAct1(float time);
+	void updateManualAct2(float time);
+	void updateManualAct3(float time);
+
 private:
 	Vec2 _spos;
 	Vec2 _curPos;
@@ -61,6 +70,8 @@ private:
 	Sprite*  m_timerFrame;
 
 	bool     m_enabled;
+
+	bool     m_fakeStage;
 
 };
 

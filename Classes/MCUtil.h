@@ -24,6 +24,9 @@ public:
 	static const std::string filename[24];
 
 	static int random(int a, int b);
+
+	static Color3B  m_timerColor;
+	static Color3B  m_targetColor;
 };
 
 #endif

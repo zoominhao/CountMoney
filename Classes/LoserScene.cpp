@@ -2,6 +2,7 @@
 #include "LoserPauseScene.h"
 #include "SingleScene.h"
 #include "MCUtil.h"
+#include "MCManual.h"
 #include "AudioControl.h"
 
 
@@ -70,6 +71,7 @@ bool LoserScene::init()
 
 	//播放背景音乐
 	//AudioControl::playBgMusic(LOSER);
+	AudioControl::stopBGMusic();
 
 	//注册单点触屏事件
 	auto touchlistenter = EventListenerTouchOneByOne::create();
@@ -80,7 +82,15 @@ bool LoserScene::init()
 	touchlistenter->onTouchMoved = CC_CALLBACK_2(LoserScene::onTouchMoved, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(touchlistenter, this);
 
-	readyGoAct();
+	if (MCManual::novice[0])
+	{
+		manualAct1();
+	}
+	else
+	{
+		readyGoAct();
+	}
+
 	//初始化
 	m_count_flag = false;
 	m_enabled = false;
@@ -179,6 +189,12 @@ void LoserScene::onTouchEnded(Touch* touch, Event* event)
 		m_player->addTotalMoney(100);
 		m_player->removeChildByName("up");
 		m_player->MoneySingle()->setName("up");
+
+		if (MCManual::novice[0])
+		{
+			m_enabled = false;
+			manualAct2();
+		}
 		break;
 	default:
 		m_player->removeChild(m_player->MoneySingle());
@@ -238,5 +254,68 @@ void LoserScene::readyGoAct()
 	m_ready->runAction(seq);
 	
 	AudioControl::playReadyEffect();
+}
+
+void LoserScene::manualAct1()
+{
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+	auto manual_mask = Sprite::create("manual/mask.png");
+	manual_mask->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2);
+	this->addChild(manual_mask, 5, "manual_mask");
+
+
+	CCSprite* gesture = CCSprite::create("manual/gesture.png");
+	gesture->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 4 - 50);
+	this->addChild(gesture, 5, "gesture");
+
+	CCSprite* up_count = CCSprite::create("manual/up_count.png");
+	up_count->setPosition(origin.x + visibleSize.width / 2 + 120, origin.y + visibleSize.height / 4 + 170);
+	this->addChild(up_count, 5, "up_count");
+
+	CCActionInterval * moveup = CCMoveBy::create(1.1f, ccp(0, 200));
+	CCActionInterval * movedown = CCMoveBy::create(0.15f, ccp(0, -200));
+
+	CCCallFunc * funcall = CCCallFunc::create([&](){
+		this->removeChildByName("manual_mask");
+		this->removeChildByName("gesture");
+		this->removeChildByName("up_count");
+		m_enabled = true;
+	});
+
+	CCFiniteTimeAction * seq = CCSequence::create(moveup, movedown, moveup, funcall, NULL);
+	gesture->runAction(seq);
+}
+
+void LoserScene::manualAct2()
+{
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+	auto manual_mask = Sprite::create("manual/mask.png");
+	manual_mask->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2);
+	this->addChild(manual_mask, 5, "manual_mask");
+
+
+	CCSprite* timer_frame = CCSprite::create("manual/redFrame.png");
+	timer_frame->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - 75);
+	timer_frame->setScale(1.1, 0.86);
+	this->addChild(timer_frame, 5, "timer_frame");
+
+	CCSprite* loser_tip1 = CCSprite::create("manual/loserTip1.png");
+	loser_tip1->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - 220);
+	this->addChild(loser_tip1, 5, "losertip1");
+
+	scheduleOnce(schedule_selector(LoserScene::updateManualAct), 3.5f);
+}
+
+void LoserScene::updateManualAct(float time)
+{
+	this->removeChildByName("manual_mask");
+	this->removeChildByName("timer_frame");
+	this->removeChildByName("losertip1");
+	MCManual::writeUserProfile(MANUAL_LOSER, false);
+	readyGoAct();
 }
 

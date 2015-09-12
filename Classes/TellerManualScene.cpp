@@ -1,5 +1,5 @@
 #include "TellerManualScene.h"
-#include "TellerScene.h"
+#include "SingleScene.h"
 #include "AudioControl.h"
 #include "MCManual.h"
 
@@ -60,8 +60,8 @@ void TellerManualScene::btnCB(Ref *pSender, ui::Widget::TouchEventType type)
 	{
 		//SlidingLayer::btnCB(pSender, type);
 		AudioControl::playClickEffect();
-		auto scene = TellerScene::createScene();
+		auto scene = SingleScene::createScene();
 		Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
-		MCManual::writeUserProfile(MANUAL_TELLER, false);
+		//MCManual::writeUserProfile(MANUAL_TELLER, false);
 	}
 }

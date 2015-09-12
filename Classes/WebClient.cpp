@@ -1,28 +1,25 @@
 #include "WebClient.h"
 
 #include <thread>
-
+#include <sstream>
 
 
 #define DEFAULT_PORT 8080
-
+//#define DEFAULT_ADDR "10.66.227.70"
+#define DEFAULT_ADDR "112.74.212.113"
 //#define DEFAULT_ADDR "192.168.1.102"
-#define DEFAULT_ADDR "10.66.237.62"
+//#define DEFAULT_ADDR "10.66.237.210"
 
 WebClient::WebClient()
 {
 	status = -1;
-	m_CbObj = NULL;
+	method = NULL;
 }
 
 WebClient::~WebClient()
 {
 	if (status == 0)
-	{
-		m_CbObj = NULL;
 		close();
-	}
-		
 }
 
 void WebClient::close()
@@ -33,20 +30,9 @@ void WebClient::close()
 #else
 	::close(socket);
 #endif  
+	method->onClose();
 	status = -1;
 }
-
-void WebClient::partExit()
-{
-#ifdef _WIN32  
-	closesocket(socket);
-	WSACleanup();
-#else
-	::close(socket);
-#endif  
-	status = -1;
-}
-
 
 void WebClient::getMessage(int socket)
 {
@@ -57,73 +43,71 @@ void WebClient::getMessage(int socket)
 
 		fd_set fd_pre = fdset;
 		if (select(socket + 1, &fdset, NULL, NULL, NULL) == -1) {  // windows ignore the 1st param
-			m_CbObj->onError("select error");
+			method->onError("select error");
 			break; // while
 		}
 		if (status == -1) // shutdown
 			return;
 		if (FD_ISSET(socket, &fdset)) {
-			//char buf[128];
-			char buf[32];
+			char buf[512];
 			mutex.lock();
-			int ret = recv(socket, buf, sizeof(int), 0);
+			int ret = recv(socket, buf, 4, 0);
 			mutex.unlock();
 
 			if (ret == 0) {
 				break; // while
 			}
 			else if (ret < 0) {
-				if (m_CbObj != NULL)
-				{
-					m_CbObj->onError("recv error");
-				}
+				method->onError("recv error");
 				break; // while
 			}
-			switch (buf[0] - '0') {
-			case EVENT_MONEY_REAL:
-			{
+
+			int event = *(int *)buf;
+			if (event & EVENT_FIGHT_MASK) {
+				int ret = recv(socket, buf, 1, 0);
 				char direction = *buf;
-				if (m_CbObj != NULL)
-				{
-					m_CbObj->onFight(EVENT_MONEY_REAL, buf[1] == '1');
-				}
-				break; //switch
+				method->onFight(event, (direction == 0) ? false : true);
 			}
-			case EVENT_NO_PAIR:
-			{
-				if (buf[1] == '1')   //自己发来的消息，配对不成功
-				{
-					m_CbObj->onWait();
+			else if (event & EVENT_UPLOAD_MASK) {
+				recv(socket, buf, 1, 0);
+				if (event & EVENT_UPLOAD_LUP_MASK)
+					method->onUpdateScore();
+				else {
+					bool islevelup = (buf[0] == 0x10);
+					method->onSendScore(islevelup);
 				}
-				if (buf[1] == '0')   //对方发来的消息，证明配对成功
-				{
-					m_CbObj->onMatch();
+			}
+			else if (event & EVENT_QUERY_MASK) {
+				recv(socket, buf, 1, 0); // err
+				recv(socket, buf, 4, 0); // size
+				int size = *(int *)buf;
+				recv(socket, buf, size, 0);
+				std::string name, score;
+				std::vector<std::string> result;
+				char *str = buf;
+				// number#name#score#name#score#...#
+				int pos = strcspn(str, "#");
+				buf[pos] = '\0';
+				int number;
+				//scanf(buf, "%d", &number); 
+				std::stringstream iss(buf);
+				iss >> number;
+
+				str = buf + pos + 1;
+				for (int i = 0; i < number; i++) {
+					pos = strcspn(str, "#");
+					name.assign(str, pos);
+					str = str + pos + 1;
+					pos = strcspn(str, "#");
+					score.assign(str, pos);
+					str = str + pos + 1;
+					result.push_back(name);
+					result.push_back(score);
 				}
-				break;
+				method->onQuery(GameMode((event >> EVENT_QUERY_SHIFT) - 1), result);
 			}
-			case EVENT_LOSE:
-			{
-				if (buf[1] == '0')   //对方发来的消息
-				{
-					if (m_CbObj != NULL)
-					{
-						m_CbObj->onOpponentExit();
-					}
-				}
-				break;
-			}
-			case EVENT_START:
-			{
-				if (buf[1] == '0')   //对方发来的消息
-				{
-					m_CbObj->onStart();
-				}
-				break;
-			}
-			default:
-				m_CbObj->onError("unknow event");
-				break; // switch
-			}
+			else
+				method->onError("unknow event");
 		}
 	}
 	close();
@@ -220,12 +204,12 @@ bool WebClient::connect()
 void WebClient::start()
 {
 	if (!createSocket()) {
-		m_CbObj->onError("create socket error");
+		method->onError("create socket error");
 		return;
 	}
 	if (!connect()) {
 		close();
-		m_CbObj->onError("connection error");
+		method->onError("connection error");
 		return;
 	}
 	std::thread thread_getMsg(&WebClient::getMessage, this, socket);
@@ -237,7 +221,7 @@ void WebClient::start()
 void WebClient::shutdown()
 {
 	status = -1;
-	partExit();
+	close();
 }
 
 void WebClient::pause()
@@ -250,13 +234,101 @@ void WebClient::conti()
 	// send conti event
 }
 
-void WebClient::sendCountEvent(MCFIGHT fight_event, bool toMe)
+void WebClient::query(enum GameMode mode)
 {
 	if (status != 0)
 		return;
-	char buf[10];
-	sprintf(buf, "%d%d", fight_event, toMe);
-	send(buf, strlen(buf));
+	int type;
+	switch (mode) {
+	case DS:
+		type = EVENT_QUERY_1;
+		break;
+	case GY:
+		type = EVENT_QUERY_2;
+		break;
+	case WJ:
+		type = EVENT_QUERY_3;
+		break;
+	case PK:
+		type = EVENT_QUERY_4;
+		break;
+	default:
+		method->onError("mode error");
+		break;
+	}
+	char buf[16];
+	memcpy(buf, &type, 4);
+	send((char *)&buf, 4);
+}
+
+void WebClient::sendFightEvent(int type, bool toMe)
+{
+	if (status != 0)
+		return;
+	char buf[8];
+	memcpy(buf, &type, 4);
+	char diretion = toMe ? 1 : 0;
+	memcpy(buf + 4, &diretion, 1);
+	send((char *)&buf, 5);
+}
+
+void WebClient::sendScore(enum GameMode mode, int score)
+{
+	if (status != 0)
+		return;
+	int type;
+	switch (mode) {
+	case DS:
+		type = EVENT_UPLOAD_1;
+		break;
+	case GY:
+		type = EVENT_UPLOAD_2;
+		break;
+	case WJ:
+		type = EVENT_UPLOAD_3;
+		break;
+	case PK:
+		type = EVENT_UPLOAD_4;
+		break;
+	default:
+		method->onError("mode error");
+		break;
+	}
+	char buf[16];
+	memcpy(buf, &type, 4);
+	memcpy(buf + 4, &score, 4);
+	send((char *)&buf, 8);
+}
+
+void WebClient::updateScore(enum GameMode mode, std::string name, int score)
+{
+	if (status != 0)
+		return;
+	int type;
+	switch (mode) {
+	case DS:
+		type = EVENT_UPLOAD_1 | EVENT_UPLOAD_LUP_MASK;
+		break;
+	case GY:
+		type = EVENT_UPLOAD_2 | EVENT_UPLOAD_LUP_MASK;
+		break;
+	case WJ:
+		type = EVENT_UPLOAD_3 | EVENT_UPLOAD_LUP_MASK;
+		break;
+	case PK:
+		type = EVENT_UPLOAD_4 | EVENT_UPLOAD_LUP_MASK;
+		break;
+	default:
+		method->onError("mode error");
+		break;
+	}
+	char buf[512];
+	memcpy(buf, &type, 4);
+	memcpy(buf + 4, &score, 4);
+	int size = name.size();
+	memcpy(buf + 8, &size, 4);
+	memcpy(buf + 12, name.c_str(), size);
+	send((char *)&buf, 12 + size);
 }
 
 void WebClient::send(const char *data, int size)
@@ -265,22 +337,11 @@ void WebClient::send(const char *data, int size)
 	int ret = ::send(socket, data, size, 0);
 	mutex.unlock();
 	if (ret < 0) {
-		m_CbObj->onError("send error");
+		method->onError("send error");
 	}
 }
 
-void WebClient::registerMethod(WebClientMethod *CbObj)
+void WebClient::registerMethod(WebClientMethod *method)
 {
-	m_CbObj = CbObj;
+	this->method = method;
 }
-
-void WebClient::unregisterMethod()
-{
-	m_CbObj = NULL;
-}
-
-void WebClient::shutdown2()
-{
-	status = -1;
-}
-

@@ -1,5 +1,5 @@
 #include "EndlessManualScene.h"
-#include "EndlessScene.h"
+#include "SingleScene.h"
 #include "AudioControl.h"
 #include "MCManual.h"
 
@@ -60,8 +60,8 @@ void EndlessManualScene::btnCB(Ref *pSender, ui::Widget::TouchEventType type)
 	{
 		//SlidingLayer::btnCB(pSender, type);
 		AudioControl::playClickEffect();
-		auto scene = EndlessScene::createScene();
+		auto scene = SingleScene::createScene();
 		Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
-		MCManual::writeUserProfile(MANUAL_ENDLESS, false);
+		//MCManual::writeUserProfile(MANUAL_ENDLESS, false);
 	}
 }

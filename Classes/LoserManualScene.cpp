@@ -1,5 +1,5 @@
 #include "LoserManualScene.h"
-#include "LoserScene.h"
+#include "SingleScene.h"
 #include "AudioControl.h"
 #include "MCManual.h"
 
@@ -60,8 +60,8 @@ void LoserManualScene::btnCB(Ref *pSender, ui::Widget::TouchEventType type)
 	{
 		//SlidingLayer::btnCB(pSender, type);
 		AudioControl::playClickEffect();
-		MCManual::writeUserProfile(MANUAL_LOSER, false);
-		auto scene = LoserScene::createScene();
+		//MCManual::writeUserProfile(MANUAL_LOSER, false);
+		auto scene = SingleScene::createScene();
 		Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
 	}
 }

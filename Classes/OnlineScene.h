@@ -1,3 +1,4 @@
+/*
 #ifndef __ONLINE_SCENE_H__
 #define __ONLINE_SCENE_H__
 
@@ -74,3 +75,4 @@ private:
 };
 
 #endif // __ONLINE_SCENE_H__
+*/

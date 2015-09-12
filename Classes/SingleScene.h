@@ -20,6 +20,10 @@ private:
 	void GYScene(Ref *pSender, ui::Widget::TouchEventType type);
 	void WJScene(Ref *pSender, ui::Widget::TouchEventType type);
 
+	void DSManualScene(Ref *pSender, ui::Widget::TouchEventType type);
+	void GYManualScene(Ref *pSender, ui::Widget::TouchEventType type);
+	void WJManualScene(Ref *pSender, ui::Widget::TouchEventType type);
+
 	
 };
 #endif

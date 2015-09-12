@@ -36,6 +36,7 @@ private:
 	void addStatus();
 
 	void addPlayerName();
+	void addPlayerName2();
 
 	void returnCallback(Ref* pSender);
 	void pauseCallback(Ref* pSender);
@@ -46,7 +47,7 @@ private:
 
 
 
-	//Ìí¼ÓµÀ¾ß
+	//æ·»åŠ é“å…·
 	void randNewSingleMoney(int whichPlayer);
 	void initProArr();
 
@@ -57,30 +58,40 @@ private:
 	void returnPos(Vec2 location, int whichPlayer);
 
 	//scene effect
-	void halfSmoke(int whichHalf);   //ÃÔÎí
+	void halfSmoke(int whichHalf);   //è¿·é›¾
 	void updateSmoke1(float time);
 	void updateSmoke2(float time);
 
-	void changePos(int whichHalf);    //»»Î»
+	void changePos(int whichHalf);    //æ¢ä½
 
 
-	void increaseWeight(int whichHalf);    //¼ÓÖØ
+	void increaseWeight(int whichHalf);    //åŠ é‡
 	void updateWeight1(float time);
 	void updateWeight2(float time);
 	
-	void triggerPoor(int whichHalf);   //ÇîÉñ
+	void triggerPoor(int whichHalf);   //ç©·ç¥
 	void updatePoor1(float time);
 	void updatePoor2(float time);
 
-	void triggerRich(int whichHalf);   //ÍÁºÀ¿¨
+	void triggerRich(int whichHalf);   //åœŸè±ªå¡
 	void updateRich1(float time);
 	void updateRich2(float time);
 
-	void triggerInvincible(int whichHalf);  //ÎŞµĞ¿¨
+	void triggerInvincible(int whichHalf);  //æ— æ•Œå¡
 	void updateInvincible1(float time);
 	void updateInvincible2(float time);
 
 	void initStatus();
+
+
+	//manual
+	void manualAct1();
+	void manualAct2();
+	void manualAct3();
+	void manualAct4();
+	void manualAct5();
+	void updateManualAct1(float time);
+	void updateManualAct2(float time);
 
 private:
 	Vec2 _sP1Pos;
@@ -107,7 +118,7 @@ private:
 	int m_effect_id1;
 	int m_effect_id2;
 
-	//Íæ¼Ò
+	//ç©å®¶
 	Player*  m_player1;
 	Player*  m_player2;
 
@@ -117,7 +128,7 @@ private:
 	Sprite*  m_wallet1;
 	Sprite*  m_wallet2;
 
-	//¼Ç·Ö
+	//è®°åˆ†
 	Label* m_p1Label1;
 	Label* m_p1Label2;
 	Label* m_p2Label1;
@@ -126,7 +137,7 @@ private:
 	float m_pro[7];
 
 
-	//×´Ì¬À¸
+	//çŠ¶æ€æ 
 	bool m_p1Status[6];
 	bool m_p2Status[6];
 	int m_p1Occupied[6];
@@ -139,6 +150,10 @@ private:
 	Vec2 m_p2StatusPos[6];
 
 	std::string m_status_file[6];
+
+
+	//manual
+	int m_stageCount;
 
 };
 #endif

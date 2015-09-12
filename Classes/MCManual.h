@@ -22,6 +22,7 @@ public:
 
 private:
 	static bool m_isFirstTime;
+
 };
 
 //	MCManual::writeUserProfile(MANUAL_LOSRE, false);

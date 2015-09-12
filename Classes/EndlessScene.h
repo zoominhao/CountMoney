@@ -42,6 +42,15 @@ private:
 	void playStageEffect(int level, int target, float timelimit);
 	void removeStageEffect(float time);
 
+
+	//manual
+	void manualAct1();
+	void manualAct2();
+	void manualAct3();
+	void manualAct4();
+	void updateManualAct1(float time);
+	void updateManualAct2(float time);
+
 private:
 	Vec2 _spos;
 	Vec2 _curPos;
@@ -76,6 +85,9 @@ private:
 
 	Sprite*  m_timerFrame;
 	bool     m_enabled;
+
+	//manual
+	int      m_stageCount;
 };
 
 #endif // __ENDLESS_SCENE_H__

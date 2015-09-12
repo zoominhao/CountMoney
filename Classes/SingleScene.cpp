@@ -33,6 +33,8 @@ bool SingleScene::init()
 
 	this->addChild(uilayer);
 
+	AudioControl::stopBGMusic();
+	AudioControl::playBgMusic(LOGIN);
 
 	//给开始按钮添加事件监听  
 	ui::Button *Btn_Double = dynamic_cast<ui::Button*>(uilayer->getChildByName("DoubleMode"));
@@ -44,9 +46,18 @@ bool SingleScene::init()
 	ui::Button *Btn_GY = dynamic_cast<ui::Button*>(uilayer->getChildByName("GYMode"));
 	Btn_GY->addTouchEventListener(CC_CALLBACK_2(SingleScene::GYScene, this));
 
-
 	ui::Button *Btn_WJ = dynamic_cast<ui::Button*>(uilayer->getChildByName("WJMode"));
 	Btn_WJ->addTouchEventListener(CC_CALLBACK_2(SingleScene::WJScene, this));
+
+	//manual
+	ui::Button *Btn_DS_Manual = dynamic_cast<ui::Button*>(uilayer->getChildByName("Loser_Manual"));
+	Btn_DS_Manual->addTouchEventListener(CC_CALLBACK_2(SingleScene::DSManualScene, this));
+
+	ui::Button *Btn_GY_Manual = dynamic_cast<ui::Button*>(uilayer->getChildByName("Teller_Manual"));
+	Btn_GY_Manual->addTouchEventListener(CC_CALLBACK_2(SingleScene::GYManualScene, this));
+
+	ui::Button *Btn_WJ_Manual = dynamic_cast<ui::Button*>(uilayer->getChildByName("Endless_Manual"));
+	Btn_WJ_Manual->addTouchEventListener(CC_CALLBACK_2(SingleScene::WJManualScene, this));
 
 
 	return true;
@@ -56,19 +67,9 @@ void SingleScene::DSScene(Ref *pSender, ui::Widget::TouchEventType type)
 {
 	if (type == ui::Widget::TouchEventType::ENDED)
 	{
-		if (MCManual::novice[0])
-		{
-			AudioControl::playClickEffect();
-			auto loserManuals = LoserManualScene::createScene();
-			Director::sharedDirector()->replaceScene(loserManuals);
-		}
-		else
-		{
-			AudioControl::playClickEffect();
-			auto scene = LoserScene::createScene();
-			Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
-		}
-		
+		AudioControl::playClickEffect();
+		auto scene = LoserScene::createScene();
+		Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
 	}
 }
 
@@ -76,19 +77,9 @@ void SingleScene::GYScene(Ref *pSender, ui::Widget::TouchEventType type)
 {
 	if (type == ui::Widget::TouchEventType::ENDED)
 	{
-		if (MCManual::novice[1])
-		{
-			AudioControl::playClickEffect();
-			auto tellerManuals = TellerManualScene::createScene();
-			Director::sharedDirector()->replaceScene(tellerManuals);
-		}
-		else
-		{
-			AudioControl::playClickEffect();
-			auto scene = TellerScene::createScene();
-			Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
-		}
-		
+		AudioControl::playClickEffect();
+		auto scene = TellerScene::createScene();
+		Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
 	}
 }
 
@@ -96,18 +87,10 @@ void SingleScene::WJScene(Ref *pSender, ui::Widget::TouchEventType type)
 {
 	if (type == ui::Widget::TouchEventType::ENDED)
 	{
-		if (MCManual::novice[2])
-		{
-			AudioControl::playClickEffect();
-			auto endlessManuals = EndlessManualScene::createScene();
-			Director::sharedDirector()->replaceScene(endlessManuals);
-		}
-		else
-		{
-			AudioControl::playClickEffect();
-			auto scene = EndlessScene::createScene();
-			Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
-		}
+
+		AudioControl::playClickEffect();
+		auto scene = EndlessScene::createScene();
+		Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
 	}
 }
 
@@ -118,6 +101,36 @@ void SingleScene::StartScene(Ref *pSender, ui::Widget::TouchEventType type)
 		AudioControl::playClickEffect();
 		auto scene = StartScene::createScene();
 		Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
+	}
+}
+
+void SingleScene::DSManualScene(Ref *pSender, ui::Widget::TouchEventType type)
+{
+	if (type == ui::Widget::TouchEventType::ENDED)
+	{
+		AudioControl::playClickEffect();
+		auto scene = LoserManualScene::createScene();
+		Director::sharedDirector()->replaceScene(scene);
+	}
+}
+
+void SingleScene::GYManualScene(Ref *pSender, ui::Widget::TouchEventType type)
+{
+	if (type == ui::Widget::TouchEventType::ENDED)
+	{
+		AudioControl::playClickEffect();
+		auto scene = TellerManualScene::createScene();
+		Director::sharedDirector()->replaceScene(scene);
+	}
+}
+
+void SingleScene::WJManualScene(Ref *pSender, ui::Widget::TouchEventType type)
+{
+	if (type == ui::Widget::TouchEventType::ENDED)
+	{
+		AudioControl::playClickEffect();
+		auto scene = EndlessManualScene::createScene();
+		Director::sharedDirector()->replaceScene(scene);
 	}
 }
 

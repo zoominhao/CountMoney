@@ -31,6 +31,9 @@ private:
 
 	void readyGoAct();
 
+	void manualAct1();
+	void manualAct2();
+	void updateManualAct(float time);
 
 private:
 	Vec2 _spos;

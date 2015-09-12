@@ -1,5 +1,5 @@
 #include "MultiManualScene.h"
-#include "MultiScene.h"
+#include "StartScene.h"
 #include "AudioControl.h"
 #include "MCManual.h"
 
@@ -64,10 +64,10 @@ void MultiManualScene::btnCB(Ref *pSender, ui::Widget::TouchEventType type)
 {
 	if (type == ui::Widget::TouchEventType::ENDED)
 	{
-		//SlidingLayer::btnCB(pSender, type);
 		AudioControl::playClickEffect();
-		MCManual::writeUserProfile(MANUAL_MULTI, false);
-		multiOpenAct();
+		auto scene = StartScene::createScene();
+		Director::sharedDirector()->replaceScene(TransitionFadeUp::create(0.5f, scene));
+		//multiOpenAct();
 	}
 }
 
@@ -98,16 +98,18 @@ void MultiManualScene::multiOpenAct()
 	CCActionInterval* moveby = CCMoveBy::create(0.5f, ccp(visibleSize.width / 2, 0));
 	CCActionInterval * easeElasticOut = CCEaseElasticOut::create(moveby);
 
+	CCActionInterval* rmdelay = CCDelayTime::create(1.0f);
+
 	CCCallFunc * funcall = CCCallFunc::create([&](){
 		this->removeChildByName("vsbg");
 		this->removeChildByName("vsdown");
 		this->removeChildByName("vsup");
 		this->removeChildByName("vscenter");
-		auto scene = MultiScene::createScene();
+		auto scene = StartScene::createScene();
 		Director::sharedDirector()->replaceScene(TransitionFadeUp::create(0.5f, scene));
 
 	});
-	CCFiniteTimeAction * seq = CCSequence::create(easeElasticOut, funcall, NULL);
+	CCFiniteTimeAction * seq = CCSequence::create(easeElasticOut, rmdelay, funcall, NULL);
 
 	svs->runAction(seq);
 }

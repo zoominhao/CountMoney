@@ -2,6 +2,7 @@
 #include "StartScene.h"
 #include "AudioControl.h"
 #include "MultiEndScene.h"
+#include "MCManual.h"
 
 #include <time.h>
 
@@ -38,6 +39,10 @@ bool MultiScene::init()
 	srand((unsigned)time(NULL));
 	int x = rand() % 30;
 	m_targetNum = x * 100 + 5000;
+	if (MCManual::novice[3])
+	{
+		m_targetNum = 7000;
+	}
 	char targetNumStr[30];
 	sprintf(targetNumStr, " %d", m_targetNum);
 	addTargetNumLabel(1, targetNumStr);
@@ -45,7 +50,7 @@ bool MultiScene::init()
 
 	
 
-	//Ìí¼ÓÍæ¼Ò£¬¸Ã³¡¾°ÎªË«ÈËÄ£Ê½
+	//æ·»åŠ ç©å®¶ï¼Œè¯¥åœºæ™¯ä¸ºåŒäººæ¨¡å¼
 	m_player1 = Player::create();
 	m_player1->createPlayer(2);
 	m_player1->MoneyTotal()->MoneySprite()->setScale(0.5);
@@ -73,12 +78,13 @@ bool MultiScene::init()
 	addGateWay();
 
 	addCurScore();
-	addPlayerName();
+	addPlayerName2();
 
-	//²¥·Å±³¾°ÒôÀÖ
+	//æ’­æ”¾èƒŒæ™¯éŸ³ä¹
+	AudioControl::stopBGMusic();
 	AudioControl::playBgMusic(PK_OFFLINE);
 
-	//×¢²á¶àµã´¥ÆÁÊÂ¼ş
+	//æ³¨å†Œå¤šç‚¹è§¦å±äº‹ä»¶
 	auto mutiTouchlistener = EventListenerTouchAllAtOnce::create();
 	mutiTouchlistener->onTouchesBegan = CC_CALLBACK_2(MultiScene::onTouchesBegan, this);
 	mutiTouchlistener->onTouchesMoved = CC_CALLBACK_2(MultiScene::onTouchesMoved, this);
@@ -87,11 +93,11 @@ bool MultiScene::init()
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(mutiTouchlistener, this);
 	_eventDispatcher->setPriority(mutiTouchlistener, 1);
 
-	//×¢²áÖ¡ÊÂ¼ş
+	//æ³¨å†Œå¸§äº‹ä»¶
 	this->scheduleUpdate();
 
 
-	//³õÊ¼»¯
+	//åˆå§‹åŒ–
 	m_p1NextMType = Real_100_S;
 	m_p1CurMType = Real_100_S;
 	m_p1NeedRand = true;
@@ -105,6 +111,12 @@ bool MultiScene::init()
 
 	initProArr();
 	initStatus();
+
+	m_stageCount = 0;
+	if (MCManual::novice[3])
+	{
+		manualAct1();
+	}
 
 	return true;
 }
@@ -134,6 +146,9 @@ void MultiScene::setBgImage()
 
 void MultiScene::onTouchesBegan(const std::vector<Touch*>& touches, Event* event)
 {
+	if (MCManual::novice[3] && m_stageCount == 0)
+		return;
+
 	for (auto &item : touches)
 	{
 		auto touch = item;
@@ -158,6 +173,10 @@ void MultiScene::onTouchesBegan(const std::vector<Touch*>& touches, Event* event
 		}
 		if (_touchP2ID == -1 && m_player2->MoneyTotal()->isOnMoney(location))
 		{
+			if (MCManual::novice[3])
+			{
+				return;
+			}
 			_sP2Pos = location;
 			_curP2Pos = _sP2Pos;
 			_touchP2ID = touch->getID();
@@ -192,47 +211,89 @@ void MultiScene::onTouchesEnded(const std::vector<Touch*>& touches, Event* event
 			switch (MCUtil::direction(_sP1Pos, location))
 			{
 			case UP:
-				if (m_p1Status[2] && std::abs(_sP1Pos.y - location.y) < WeightDis)  //¼ÓÖØ×´Ì¬
+				if (MCManual::novice[3] && m_stageCount > 6)
 				{
 					returnPos(location, 1);
 					m_p1NeedRand = false;
 				}
 				else
 				{
-					if (m_p1Status[1])
+					if (m_p1Status[2] && std::abs(_sP1Pos.y - location.y) < WeightDis)  //åŠ é‡çŠ¶æ€
 					{
-						giveOpponent(UP, location, 1);
+						returnPos(location, 1);
+						m_p1NeedRand = false;
 					}
 					else
 					{
-						giveMyself(UP, location, 1);
+						if (m_p1Status[1])
+						{
+							giveOpponent(UP, location, 1);
+						}
+						else
+						{
+							giveMyself(UP, location, 1);
+						}
+						m_player1->removeChildByName("up");
+						m_player1->MoneySingle()->setName("up");
+						if (MCManual::novice[3] && m_stageCount == 1)
+						{
+							m_stageCount = 0;
+							manualAct2();
+
+						}
+						else if (MCManual::novice[3] && m_stageCount == 2)
+						{
+							m_stageCount = 0;
+							manualAct3();
+						}
+						else if (MCManual::novice[3] && m_stageCount == 5)
+						{
+							m_stageCount = 0;
+							manualAct4();
+						}
+						else
+						{
+							m_stageCount++;
+						}
+						m_p1NeedRand = true;
 					}
-					m_player1->removeChildByName("up");
-					m_player1->MoneySingle()->setName("up");
-					m_p1NeedRand = true;
 				}
 				break;
 			case RIGHT:
-				if (m_p1Status[2] && std::abs(_sP1Pos.x - location.x) < WeightDis)  //¼ÓÖØ×´Ì¬
+				if (MCManual::novice[3] && m_stageCount < 6)
 				{
 					returnPos(location, 1);
 					m_p1NeedRand = false;
 				}
 				else
 				{
-					if (m_p1Status[1])
+					if (m_p1Status[2] && std::abs(_sP1Pos.x - location.x) < WeightDis)  //åŠ é‡çŠ¶æ€
 					{
-						giveMyself(RIGHT, location, 1);
+						returnPos(location, 1);
+						m_p1NeedRand = false;
 					}
 					else
 					{
-						giveOpponent(RIGHT, location, 1);
+						if (m_p1Status[1])
+						{
+							giveMyself(RIGHT, location, 1);
+						}
+						else
+						{
+							giveOpponent(RIGHT, location, 1);
+						}
+						m_player1->removeChildByName("right");
+						m_player1->MoneySingle()->setName("right");
+
+						if (MCManual::novice[3] && m_stageCount == 7)
+						{
+							m_stageCount = 0;
+							manualAct5();
+						}
+						m_p1NeedRand = true;
 					}
-					m_player1->removeChildByName("right");
-					m_player1->MoneySingle()->setName("right");
-					m_p1NeedRand = true;
-					break;
 				}
+				break;
 			default:
 				returnPos(location, 1);
 				m_p1NeedRand = false;
@@ -253,7 +314,7 @@ void MultiScene::onTouchesEnded(const std::vector<Touch*>& touches, Event* event
 			switch (MCUtil::direction(_sP2Pos, location))
 			{
 			case DOWN:
-				if (m_p2Status[2] && std::abs(_sP2Pos.y - location.y) < WeightDis)  //¼ÓÖØ×´Ì¬
+				if (m_p2Status[2] && std::abs(_sP2Pos.y - location.y) < WeightDis)  //åŠ é‡çŠ¶æ€
 				{
 					returnPos(location, 2);
 					m_p2NeedRand = false;
@@ -276,7 +337,7 @@ void MultiScene::onTouchesEnded(const std::vector<Touch*>& touches, Event* event
 				break;
 
 			case LEFT:
-				if (m_p2Status[2] && std::abs(_sP2Pos.x - location.x) < WeightDis)  //¼ÓÖØ×´Ì¬
+				if (m_p2Status[2] && std::abs(_sP2Pos.x - location.x) < WeightDis)  //åŠ é‡çŠ¶æ€
 				{
 					returnPos(location, 2);
 					m_p2NeedRand = false;
@@ -374,7 +435,7 @@ void MultiScene::addTargetNumLabel(int whichPlayer, const char* str)
 		sprite->setRotation(180);
 	}
 	
-	label->setColor(Color3B(0.0, 0.0, 0.0));
+	label->setColor(MCUtil::m_targetColor);
 
 	this->addChild(sprite, 1);
 	this->addChild(label, 1);
@@ -436,20 +497,20 @@ void MultiScene::update(float dt)
 {
 	if (m_player1->totalMoneyNum() == m_targetNum && m_player2->totalMoneyNum() == m_targetNum)
 	{
-		auto scene = MultiEndScene::createScene("TIE");
+		auto scene = MultiEndScene::createScene("0");
 		Director::sharedDirector()->pushScene(scene);
 		this->unscheduleUpdate();
 	}
 	if (m_player1->totalMoneyNum() == m_targetNum)
 	{
-		auto scene = MultiEndScene::createScene("Player1 Win");
+		auto scene = MultiEndScene::createScene("1");
 		Director::sharedDirector()->pushScene(scene);
 		this->unscheduleUpdate();
 	}
 
 	if (m_player2->totalMoneyNum() == m_targetNum)
 	{
-		auto scene = MultiEndScene::createScene("Player2 Win");
+		auto scene = MultiEndScene::createScene("-1");
 		Director::sharedDirector()->pushScene(scene);
 		this->unscheduleUpdate();
 	}
@@ -564,6 +625,23 @@ void MultiScene::randNewSingleMoney(int whichPlayer)
 	}
 	
 	int x = rand() % 100;
+	if (MCManual::novice[3])
+	{
+		if (m_stageCount == 1)
+		{
+			x = m_pro[4];  // è´¢ç¥
+		}
+		else if (m_stageCount < 5 && m_stageCount > 1)
+		{
+			x = 99;
+		}
+		else if (m_stageCount == 5)
+		{
+			x = m_pro[1];    // æ¢ä½
+		}
+
+	}
+
 	if (x <= m_pro[0])
 	{
 		tmpPlayer->MoneyTotal()->changeMoney(Tool_1_T);
@@ -617,13 +695,13 @@ void MultiScene::randNewSingleMoney(int whichPlayer)
 
 void MultiScene::initProArr()
 {
-	m_pro[0] = 3;   //ÃÔÎí
-	m_pro[1] = 5;    //»»Î»
-	m_pro[2] = 8;  //¼ÓÖØ
-	m_pro[3] = 19;  //ÇîÉñ
-	m_pro[4] = 21;   //Ë«±¶
-	m_pro[5] = 23;   //ÃâÒß
-	m_pro[6] = 23;   //¼ÙÇ®
+	m_pro[0] = 3;   //è¿·é›¾
+	m_pro[1] = 5;    //æ¢ä½
+	m_pro[2] = 8;  //åŠ é‡
+	m_pro[3] = 19;  //ç©·ç¥
+	m_pro[4] = 21;   //åŒå€
+	m_pro[5] = 23;   //å…ç–«
+	m_pro[6] = 23;   //å‡é’±
 }
 
 void MultiScene::giveOpponent(MCDirection direction, Vec2 location, int whichPlayer)
@@ -643,14 +721,14 @@ void MultiScene::giveOpponent(MCDirection direction, Vec2 location, int whichPla
 	switch (direction)
 	{
 	case UP:
-		//·ÀÖ¹Íæ¼Ò1£¬Ò²¼´ÏòÉÏ»®Ç®µ½½çÃæÁíÒ»°ë,ÆäÊµÍæ¼Ò2ÊÇ²»»áÓĞup²Ù×÷µÄ
+		//é˜²æ­¢ç©å®¶1ï¼Œä¹Ÿå³å‘ä¸Šåˆ’é’±åˆ°ç•Œé¢å¦ä¸€åŠ,å…¶å®ç©å®¶2æ˜¯ä¸ä¼šæœ‰upæ“ä½œçš„
 		if (location.y >= 512)
 			location.y = 512;
-		//Æ®Ç®Ğ§¹û
+		//é£˜é’±æ•ˆæœ
 		tmpPlayer->MoneySingle()->moneyFakeFly(0.0, 250.0 - (location.y - spos.y)*0.5, 0.1);
 		break;
 	case DOWN:
-		//·ÀÖ¹Íæ¼Ò2£¬Ò²¼´ÏòÉÏ»®Ç®µ½½çÃæÁíÒ»°ë,ÆäÊµÍæ¼Ò1ÊÇ²»»áÓĞdown²Ù×÷µÄ
+		//é˜²æ­¢ç©å®¶2ï¼Œä¹Ÿå³å‘ä¸Šåˆ’é’±åˆ°ç•Œé¢å¦ä¸€åŠ,å…¶å®ç©å®¶1æ˜¯ä¸ä¼šæœ‰downæ“ä½œçš„
 		if (location.y <= 512)
 			location.y = 512;
 		tmpPlayer->MoneySingle()->moneyFakeFly(0.0, -250.0 - (location.y - spos.y)*0.5, 0.1);
@@ -728,14 +806,14 @@ void MultiScene::throwTrashCan(MCDirection direction, Vec2 location, int whichPl
 	switch (direction)
 	{
 	case UP:
-		//·ÀÖ¹Íæ¼Ò1£¬Ò²¼´ÏòÉÏ»®Ç®µ½½çÃæÁíÒ»°ë,ÆäÊµÍæ¼Ò2ÊÇ²»»áÓĞup²Ù×÷µÄ
+		//é˜²æ­¢ç©å®¶1ï¼Œä¹Ÿå³å‘ä¸Šåˆ’é’±åˆ°ç•Œé¢å¦ä¸€åŠ,å…¶å®ç©å®¶2æ˜¯ä¸ä¼šæœ‰upæ“ä½œçš„
 		if (location.y >= 512)
 			location.y = 512;
-		//Æ®Ç®Ğ§¹û
+		//é£˜é’±æ•ˆæœ
 		tmpPlayer->MoneySingle()->moneyFakeFly(0.0, 200.0 - (location.y - spos.y)*0.5, 0.1);
 		break;
 	case DOWN:
-		//·ÀÖ¹Íæ¼Ò2£¬Ò²¼´ÏòÉÏ»®Ç®µ½½çÃæÁíÒ»°ë,ÆäÊµÍæ¼Ò1ÊÇ²»»áÓĞdown²Ù×÷µÄ
+		//é˜²æ­¢ç©å®¶2ï¼Œä¹Ÿå³å‘ä¸Šåˆ’é’±åˆ°ç•Œé¢å¦ä¸€åŠ,å…¶å®ç©å®¶1æ˜¯ä¸ä¼šæœ‰downæ“ä½œçš„
 		if (location.y <= 512)
 			location.y = 512;
 		tmpPlayer->MoneySingle()->moneyFakeFly(0.0, -200.0 - (location.y - spos.y)*0.5, 0.1);
@@ -771,14 +849,14 @@ void MultiScene::giveMyself(MCDirection direction, Vec2 location, int whichPlaye
 	switch (direction)
 	{
 	case UP:
-		//·ÀÖ¹Íæ¼Ò1£¬Ò²¼´ÏòÉÏ»®Ç®µ½½çÃæÁíÒ»°ë,ÆäÊµÍæ¼Ò2ÊÇ²»»áÓĞup²Ù×÷µÄ
+		//é˜²æ­¢ç©å®¶1ï¼Œä¹Ÿå³å‘ä¸Šåˆ’é’±åˆ°ç•Œé¢å¦ä¸€åŠ,å…¶å®ç©å®¶2æ˜¯ä¸ä¼šæœ‰upæ“ä½œçš„
 		if (location.y >= 512)
 			location.y = 512;
-		//Æ®Ç®Ğ§¹û
+		//é£˜é’±æ•ˆæœ
 		tmpPlayer->MoneySingle()->moneyFakeFly(0.0, 250.0 - (location.y - spos.y)*0.5, 0.1);
 		break;
 	case DOWN:
-		//·ÀÖ¹Íæ¼Ò2£¬Ò²¼´ÏòÉÏ»®Ç®µ½½çÃæÁíÒ»°ë,ÆäÊµÍæ¼Ò1ÊÇ²»»áÓĞdown²Ù×÷µÄ
+		//é˜²æ­¢ç©å®¶2ï¼Œä¹Ÿå³å‘ä¸Šåˆ’é’±åˆ°ç•Œé¢å¦ä¸€åŠ,å…¶å®ç©å®¶1æ˜¯ä¸ä¼šæœ‰downæ“ä½œçš„
 		if (location.y <= 512)
 			location.y = 512;
 		tmpPlayer->MoneySingle()->moneyFakeFly(0.0, -250.0 - (location.y - spos.y)*0.5, 0.1);
@@ -867,7 +945,7 @@ void MultiScene::halfSmoke(int whichHalf)
 
 	if (whichHalf == 1 && !m_p1Status[0])
 	{
-		//Ìí¼ÓĞ§¹û
+		//æ·»åŠ æ•ˆæœ
 		CCSprite * sp = CCSprite::create("multi/smoke_effect.png");
 		Vec2 pos = Vec2(origin.x + visibleSize.width / 2 + 5, origin.y + sp->getContentSize().height / 2);
 		sp->setPosition(pos);
@@ -875,7 +953,7 @@ void MultiScene::halfSmoke(int whichHalf)
 		sp->setScale(0.5);		
 		this->addChild(sp, 2, "smokeeffect1");
 
-		//Ìí¼Ó×´Ì¬
+		//æ·»åŠ çŠ¶æ€
 		for (int i = 0; i < 6; i++)
 		{
 			if (!m_occupiedP1[i])
@@ -897,7 +975,7 @@ void MultiScene::halfSmoke(int whichHalf)
 	}
 	if (whichHalf == 2 && !m_p2Status[0])
 	{
-		//Ìí¼ÓĞ§¹û
+		//æ·»åŠ æ•ˆæœ
 		CCSprite * sp = CCSprite::create("multi/smoke_effect.png");
 		Vec2 pos = Vec2(origin.x + visibleSize.width / 2 - 5, origin.y + visibleSize.height - sp->getContentSize().height / 2 - 1);
 		sp->setPosition(pos);
@@ -905,7 +983,7 @@ void MultiScene::halfSmoke(int whichHalf)
 		sp->setScale(0.5);
 		this->addChild(sp, 2, "smokeeffect2");
 
-		//Ìí¼Ó×´Ì¬
+		//æ·»åŠ çŠ¶æ€
 		for (int i = 0; i < 6; i++)
 		{
 			if (!m_occupiedP2[i])
@@ -951,14 +1029,14 @@ void MultiScene::changePos(int whichHalf)
 	{
 		if (m_p1Status[1])
 		{
-			//È¥³ı×´Ì¬
+			//å»é™¤çŠ¶æ€
 			this->removeChildByName("tool2_1");
 			m_occupiedP1[m_p1Occupied[1]] = false;
 			m_p1Occupied[1] = -1;
 		}
 		else
 		{
-			//Ìí¼Ó×´Ì¬
+			//æ·»åŠ çŠ¶æ€
 			for (int i = 0; i < 6; i++)
 			{
 				if (!m_occupiedP1[i])
@@ -999,14 +1077,14 @@ void MultiScene::changePos(int whichHalf)
 	{
 		if (m_p2Status[1])
 		{
-			//È¥³ı×´Ì¬
+			//å»é™¤çŠ¶æ€
 			this->removeChildByName("tool2_2");
 			m_occupiedP2[m_p2Occupied[1]] = false;
 			m_p2Occupied[1] = -1;
 		}
 		else
 		{
-			//Ìí¼Ó×´Ì¬
+			//æ·»åŠ çŠ¶æ€
 			for (int i = 0; i < 6; i++)
 			{
 				if (!m_occupiedP2[i])
@@ -1052,7 +1130,7 @@ void MultiScene::increaseWeight(int whichHalf)
 
 	if (whichHalf == 1 && !m_p1Status[2])
 	{
-		//Ìí¼ÓĞ§¹û
+		//æ·»åŠ æ•ˆæœ
 		CCSprite * sp = CCSprite::create("multi/weight_effect.png");
 		Vec2 pos = Vec2(origin.x + visibleSize.width / 2 + 5, origin.y + sp->getContentSize().height / 2);
 		sp->setPosition(pos);
@@ -1060,7 +1138,7 @@ void MultiScene::increaseWeight(int whichHalf)
 		sp->setScale(0.5);
 		this->addChild(sp, 2, "weighteffect1");
 
-		//Ìí¼Ó×´Ì¬
+		//æ·»åŠ çŠ¶æ€
 		for (int i = 0; i < 6; i++)
 		{
 			if (!m_occupiedP1[i])
@@ -1082,7 +1160,7 @@ void MultiScene::increaseWeight(int whichHalf)
 	}
 	if (whichHalf == 2 && !m_p2Status[2])
 	{
-		//Ìí¼ÓĞ§¹û
+		//æ·»åŠ æ•ˆæœ
 		CCSprite * sp = CCSprite::create("multi/weight_effect.png");
 		Vec2 pos = Vec2(origin.x + visibleSize.width / 2 - 5, origin.y + visibleSize.height - sp->getContentSize().height / 2 - 1);
 		sp->setPosition(pos);
@@ -1090,7 +1168,7 @@ void MultiScene::increaseWeight(int whichHalf)
 		sp->setScale(0.5);
 		this->addChild(sp, 2, "weighteffect2");
 
-		//Ìí¼Ó×´Ì¬
+		//æ·»åŠ çŠ¶æ€
 		for (int i = 0; i < 6; i++)
 		{
 			if (!m_occupiedP2[i])
@@ -1136,7 +1214,7 @@ void MultiScene::triggerPoor(int whichHalf)
 
 	if (whichHalf == 1 && !m_p1Status[3])
 	{
-		//Ìí¼Ó×´Ì¬
+		//æ·»åŠ çŠ¶æ€
 		for (int i = 0; i < 6; i++)
 		{
 			if (!m_occupiedP1[i])
@@ -1160,7 +1238,7 @@ void MultiScene::triggerPoor(int whichHalf)
 	}
 	if (whichHalf == 2 && !m_p2Status[3])
 	{
-		//Ìí¼Ó×´Ì¬
+		//æ·»åŠ çŠ¶æ€
 		for (int i = 0; i < 6; i++)
 		{
 			if (!m_occupiedP2[i])
@@ -1207,7 +1285,7 @@ void MultiScene::triggerRich(int whichHalf)
 
 	if (whichHalf == 1 && !m_p1Status[4])
 	{
-		//Ìí¼Ó×´Ì¬
+		//æ·»åŠ çŠ¶æ€
 		for (int i = 0; i < 6; i++)
 		{
 			if (!m_occupiedP1[i])
@@ -1228,7 +1306,7 @@ void MultiScene::triggerRich(int whichHalf)
 	}
 	if (whichHalf == 2 && !m_p2Status[4])
 	{
-		//Ìí¼Ó×´Ì¬
+		//æ·»åŠ çŠ¶æ€
 		for (int i = 0; i < 6; i++)
 		{
 			if (!m_occupiedP2[i])
@@ -1272,7 +1350,7 @@ void MultiScene::triggerInvincible(int whichHalf)
 
 	if (whichHalf == 1 && !m_p1Status[5])
 	{
-		//Ìí¼Ó×´Ì¬
+		//æ·»åŠ çŠ¶æ€
 		for (int i = 0; i < 6; i++)
 		{
 			if (!m_occupiedP1[i])
@@ -1293,7 +1371,7 @@ void MultiScene::triggerInvincible(int whichHalf)
 	}
 	if (whichHalf == 2 && !m_p2Status[5])
 	{
-		//Ìí¼Ó×´Ì¬
+		//æ·»åŠ çŠ¶æ€
 		for (int i = 0; i < 6; i++)
 		{
 			if (!m_occupiedP2[i])
@@ -1376,8 +1454,8 @@ void MultiScene::addPlayerName()
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
 
-	auto pname1 = Label::createWithTTF("Player1", "fonts/Marker Felt.ttf", 40);
-	auto pname2 = Label::createWithTTF("Player2", "fonts/Marker Felt.ttf", 40);
+	auto pname1 = Label::createWithTTF("player1", "fonts/Marker Felt.ttf", 40);
+	auto pname2 = Label::createWithTTF("player2", "fonts/Marker Felt.ttf", 40);
 
 	pname1->setPosition(origin.x + 60, origin.y + 40);
 	pname2->setPosition(origin.x + visibleSize.width - 60, origin.y + visibleSize.height - 40);
@@ -1389,6 +1467,192 @@ void MultiScene::addPlayerName()
 
 	this->addChild(pname1, 1);
 	this->addChild(pname2, 1);
+}
+
+void MultiScene::addPlayerName2()
+{
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+	auto pname1 = Sprite::create("multi/player1.png");
+	pname1->setPosition(origin.x + 60, origin.y + 40);
+	this->addChild(pname1, 1);
+
+	auto pname2 = Sprite::create("multi/player2.png");
+	pname2->setPosition(origin.x + visibleSize.width - 60, origin.y + visibleSize.height - 40);
+	pname2->setRotation(180);
+	this->addChild(pname2, 1);
+}
+
+void MultiScene::manualAct1()
+{
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+	auto manual_mask = Sprite::create("manual/mask.png");
+	manual_mask->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2);
+	this->addChild(manual_mask, 5, "manual_mask");
+
+
+	CCSprite* gesture = CCSprite::create("manual/gesture.png");
+	gesture->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 8);
+	gesture->setScale(0.6);
+	this->addChild(gesture, 5, "gesture");
+
+	CCSprite* up_count = CCSprite::create("manual/up_count.png");
+	up_count->setPosition(origin.x + visibleSize.width / 2 + 120, origin.y + visibleSize.height / 4);
+	this->addChild(up_count, 5, "up_count");
+
+	CCActionInterval * moveup = CCMoveBy::create(1.0f, ccp(0, 100));
+	CCActionInterval * movedown = CCMoveBy::create(0.1f, ccp(0, -100));
+
+	CCCallFunc * funcall = CCCallFunc::create([&](){
+		this->removeChildByName("manual_mask");
+		this->removeChildByName("gesture");
+		this->removeChildByName("up_count");
+		m_stageCount = 1;
+	});
+
+	CCFiniteTimeAction * seq = CCSequence::create(moveup, movedown, moveup, funcall, NULL);
+	gesture->runAction(seq);
+}
+
+void MultiScene::manualAct2()
+{
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+	auto manual_mask = Sprite::create("manual/mask.png");
+	manual_mask->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2);
+	this->addChild(manual_mask, 5, "manual_mask");
+
+	auto multi_tip1 = Sprite::create("manual/multiTip1.png");
+	multi_tip1->setPosition(origin.x + visibleSize.width / 2 - 50, origin.y + visibleSize.height / 2 - 250);
+	this->addChild(multi_tip1, 5, "multitip1");
+
+	CCSprite* gesture = CCSprite::create("manual/gesture.png");
+	gesture->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 8);
+	gesture->setScale(0.6);
+	this->addChild(gesture, 5, "gesture");
+
+	CCActionInterval * moveup = CCMoveBy::create(1.0f, ccp(0, 100));
+	CCActionInterval * movedown = CCMoveBy::create(0.1f, ccp(0, -100));
+
+	CCCallFunc * funcall = CCCallFunc::create([&](){
+		this->removeChildByName("manual_mask");
+		this->removeChildByName("gesture");
+		this->removeChildByName("multitip1");
+		m_stageCount = 2;
+	});
+
+	CCFiniteTimeAction * seq = CCSequence::create(moveup, movedown, moveup, funcall, NULL);
+	gesture->runAction(seq);
+}
+
+void MultiScene::manualAct3()
+{
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+	auto manual_mask = Sprite::create("manual/mask.png");
+	manual_mask->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2);
+	this->addChild(manual_mask, 5, "manual_mask");
+
+	auto multi_tip2 = Sprite::create("manual/multiTip2.png");
+	multi_tip2->setPosition(origin.x + visibleSize.width / 2 - 50, origin.y + visibleSize.height / 2 - 150);
+	this->addChild(multi_tip2, 5, "multitip2");
+
+	CCSprite* tool_cm = CCSprite::create("multi/tool5.png");
+	tool_cm->setPosition(origin.x + 80, origin.y + visibleSize.height / 2 - 250);
+	this->addChild(tool_cm, 5, "tool_cm");
+
+	CCActionInterval * scaleTo = CCScaleTo::create(3.0, 0.3, 0.3);
+	
+	CCCallFunc * funcall = CCCallFunc::create([&](){
+		this->removeChildByName("manual_mask");
+		this->removeChildByName("tool_cm");
+		this->removeChildByName("multitip2");
+		m_stageCount = 3;
+	});
+
+	CCFiniteTimeAction * seq = CCSequence::create(scaleTo, funcall, NULL);
+	tool_cm->runAction(seq);
+}
+
+void MultiScene::manualAct4()
+{
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+	auto manual_mask = Sprite::create("manual/mask.png");
+	manual_mask->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2);
+	this->addChild(manual_mask, 5, "manual_mask");
+
+	auto multi_tip3 = Sprite::create("manual/multiTip3.png");
+	multi_tip3->setPosition(origin.x + visibleSize.width / 2 - 50, origin.y + visibleSize.height / 2 - 150);
+	this->addChild(multi_tip3, 5, "multitip3");
+
+	CCSprite* gesture = CCSprite::create("manual/gesture.png");
+	gesture->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 8);
+	gesture->setScale(0.6);
+	this->addChild(gesture, 5, "gesture");
+
+	CCActionInterval* moveright = CCMoveBy::create(1.5f, ccp(130, 0));
+	CCActionInterval* moveleft = CCMoveBy::create(0.2f, ccp(-130, 0));
+
+	CCCallFunc * funcall = CCCallFunc::create([&](){
+		this->removeChildByName("manual_mask");
+		this->removeChildByName("gesture");
+		this->removeChildByName("multitip3");
+		m_stageCount = 7;
+	});
+
+	CCFiniteTimeAction * seq = CCSequence::create(moveright, moveleft, moveright, funcall, NULL);
+	gesture->runAction(seq);
+}
+
+void MultiScene::manualAct5()
+{
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+	auto manual_mask = Sprite::create("manual/mask.png");
+	manual_mask->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2);
+	this->addChild(manual_mask, 5, "manual_mask");
+
+	auto multi_tip4 = Sprite::create("manual/multiTip4.png");
+	multi_tip4->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 - 200);
+	this->addChild(multi_tip4, 5, "multitip4");
+
+	scheduleOnce(schedule_selector(MultiScene::updateManualAct1), 3.0f);
+}
+
+void MultiScene::updateManualAct1(float time)
+{
+	this->removeChildByName("multitip4");
+
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+	
+	CCSprite* target_frame = CCSprite::create("manual/redFrame.png");
+	target_frame->setPosition(origin.x + visibleSize.width / 2 + 230, origin.y + visibleSize.height / 2 - 70);
+	target_frame->setScale(1.1, 0.8);
+	this->addChild(target_frame, 5, "target_frame");
+
+	auto multi_tip5 = Sprite::create("manual/multiTip5.png");
+	multi_tip5->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 - 250);
+	this->addChild(multi_tip5, 5, "multitip5");
+
+	scheduleOnce(schedule_selector(MultiScene::updateManualAct2), 3.0f);
+}
+
+void MultiScene::updateManualAct2(float time)
+{
+	this->removeChildByName("multitip5");
+	this->removeChildByName("target_frame");
+	MCManual::writeUserProfile(MANUAL_MULTI, false);
+	auto scene = MultiScene::createScene();
+	Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(0.5f, scene, false));
 }
 
 

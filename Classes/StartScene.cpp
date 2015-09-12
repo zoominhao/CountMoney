@@ -8,6 +8,7 @@
 
 #include "MCManual.h"
 #include "MultiManualScene.h"
+#include "RankScene.h"
 
 
 Scene* StartScene::createScene()
@@ -45,6 +46,8 @@ bool StartScene::init()
 	MCManual::readUserProfile();
 	//给开始按钮添加事件监听  
 
+	AudioControl::playBgMusic(LOGIN);
+
 	ui::Button *Btn_Single = dynamic_cast<ui::Button*>(uilayer->getChildByName("SingleCount"));
 	Btn_Single->addTouchEventListener(CC_CALLBACK_2(StartScene::SingleScene, this));
 
@@ -59,6 +62,9 @@ bool StartScene::init()
 
 	ui::Button *Btn_Set = dynamic_cast<ui::Button*>(uilayer->getChildByName("Set"));
 	Btn_Set->addTouchEventListener(CC_CALLBACK_2(StartScene::SetScene, this));
+
+	ui::Button *Btn_DoubleManual = dynamic_cast<ui::Button*>(uilayer->getChildByName("Double_Manual"));
+	Btn_DoubleManual->addTouchEventListener(CC_CALLBACK_2(StartScene::DManualScene, this));
 
 	return true;
 }
@@ -81,17 +87,8 @@ void StartScene::MultiScene(Ref *pSender, ui::Widget::TouchEventType type)
 
 	if (type == ui::Widget::TouchEventType::ENDED)
 	{
-		if (MCManual::novice[3])
-		{
-			AudioControl::playClickEffect();
-			auto multiManuals = MultiManualScene::createScene();
-			Director::sharedDirector()->replaceScene(multiManuals);
-		}
-		else
-		{
-			AudioControl::playClickEffect();
-			multiOpenAct();
-		}
+		AudioControl::playClickEffect();
+		multiOpenAct();
 	}
 }
 
@@ -103,7 +100,7 @@ void StartScene::NetScene(Ref *pSender, ui::Widget::TouchEventType type)
 		//auto scene = OnlineScene::createScene();
 		//Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
 		//MessageBox("coming soon ...","Info");
-		MessageBox("坐等服务器到位 ...", "信息");
+		MessageBox("即将上线，敬请期待 ...", "信息");
 	}
 	
 }
@@ -112,9 +109,8 @@ void StartScene::RankScene(Ref *pSender, ui::Widget::TouchEventType type)
 {
 	if (type == ui::Widget::TouchEventType::ENDED)
 	{
-		//auto scene = AboutScene::createScene();
-		//Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
-		MessageBox("坐等服务器到位 ...", "信息");
+		auto scene = RankScene::createScene();
+		Director::sharedDirector()->replaceScene(scene);
 	}
 }
 
@@ -139,20 +135,22 @@ void StartScene::multiOpenAct()
 	CCSprite* sp1 = CCSprite::create("multi/P1.png");
 	sp1->setPosition(origin.x + visibleSize.width, origin.y + visibleSize.height);
 	this->addChild(sp1, 2, "vsdown");
-	CCActionInterval * movedown = CCMoveBy::create(0.5f, ccp(-visibleSize.width / 2, -visibleSize.height / 2));
+	CCActionInterval * movedown = CCMoveBy::create(1.0f, ccp(-visibleSize.width / 2, -visibleSize.height / 2));
 	sp1->runAction(movedown);
 
 	CCSprite * sp2 = CCSprite::create("multi/P2.png");
 	sp2->setPosition(origin.x, origin.y);
 	this->addChild(sp2, 2, "vsup");
-	CCActionInterval * moveup = CCMoveBy::create(0.5f, ccp(visibleSize.width / 2, visibleSize.height / 2));
+	CCActionInterval * moveup = CCMoveBy::create(1.0f, ccp(visibleSize.width / 2, visibleSize.height / 2));
 	sp2->runAction(moveup);
 
 	CCSprite * svs = CCSprite::create("multi/pvp.png");
 	svs->setPosition(origin.x, origin.y + visibleSize.height / 2);
 	this->addChild(svs, 2, "vscenter");
-	CCActionInterval* moveby = CCMoveBy::create(0.5f, ccp(visibleSize.width / 2, 0));
+	CCActionInterval* moveby = CCMoveBy::create(1.0f, ccp(visibleSize.width / 2, 0));
 	CCActionInterval * easeElasticOut = CCEaseElasticOut::create(moveby);
+
+	CCActionInterval* rmdelay = CCDelayTime::create(1.0f);
 
 	CCCallFunc * funcall = CCCallFunc::create([&](){
 		this->removeChildByName("vsbg");
@@ -160,10 +158,10 @@ void StartScene::multiOpenAct()
 		this->removeChildByName("vsup");
 		this->removeChildByName("vscenter");
 		auto scene = MultiScene::createScene();
-		Director::sharedDirector()->replaceScene(TransitionFadeUp::create(0.5f, scene));
+		Director::sharedDirector()->replaceScene(TransitionFadeUp::create(1.0f, scene));
 
 	});
-	CCFiniteTimeAction * seq = CCSequence::create(easeElasticOut, funcall, NULL);
+	CCFiniteTimeAction * seq = CCSequence::create(easeElasticOut, rmdelay, funcall, NULL);
 
 	svs->runAction(seq);
 	
@@ -177,6 +175,15 @@ void StartScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
 		#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 			exit(0);
 		#endif
+	}
+}
+
+void StartScene::DManualScene(Ref *pSender, ui::Widget::TouchEventType type)
+{
+	if (type == ui::Widget::TouchEventType::ENDED)
+	{
+		auto multiManuals = MultiManualScene::createScene();
+		Director::sharedDirector()->replaceScene(multiManuals);
 	}
 }
 

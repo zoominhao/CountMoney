@@ -133,7 +133,7 @@ void SlidingLayer::addSlidePage(Sprite* pSprite, int btn_type)
 	//Ìí¼Ó°´Å¥
 	if (btn_type == 0)
 	{
-		ui::Button *btn = ui::Button::create("skip_manual.png");
+		ui::Button *btn = ui::Button::create("manual/skip_manual.png");
 		btn->setPosition(Vec2(origin.x + visibleSize.width - 150, origin.y + 50));
 		btn->setScale(0.8);
 		btn->addTouchEventListener(CC_CALLBACK_2(SlidingLayer::btnCB, this));
@@ -141,7 +141,7 @@ void SlidingLayer::addSlidePage(Sprite* pSprite, int btn_type)
 	}
 	else if (btn_type == 1)
 	{
-		ui::Button *btn = ui::Button::create("finish_manual.png");
+		ui::Button *btn = ui::Button::create("manual/finish_manual.png");
 		btn->setPosition(Vec2(origin.x + visibleSize.width - 150, origin.y + 50));
 		btn->setScale(0.8);
 		btn->addTouchEventListener(CC_CALLBACK_2(SlidingLayer::btnCB, this));

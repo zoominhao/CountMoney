@@ -25,6 +25,9 @@ private:
 	void RankScene(Ref *pSender, ui::Widget::TouchEventType type);
 	void SetScene(Ref *pSender, ui::Widget::TouchEventType type);
 
+
+	void DManualScene(Ref *pSender, ui::Widget::TouchEventType type);
+
 	void multiOpenAct();
 
 };

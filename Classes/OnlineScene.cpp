@@ -1,3 +1,4 @@
+/*
 #include "OnlineScene.h"
 #include "StartScene.h"
 #include "MCUtil.h"
@@ -34,7 +35,7 @@ bool OnlineScene::init()
 		origin.y + visibleSize.height - returnItem->getContentSize().height / 2));
 
 
-	/*auto pauseItem = MenuItemImage::create(
+	/ *auto pauseItem = MenuItemImage::create(
 		"online/icon_pause.png",
 		"online/icon_pause.png",
 		CC_CALLBACK_1(OnlineScene::pauseCallback, this));
@@ -43,7 +44,7 @@ bool OnlineScene::init()
 		origin.y + visibleSize.height - pauseItem->getContentSize().height / 2));
 
 	// create menu, it's an autorelease object
-	auto menu = Menu::create(returnItem, pauseItem, NULL);*/
+	auto menu = Menu::create(returnItem, pauseItem, NULL);* /
 	auto menu = Menu::create(returnItem, NULL);
 	menu->setPosition(Vec2::ZERO);
 	this->addChild(menu, 1);
@@ -100,14 +101,14 @@ void OnlineScene::pauseCallback(Ref* pSender)
 {
 	//遍历当前类的所有子节点信息，画入renderTexture中。  
 	//这里类似截图。  
-	/*Size visibleSize = Director::getInstance()->getVisibleSize();
+	/ *Size visibleSize = Director::getInstance()->getVisibleSize();
 	RenderTexture *renderTexture = RenderTexture::create(visibleSize.width, visibleSize.height + 30);
 	renderTexture->begin();
 	this->getParent()->visit();
 	renderTexture->end();
 
 	auto scene = OnlinePauseScene::createScene(renderTexture, m_player->totalMoneyNum());
-	Director::sharedDirector()->pushScene(scene);*/
+	Director::sharedDirector()->pushScene(scene);* /
 }
 
 void OnlineScene::returnCallback(Ref* pSender)
@@ -337,4 +338,4 @@ void OnlineScene::closeConnection()
 void OnlineScene::timetest(float time)
 {
 	sendFight(EVENT_MONEY_REAL);
-}
+}*/

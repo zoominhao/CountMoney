@@ -18,6 +18,7 @@
 #define BGMUSIC_FILE   "bg_music.wav" //"background.mp3"
 #endif*/
 
+#define LOGIN_BGM "audio/login_BGM.mp3"
 #define LOSER_BGM "audio/loser_BGM.mp3"
 #define TELLER_BGM "audio/teller_BGM.mp3"
 #define ENDLESS_BGM "audio/endless_BGM.mid"
@@ -41,6 +42,7 @@ typedef enum
 	ENDLESS,
 	PK_OFFLINE,
 	PK_ONLINE,
+	LOGIN,
 } CMMODE;
 
 #include "cocos2d.h"
