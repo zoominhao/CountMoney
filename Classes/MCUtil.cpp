@@ -64,5 +64,8 @@ void MCUtil::displayCharacter()
 	//this->addChild(labelInfo, 1);*/
 }
 
+
 Color3B MCUtil::m_timerColor = Color3B(255.0, 255.0, 255.0);
 Color3B MCUtil::m_targetColor = Color3B(255.0, 255.0, 255.0);
+
+bool MCUtil::m_flag_openscene = true;

@@ -17,23 +17,13 @@ Scene* MultiEndScene::createScene(const char* resultstr)
 	SimpleAudioEngine::sharedEngine()->stopAllEffects();
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
-	Sprite *scoreSp;
+
 	if (strcmp(resultstr, "0") == 0)
-		scoreSp = Sprite::create("multi/tie.png");
+		layer->addWinSprite(1);
 	else if (strcmp(resultstr, "1") == 0)
-		scoreSp = Sprite::create("multi/player1win.png");
+		layer->addWinSprite(1);
 	else
-		scoreSp = Sprite::create("multi/player2win.png");
-
-	scoreSp->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - 200);
-	scene->addChild(scoreSp, 1);
-	/*auto scoreLabel = Label::createWithTTF(resultstr, "fonts/Marker Felt.ttf", 24);
-	//添加得分
-	scoreLabel->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height  - 200);
-	//scoreLabel->setColor(Color3B(255.0, 255.0, 255.0));
-	scoreLabel->setColor(Color3B::GRAY);
-
-	scene->addChild(scoreLabel, 1);*/
+		layer->addWinSprite(2);
 
 	return scene;
 }
@@ -45,7 +35,7 @@ bool MultiEndScene::init()
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto origin = Director::getInstance()->getVisibleOrigin();
 	//加载cocos studio制作的界面  
-	auto uilayer = cocostudio::GUIReader::getInstance()->widgetFromJsonFile("End/EndUi_1.ExportJson");
+	auto uilayer = cocostudio::GUIReader::getInstance()->widgetFromJsonFile("multiEnd/EndUi_1.ExportJson");
 	uilayer->setPosition(ccp(origin.x + visibleSize.width / 2 - uilayer->getContentSize().width / 2, 
 		origin.y + visibleSize.height / 2 - uilayer->getContentSize().height / 2));
 	this->addChild(uilayer);
@@ -78,23 +68,48 @@ void MultiEndScene::returnButton(Ref *pSender, ui::Widget::TouchEventType type)
 		auto scene = StartScene::createScene();
 		Director::getInstance()->replaceScene(scene);
 	}
-/*
-	switch (type)
+}
+
+void MultiEndScene::addWinSprite(int whichplayer)
+{
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+	if (whichplayer == 1)
 	{
-	case ui::Widget::TouchEventType::BEGAN:
-		CCLOG("Button Down");//按钮按下  
-		break;
-	case ui::Widget::TouchEventType::MOVED:
-		CCLOG("Button Down and Mouse move");//按钮按下移动  
-		break;
-	case ui::Widget::TouchEventType::ENDED:
-		CCLOG("Button Up");//放开按钮  
-		
-		break;
-	case ui::Widget::TouchEventType::CANCELED:
-		CCLOG("Button Cancel");//取消按钮  
-		break;
-	default:
-		break;
-	}*/
+		auto p1 = Sprite::create("multi/boy_win.png");
+		p1->setPosition(origin.x + visibleSize.width / 2, origin.y + 420);
+		this->addChild(p1, 1);
+
+		auto p2 = Sprite::create("multi/duck_lose.png");
+		p2->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - 250);
+		this->addChild(p2, 1);
+
+		auto u1 = Sprite::create("multi/uwin.png");
+		u1->setPosition(origin.x + visibleSize.width / 2 + 40, origin.y + 240);
+		this->addChild(u1, 1);
+
+		auto u2 = Sprite::create("multi/ulose.png");
+		u2->setRotation(180);
+		u2->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - 100);
+		this->addChild(u2, 1);
+	}
+	if (whichplayer == 2)
+	{
+		auto p1 = Sprite::create("multi/boy_lose.png");
+		p1->setPosition(origin.x + visibleSize.width / 2, origin.y + 400);
+		this->addChild(p1, 1);
+
+		auto p2 = Sprite::create("multi/duck_win.png");
+		p2->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - 250);
+		this->addChild(p2, 1);
+
+		auto u1 = Sprite::create("multi/ulose.png");
+		u1->setPosition(origin.x + visibleSize.width / 2, origin.y + 250);
+		this->addChild(u1, 1);
+
+		auto u2 = Sprite::create("multi/uwin.png");
+		u2->setRotation(180);
+		u2->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - 100);
+		this->addChild(u2, 1);
+	}
 }

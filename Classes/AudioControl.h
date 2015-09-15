@@ -32,8 +32,20 @@
 #define ENDLESS_WIN_EFFECT "audio/endless_win.mp3"
 #define ENDLESS_LOSE_EFFECT "audio/endless_lose.mp3"
 
-#define BUFFER_EFFECT "audio/buff.mp3"
-#define DEBUFFER_EFFECT "audio/debuff.mp3"
+#define TOOL1_EFFECT "audio/tool1.mp3"
+#define TOOL2_EFFECT "audio/tool2.mp3"
+#define TOOL3_EFFECT "audio/tool3.mp3"
+#define TOOL4_EFFECT "audio/tool4.mp3"
+#define TOOL5_EFFECT "audio/tool5.mp3"
+#define TOOL6_EFFECT "audio/tool6.mp3"
+
+#define ENCOURAGE_EFFECT_COOL "audio/effcet_vo_cool.mp3"
+#define ENCOURAGE_EFFECT_NICE "audio/effcet_vo_nice.mp3"
+#define ENCOURAGE_EFFECT_GREAT "audio/effcet_vo_great.mp3"
+#define ENCOURAGE_EFFECT_ACE "audio/effcet_vo_ace.mp3"
+#define ENCOURAGE_EFFECT_EXCELLENT "audio/effcet_vo_excellent.mp3"
+#define ENCOURAGE_EFFECT_AWESOME "audio/effcet_vo_awesome.mp3"
+
 
 typedef enum 
 {
@@ -44,6 +56,16 @@ typedef enum
 	PK_ONLINE,
 	LOGIN,
 } CMMODE;
+
+typedef enum
+{
+	COOL,
+	NICE,
+	GREAT,
+	ACE,
+	EXCELLENT,
+	AWESOME,
+} ENCOURAGEMODE;
 
 #include "cocos2d.h"
 #include "CMTimer.h"
@@ -62,8 +84,17 @@ public:
 	static int playClickEffect();
 	static int playOverEffect();
 	static int playReadyEffect();
-	static int playBufferEffect();
-	static int playDebufferEffect();
+
+	static int playTool1Effect();
+	static int playTool2Effect();
+	static int playTool3Effect();
+	static int playTool4Effect();
+	static int playTool5Effect();
+	static int playTool6Effect();
+
+	static int playEncourageEffect(ENCOURAGEMODE mode);
+	
+
 	static int playEndlessEffect(bool flag);
 	static void stopEffectMusic(int id);
 	

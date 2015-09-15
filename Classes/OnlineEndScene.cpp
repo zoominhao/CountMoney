@@ -17,7 +17,7 @@ Scene* OnlineEndScene::createScene(const char* resultstr)
 	SimpleAudioEngine::sharedEngine()->stopAllEffects();
 
 
-	auto scoreLabel = Label::createWithTTF(resultstr, "fonts/Marker Felt.ttf", 50);
+	auto scoreLabel = Label::createWithTTF(resultstr, "fonts/DTLNobelT-Bold.otf", 50);
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	//ฬํผำตรทึ

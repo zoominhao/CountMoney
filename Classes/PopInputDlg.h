@@ -12,7 +12,7 @@ USING_NS_CC;
 class PopInputDlg : public LayerColor
 {
 public:
-	static Scene * createScene(GameMode gmode, int score);
+	static Layer * createLayer(GameMode gmode, int score);
 	virtual bool init();
 	CREATE_FUNC(PopInputDlg);
 

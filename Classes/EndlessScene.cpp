@@ -61,7 +61,6 @@ bool EndlessScene::init()
 	setBgImage();
 	//addCatAnimation();
 	addTranshCan();
-	addTimerFrame();
 
 	//添加玩家，该场景为单人模式
 	m_player = Player::create();
@@ -74,6 +73,18 @@ bool EndlessScene::init()
 	m_cmTimer->setTotalTime(5);
 	m_cmTimer->createLabel(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - 80), m_player, 3);
 	this->addChild(m_cmTimer, 2);
+
+	//飘字
+	m_flyWord[0] = FlyWord::create("flyword/+5.png", 1.0, Vec2(origin.x + visibleSize.width / 2 - 130, origin.y + visibleSize.height / 2), 50);
+	this->addChild(m_flyWord[0], 2);
+	m_flyWord[1] = FlyWord::create("flyword/+10.png", 1.0, Vec2(origin.x + visibleSize.width / 2 - 130, origin.y + visibleSize.height / 2), 50);
+	this->addChild(m_flyWord[1], 2);
+	m_flyWord[2] = FlyWord::create("flyword/+20.png", 1.0, Vec2(origin.x + visibleSize.width / 2 - 130, origin.y + visibleSize.height / 2), 50);
+	this->addChild(m_flyWord[2], 2);
+	m_flyWord[3] = FlyWord::create("flyword/+50.png", 1.0, Vec2(origin.x + visibleSize.width / 2 - 130, origin.y + visibleSize.height / 2), 50);
+	this->addChild(m_flyWord[3], 2);
+	m_flyWord[4] = FlyWord::create("flyword/+100.png", 1.0, Vec2(origin.x + visibleSize.width / 2 - 130, origin.y + visibleSize.height / 2), 50);
+	this->addChild(m_flyWord[4], 2);
 
 
 	//播放背景音乐
@@ -113,6 +124,7 @@ bool EndlessScene::init()
 	{ 
 		manualAct1();
 	}
+
 	
 
 	return true;
@@ -188,18 +200,23 @@ void EndlessScene::onTouchEnded(Touch* touch, Event* event)
 			{
 			case Real_100_S:
 				m_player->addTotalMoney(100);
+				m_flyWord[4]->Flying();
 				break;
 			case Real_5_S:
 				m_player->addTotalMoney(5);
+				m_flyWord[0]->Flying();
 				break;
 			case Real_10_S:
 				m_player->addTotalMoney(10);
+				m_flyWord[1]->Flying();
 				break;
 			case Real_20_S:
 				m_player->addTotalMoney(20);
+				m_flyWord[2]->Flying();
 				break;
 			case Real_50_S:
 				m_player->addTotalMoney(50);
+				m_flyWord[3]->Flying();
 				break;
 			default:
 				break;
@@ -212,16 +229,16 @@ void EndlessScene::onTouchEnded(Touch* touch, Event* event)
 
 				float timeLimit;
 				if (m_stage < 10)
-					timeLimit = floor(m_time_per_count * (0.154 * m_stage + 4.6157));
+					timeLimit = m_time_per_count * (0.154 * m_stage + 4.6157);
 				else
-					timeLimit = floor(m_time_per_count * (0.154 * m_stage + 4.6157) - (m_stage - 9) * 0.1);
+					timeLimit = m_time_per_count * (0.154 * m_stage + 4.6157) - (m_stage - 9) * 0.1;
 				playStageEffect(m_stage, m_targetNum, timeLimit);
 			}
 			else if (m_player->totalMoneyNum() > m_targetNum)
 			{
 				AudioControl::stopBGMusic();
 				char stageNumStr[100];
-				sprintf(stageNumStr, "Fail In Level %d", m_stage + 1);
+				sprintf(stageNumStr, "%d", m_stage + 1);
 				auto scene = EndlessEndScene::createScene(stageNumStr, m_stage + 1);
 				Director::getInstance()->replaceScene(scene);
 				AudioControl::playEndlessEffect(false);
@@ -305,7 +322,7 @@ void EndlessScene::returnCallback(Ref* pSender)
 {
 	AudioControl::stopBGMusic();
 	auto scene = SingleScene::createScene();
-	Director::getInstance()->replaceScene(scene);
+	Director::getInstance()->replaceScene(TransitionZoomFlipX::create(0.5, scene, TransitionScene::Orientation::LEFT_OVER));
 }
 
 void EndlessScene::pauseCallback(Ref* pSender)
@@ -361,14 +378,19 @@ void EndlessScene::addTargetNumLabel()
 		m_targetNum = 110;
 	}
 	char targetNumStr[30];
-	sprintf(targetNumStr, "Target: %d", m_targetNum);
+	sprintf(targetNumStr, "%d", m_targetNum);
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-	m_targetLabel = Label::createWithTTF(targetNumStr, "fonts/Marker Felt.ttf", 50);
-	m_targetLabel->setPosition(origin.x + visibleSize.width / 2 - 200, origin.y + visibleSize.height - 200);
-	m_targetLabel->setColor(MCUtil::m_targetColor);
+	//bg
+	auto target_bg = Sprite::create("endless/target.png");
+	target_bg->setPosition(origin.x + visibleSize.width / 2 - 190, origin.y + visibleSize.height / 2 + 10);
+	this->addChild(target_bg, 1);
+
+	m_targetLabel = Label::createWithTTF(targetNumStr, "fonts/DTLNobelT-Bold.otf", 50);
+	m_targetLabel->setPosition(origin.x + visibleSize.width / 2 - 190, origin.y + visibleSize.height / 2 - 30);
+	m_targetLabel->setColor(Color3B(47, 51, 78));
 	this->addChild(m_targetLabel, 1);
 }
 
@@ -380,8 +402,8 @@ void EndlessScene::addStageLabel()
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-	m_stageLabel = Label::createWithTTF(stageStr, "fonts/Marker Felt.ttf", 50);
-	m_stageLabel->setPosition(origin.x + visibleSize.width / 2 + 200, origin.y + visibleSize.height - 200);
+	m_stageLabel = Label::createWithTTF(stageStr, "fonts/DTLNobelT-Bold.otf", 50);
+	m_stageLabel->setPosition(origin.x + visibleSize.width / 2 + 200, origin.y + visibleSize.height / 2 + 100);
 	m_stageLabel->setColor(MCUtil::m_targetColor);
 	this->addChild(m_stageLabel, 1);
 }
@@ -459,19 +481,11 @@ void EndlessScene::addTranshCan()
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	m_transhCan = Sprite::create("trashCan.png");
-	m_transhCan->setScale(0.6);
+	//m_transhCan->setScale(0.6);
 	m_transhCan->setPosition(Vec2(origin.x + visibleSize.width - 100, origin.y + visibleSize.height / 2 - 300));
 	this->addChild(m_transhCan, 1);
 }
 
-void EndlessScene::addTimerFrame()
-{
-	Size visibleSize = Director::getInstance()->getVisibleSize();
-	Vec2 origin = Director::getInstance()->getVisibleOrigin();
-	m_timerFrame = Sprite::create("endless/timer.png");
-	m_timerFrame->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - 75));
-	this->addChild(m_timerFrame, 1);
-}
 
 void EndlessScene::playStageEffect(int level, int target, float timelimit)
 {
@@ -484,7 +498,7 @@ void EndlessScene::playStageEffect(int level, int target, float timelimit)
 
 	char levelStr[10];
 	sprintf(levelStr, "%d", level);
-	auto levelLabel = Label::createWithTTF(levelStr, "fonts/Marker Felt.ttf", 40);
+	auto levelLabel = Label::createWithTTF(levelStr, "fonts/DTLNobelT-Bold.otf", 40);
 	levelLabel->setPosition(origin.x + visibleSize.width / 2 - 40, origin.y + visibleSize.height / 2 - 50);
 	levelLabel->setColor(Color3B(67.0, 72.0, 88.0));
 	levelBg->addChild(levelLabel);
@@ -492,14 +506,14 @@ void EndlessScene::playStageEffect(int level, int target, float timelimit)
 
 	char targetStr[10];
 	sprintf(targetStr, "%d", target);
-	auto targetLabel = Label::createWithTTF(targetStr, "fonts/Marker Felt.ttf", 40);
+	auto targetLabel = Label::createWithTTF(targetStr, "fonts/DTLNobelT-Bold.otf", 40);
 	targetLabel->setPosition(origin.x + visibleSize.width / 2 - 70, origin.y + visibleSize.height / 2 - 210);
 	targetLabel->setColor(Color3B(67.0, 72.0, 88.0));
 	levelBg->addChild(targetLabel);
 
 	char tlStr[10];
 	sprintf(tlStr, "%4.2f", timelimit);
-	auto tlLabel = Label::createWithTTF(tlStr, "fonts/Marker Felt.ttf", 40);
+	auto tlLabel = Label::createWithTTF(tlStr, "fonts/DTLNobelT-Bold.otf", 40);
 	tlLabel->setPosition(origin.x + visibleSize.width / 2 - 130, origin.y + visibleSize.height / 2 - 290);
 	tlLabel->setColor(Color3B(67.0, 72.0, 88.0));
 	levelBg->addChild(tlLabel);
@@ -516,7 +530,7 @@ void EndlessScene::playStageEffect(int level, int target, float timelimit)
 	CCCallFunc * funcall = CCCallFunc::create([&](){
 		this->removeChildByName("levelbg");
 		char targetNumStr[30];
-		sprintf(targetNumStr, "Target: %d", m_targetNum);
+		sprintf(targetNumStr, "%d", m_targetNum);
 		m_targetLabel->setString(targetNumStr);
 		m_player->setStageNum(m_stage);
 		char stageStr[30];
@@ -597,8 +611,8 @@ void EndlessScene::manualAct2()
 
 
 	CCSprite* target_frame = CCSprite::create("manual/redFrame.png");
-	target_frame->setPosition(origin.x + 180, origin.y + visibleSize.height - 200);
-	target_frame->setScale(1.1, 0.7);
+	target_frame->setPosition(origin.x + 190, origin.y + visibleSize.height / 2);
+	target_frame->setScale(1.1, 1.0);
 	this->addChild(target_frame, 5, "target_frame");
 
 	CCSprite* endless_tip1 = CCSprite::create("manual/endlessTip1.png");
@@ -606,7 +620,7 @@ void EndlessScene::manualAct2()
 	this->addChild(endless_tip1, 5, "endlesstip1");
 
 	CCSprite* endless_tip2 = CCSprite::create("manual/endlessTip2.png");
-	endless_tip2->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2);
+	endless_tip2->setPosition(origin.x + visibleSize.width / 2 + 100, origin.y + visibleSize.height / 2);
 	this->addChild(endless_tip2, 5, "endlesstip2");
 
 	scheduleOnce(schedule_selector(EndlessScene::updateManualAct1), 1.0f);
@@ -683,8 +697,6 @@ void EndlessScene::manualAct4()
 
 	scheduleOnce(schedule_selector(EndlessScene::updateManualAct2), 2.0f);
 }
-
-
 
 
 void EndlessScene::updateManualAct2(float time)

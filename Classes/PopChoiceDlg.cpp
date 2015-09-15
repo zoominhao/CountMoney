@@ -81,7 +81,7 @@ void PopChoiceDlg::addTitle()
 
 void PopChoiceDlg::addContent()
 {
-	m_content = LabelTTF::create("Hello! Welcome to our game!", "fonts/Marker Felt.ttf", 24);
+	m_content = LabelTTF::create("Hello! Welcome to our game!", "fonts/DTLNobelT-Bold.otf", 24);
 	m_content->setColor(Color3B(0, 0, 0));
 	m_content->setPosition(ccp(m_size.width / 2, m_size.height * 0.33));
 	m_content->setDimensions(CCSize(this->m_size.width - 60, this->m_size.height - 100));

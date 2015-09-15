@@ -79,10 +79,25 @@ bool TellerScene::init()
 
 	//添加计时器
 	m_cmTimer = CMTimer::create();
-	m_cmTimer->createLabel(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - 80), m_player, 2);
+	m_cmTimer->createLabel(Vec2(origin.x + visibleSize.width / 2 - 5, origin.y + visibleSize.height - 73), m_player, 2);
 	this->addChild(m_cmTimer, 2);
 	
+	//飘字
+	m_RflyWord = FlyWord::create("flyword/+100.png", 1.0, Vec2(origin.x + visibleSize.width / 2 - 130, origin.y + visibleSize.height / 2), 50);//放在当前怪物的锚点位置,
+	this->addChild(m_RflyWord, 2);
 
+	m_FflyWord = FlyWord::create("flyword/-200.png", 1.0, Vec2(origin.x + visibleSize.width / 2 - 130, origin.y + visibleSize.height / 2), 50);//放在当前怪物的锚点位置,
+	this->addChild(m_FflyWord, 2);
+
+	//鼓励文字
+	for (int i = 0; i < 6; ++i)
+	{
+		m_zoomingWord[i] = ZoomingWord::create(String::createWithFormat("encourage/encourage_%d.png", i + 1)->getCString(), 
+			Vec2(origin.x + visibleSize.width / 2 - 180, origin.y + visibleSize.height / 2 - 50));
+		this->addChild(m_zoomingWord[i], 2);
+	}
+
+	m_GoodCount = 0;
 
     //播放背景音乐
 	//AudioControl::playBgMusic(TELLER);
@@ -210,11 +225,16 @@ void TellerScene::onTouchEnded(Touch* touch, Event* event)
 			{
 				m_player->addFakeWrong(1);
 				m_player->addTotalMoney(-200);
+				m_GoodCount = 0;
+				m_FflyWord->Flying();
 				//m_player->changeFakeWrongLabel();
 			}
 			else
 			{
 				m_player->addTotalMoney(100);
+				m_GoodCount++;
+				encourageEffect();
+				m_RflyWord->Flying();
 			}
 
 			m_player->removeChildByName("up");
@@ -242,7 +262,15 @@ void TellerScene::onTouchEnded(Touch* touch, Event* event)
 		else
 		{
 			m_player->MoneySingle()->moneyHFakeFly(220.0, 0.0, 0.1);
-
+			if (m_curFake)
+			{
+				m_GoodCount++;
+				encourageEffect();
+			}
+			else
+			{
+				m_GoodCount = 0;   //真钱丢入垃圾桶
+			}
 			if (m_isEmpty)
 			{
 				m_transhCan->setTexture("f_trashCan.png");
@@ -280,7 +308,7 @@ void TellerScene::returnCallback(Ref* pSender)
 {
 	AudioControl::stopBGMusic();
 	auto scene = SingleScene::createScene();
-	Director::getInstance()->replaceScene(scene);
+	Director::getInstance()->replaceScene(TransitionZoomFlipX::create(0.5, scene, TransitionScene::Orientation::LEFT_OVER));
 }
 
 void TellerScene::pauseCallback(Ref* pSender)
@@ -303,7 +331,6 @@ void TellerScene::addTranshCan()
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	m_transhCan = Sprite::create("trashCan.png");
-	m_transhCan->setScale(0.6);
 	m_transhCan->setPosition(Vec2(origin.x + visibleSize.width - 100, origin.y + visibleSize.height / 2 - 300));
 	this->addChild(m_transhCan, 1);
 }
@@ -478,4 +505,38 @@ void TellerScene::updateManualAct3(float time)
 	this->removeChildByName("tellertip4");
 	MCManual::writeUserProfile(MANUAL_TELLER, false);
 	readyGoAct();
+}
+
+void TellerScene::encourageEffect()
+{
+	if (m_GoodCount == 4)
+	{
+		AudioControl::playEncourageEffect(COOL);
+		m_zoomingWord[0]->Zooming();
+	}
+	else if (m_GoodCount == 7)
+	{
+		AudioControl::playEncourageEffect(NICE);
+		m_zoomingWord[1]->Zooming();
+	}
+	else if (m_GoodCount == 10)
+	{
+		AudioControl::playEncourageEffect(GREAT);
+		m_zoomingWord[2]->Zooming();
+	}
+	else if (m_GoodCount == 13)
+	{
+		AudioControl::playEncourageEffect(ACE);
+		m_zoomingWord[3]->Zooming();
+	}
+	else if (m_GoodCount == 16)
+	{
+		AudioControl::playEncourageEffect(EXCELLENT);
+		m_zoomingWord[4]->Zooming();
+	}
+	else if (m_GoodCount % 4 == 0 && m_GoodCount > 16)
+	{
+		AudioControl::playEncourageEffect(AWESOME);
+		m_zoomingWord[5]->Zooming();
+	}
 }

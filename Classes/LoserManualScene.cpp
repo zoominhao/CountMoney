@@ -62,6 +62,6 @@ void LoserManualScene::btnCB(Ref *pSender, ui::Widget::TouchEventType type)
 		AudioControl::playClickEffect();
 		//MCManual::writeUserProfile(MANUAL_LOSER, false);
 		auto scene = SingleScene::createScene();
-		Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
+		Director::sharedDirector()->replaceScene(scene);
 	}
 }

@@ -20,8 +20,6 @@ private:
 	virtual void onTouchEnded(Touch* touch, Event* event);
 
 	virtual void btnCB(Ref *pSender, ui::Widget::TouchEventType type);
-
-	void multiOpenAct();
 };
 
 #endif

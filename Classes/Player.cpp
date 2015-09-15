@@ -36,7 +36,7 @@ void Player::createPlayer(int mode)
 
 void Player::displayTotalMoney()
 {
-	m_totalMoneyNumLabel = Label::createWithTTF("score: 0", "fonts/Marker Felt.ttf", 40);
+	m_totalMoneyNumLabel = Label::createWithTTF("score: 0", "fonts/DTLNobelT-Bold.otf", 40);
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
@@ -48,7 +48,7 @@ void Player::displayTotalMoney()
 
 void Player::displayFakeWrong()
 {
-	m_fakeWrongNumLabel = Label::createWithTTF("0", "fonts/Marker Felt.ttf", 24);
+	m_fakeWrongNumLabel = Label::createWithTTF("0", "fonts/DTLNobelT-Bold.otf", 24);
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 

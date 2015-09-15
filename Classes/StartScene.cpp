@@ -46,7 +46,6 @@ bool StartScene::init()
 	MCManual::readUserProfile();
 	//给开始按钮添加事件监听  
 
-	AudioControl::playBgMusic(LOGIN);
 
 	ui::Button *Btn_Single = dynamic_cast<ui::Button*>(uilayer->getChildByName("SingleCount"));
 	Btn_Single->addTouchEventListener(CC_CALLBACK_2(StartScene::SingleScene, this));
@@ -66,19 +65,23 @@ bool StartScene::init()
 	ui::Button *Btn_DoubleManual = dynamic_cast<ui::Button*>(uilayer->getChildByName("Double_Manual"));
 	Btn_DoubleManual->addTouchEventListener(CC_CALLBACK_2(StartScene::DManualScene, this));
 
+
+	openSceneAnimation();
+	if (!MCUtil::m_flag_openscene)
+	{
+		AudioControl::playBgMusic(LOGIN);
+	}
+
 	return true;
 }
-
-
-
 
 void StartScene::SingleScene(Ref *pSender, ui::Widget::TouchEventType type)
 {
 	if (type == ui::Widget::TouchEventType::ENDED)
 	{
-		AudioControl::playClickEffect();
+		AudioControl::playClickEffect(); 
 		auto scene = SingleScene::createScene();
-		Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
+		Director::sharedDirector()->replaceScene(TransitionZoomFlipX::create(0.5, scene));
 	}
 }
 
@@ -97,10 +100,9 @@ void StartScene::NetScene(Ref *pSender, ui::Widget::TouchEventType type)
 	if (type == ui::Widget::TouchEventType::ENDED)
 	{
 		AudioControl::playClickEffect();
-		//auto scene = OnlineScene::createScene();
-		//Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
-		//MessageBox("coming soon ...","Info");
-		MessageBox("即将上线，敬请期待 ...", "信息");
+		auto scene = OnlineScene::createScene();
+		Director::sharedDirector()->replaceScene(TransitionZoomFlipX::create(0.5, scene));
+		//MessageBox("即将上线，敬请期待 ...", "信息");
 	}
 	
 }
@@ -110,7 +112,7 @@ void StartScene::RankScene(Ref *pSender, ui::Widget::TouchEventType type)
 	if (type == ui::Widget::TouchEventType::ENDED)
 	{
 		auto scene = RankScene::createScene();
-		Director::sharedDirector()->replaceScene(scene);
+		Director::sharedDirector()->replaceScene(TransitionFadeUp::create(0.5f, scene));
 	}
 }
 
@@ -119,7 +121,7 @@ void StartScene::SetScene(Ref *pSender, ui::Widget::TouchEventType type)
 	if (type == ui::Widget::TouchEventType::ENDED)
 	{
 		auto scene = SetScene::createScene();
-		Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(1.0, scene, false));
+		Director::sharedDirector()->replaceScene(scene);
 	}
 }
 
@@ -158,7 +160,7 @@ void StartScene::multiOpenAct()
 		this->removeChildByName("vsup");
 		this->removeChildByName("vscenter");
 		auto scene = MultiScene::createScene();
-		Director::sharedDirector()->replaceScene(TransitionFadeUp::create(1.0f, scene));
+		Director::sharedDirector()->replaceScene(scene);
 
 	});
 	CCFiniteTimeAction * seq = CCSequence::create(easeElasticOut, rmdelay, funcall, NULL);
@@ -187,7 +189,46 @@ void StartScene::DManualScene(Ref *pSender, ui::Widget::TouchEventType type)
 	}
 }
 
+void StartScene::openSceneAnimation()
+{
+	if (MCUtil::m_flag_openscene)
+	{
+		MCUtil::m_flag_openscene = false;
+		Size visibleSize = Director::getInstance()->getVisibleSize();
+		Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
+		auto opensceneSp = Sprite::create();
+		opensceneSp->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2);
+		opensceneSp->setName("openscene");
+		this->addChild(opensceneSp, 4);
 
+	/*	SpriteFrameCache *m_frameCache = SpriteFrameCache::sharedSpriteFrameCache();
+		m_frameCache->addSpriteFramesWithFile("Start/openscene.plist", "Start/openscene.png");
+		Vector<SpriteFrame*> frameArray;
+		for (unsigned int i = 1; i <= 7; i++)
+		{
+			SpriteFrame* frame = m_frameCache->spriteFrameByName(String::createWithFormat("openScene_%d.png", i)->getCString());
+			frameArray.pushBack(frame);
+		}
+		Animation* animation = Animation::createWithSpriteFrames(frameArray);*/
 
+		auto animation = Animation::create();
+		for (int i = 1; i < 30; i++)
+		{
+			animation->addSpriteFrameWithFile(String::createWithFormat("Start/openScene_%d.png", i)->getCString());
+		}
+		animation->setLoops(1);
+		animation->setDelayPerUnit(0.1f);
 
+		Animate *openScene_act = Animate::create(animation);
+
+		CCCallFunc * funcall = CCCallFunc::create([&](){
+			this->removeChildByName("openscene");
+			AudioControl::playBgMusic(LOGIN);
+		});
+
+		CCFiniteTimeAction * seq = CCSequence::create(openScene_act, funcall, NULL);
+		opensceneSp->runAction(seq);
+	}
+
+}

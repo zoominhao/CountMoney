@@ -35,14 +35,18 @@ bool MultiScene::init()
 	//add background image
 	setBgImage();
 
+
+
 	//target num
 	srand((unsigned)time(NULL));
-	int x = rand() % 30;
-	m_targetNum = x * 100 + 5000;
-	if (MCManual::novice[3])
+	//int x = rand() % 30;
+	//m_targetNum = x * 100 + 5000;
+	/*if (MCManual::novice[3])
 	{
 		m_targetNum = 7000;
-	}
+	}*/
+	m_targetNum = 7000;
+
 	char targetNumStr[30];
 	sprintf(targetNumStr, " %d", m_targetNum);
 	addTargetNumLabel(1, targetNumStr);
@@ -79,6 +83,48 @@ bool MultiScene::init()
 
 	addCurScore();
 	addPlayerName2();
+
+
+
+	//飘字
+	m_flyWord[0][0] = FlyWord::create("flyword/+100.png", 0.5, Vec2(origin.x + visibleSize.width/2 - 100, origin.y + visibleSize.height / 2 - 300), 25);
+	this->addChild(m_flyWord[0][0], 2);
+	m_flyWord[0][1] = FlyWord::create("flyword/+200.png", 0.5, Vec2(origin.x + visibleSize.width / 2 - 100, origin.y + visibleSize.height / 2 - 300), 25);
+	this->addChild(m_flyWord[0][1], 2);
+	m_flyWord[0][2] = FlyWord::create("flyword/-300.png", 0.5, Vec2(origin.x + visibleSize.width / 2 - 100, origin.y + visibleSize.height / 2 - 300), 25);
+	this->addChild(m_flyWord[0][2], 2);
+	m_flyWord[0][3] = FlyWord::create("flyword/-500.png", 0.5, Vec2(origin.x + visibleSize.width / 2 - 100, origin.y + visibleSize.height / 2 - 300), 25);
+	this->addChild(m_flyWord[0][3], 2);
+
+	m_flyWord[1][0] = FlyWord::create("flyword/+100.png", 0.5, Vec2(origin.x + visibleSize.width / 2 + 100, origin.y + visibleSize.height / 2 + 300), -25);
+	m_flyWord[1][0]->setRotation(180);
+	this->addChild(m_flyWord[1][0], 2);
+	m_flyWord[1][1] = FlyWord::create("flyword/+200.png", 0.5, Vec2(origin.x + visibleSize.width / 2 + 100, origin.y + visibleSize.height / 2 + 300), -25);
+	m_flyWord[1][1]->setRotation(180);
+	this->addChild(m_flyWord[1][1], 2);
+	m_flyWord[1][2] = FlyWord::create("flyword/-300.png", 0.5, Vec2(origin.x + visibleSize.width / 2 + 100, origin.y + visibleSize.height / 2 + 300), -25);
+	m_flyWord[1][2]->setRotation(180);
+	this->addChild(m_flyWord[1][2], 2);
+	m_flyWord[1][3] = FlyWord::create("flyword/-500.png", 0.5, Vec2(origin.x + visibleSize.width / 2 + 100, origin.y + visibleSize.height / 2 + 300), -25);
+	this->addChild(m_flyWord[1][3], 2);
+
+	//鼓励文字
+	for (int i = 0; i < 6; ++i)
+	{
+		m_zoomingWord[0][i] = ZoomingWord::create(String::createWithFormat("encourage/encourage_%d.png", i + 1)->getCString(),
+			Vec2(origin.x + visibleSize.width / 2 - 200, origin.y + visibleSize.height / 2 - 200));
+		m_zoomingWord[0][i]->setScale(0.8);
+		this->addChild(m_zoomingWord[0][i], 2);
+
+		m_zoomingWord[1][i] = ZoomingWord::create(String::createWithFormat("encourage/encourage_%d.png", i + 1)->getCString(),
+			Vec2(origin.x + visibleSize.width / 2 + 200, origin.y + visibleSize.height / 2 + 200));
+		m_zoomingWord[1][i]->setScale(0.8);
+		m_zoomingWord[1][i]->setRotation(180);
+		this->addChild(m_zoomingWord[1][i], 2);
+	}
+
+	m_p1GoodCount = 0;
+	m_p2GoodCount = 0;
 
 	//播放背景音乐
 	AudioControl::stopBGMusic();
@@ -117,7 +163,6 @@ bool MultiScene::init()
 	{
 		manualAct1();
 	}
-
 	return true;
 }
 
@@ -129,18 +174,6 @@ void MultiScene::setBgImage()
 	auto bgSprite = Sprite::create("multi/multi_bg.png");
 	bgSprite->setPosition(ccp(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
 	this->addChild(bgSprite, 0);
-
-	//line
-	auto lineSprite = Sprite::create("multi/line.png");
-	lineSprite->setPosition(ccp(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
-	this->addChild(lineSprite, 0);
-
-	//vs
-	auto vsSprite = Sprite::create("multi/VS.png");
-	vsSprite->setScale(1.5f);
-	vsSprite->setPosition(ccp(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
-	this->addChild(vsSprite, 0);
-
 }
 
 
@@ -190,7 +223,6 @@ void MultiScene::onTouchesBegan(const std::vector<Touch*>& touches, Event* event
 				randNewSingleMoney(2);
 			}
 		}
-
 	}
 
 }
@@ -420,18 +452,18 @@ void MultiScene::addTargetNumLabel(int whichPlayer, const char* str)
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	
-	auto label = Label::createWithTTF(str, "fonts/Marker Felt.ttf", 40);
-	auto sprite = Sprite::create("multi/target.png");
+	auto label = Label::createWithTTF(str, "fonts/DTLNobelT-Bold.otf", 35);
+	auto sprite = Sprite::create("multi/multi_target.png");
 	if (whichPlayer == 1)  
 	{
-		label->setPosition(origin.x + visibleSize.width / 2 + 250, origin.y + visibleSize.height / 2 - 75);
-		sprite->setPosition(origin.x + visibleSize.width / 2 + 230, origin.y + visibleSize.height / 2 - 70);
+		label->setPosition(origin.x + visibleSize.width / 2 - 120, origin.y + visibleSize.height / 2 - 40);
+		sprite->setPosition(origin.x + visibleSize.width / 2 - 235, origin.y + visibleSize.height / 2 - 40);
 	}
 	else
 	{
-		label->setPosition(origin.x + visibleSize.width / 2 - 250, origin.y + visibleSize.height / 2 + 75);
+		label->setPosition(origin.x + visibleSize.width / 2 + 120, origin.y + visibleSize.height / 2 + 40);
 		label->setRotation(180);
-		sprite->setPosition(origin.x + visibleSize.width / 2 - 230, origin.y + visibleSize.height / 2 + 70);
+		sprite->setPosition(origin.x + visibleSize.width / 2 + 235, origin.y + visibleSize.height / 2 + 40);
 		sprite->setRotation(180);
 	}
 	
@@ -449,30 +481,40 @@ void MultiScene::addCurScore()
 	char scoreStr1[10], scoreStr2[10];
 	sprintf(scoreStr1, "%d", m_player1->totalMoneyNum());
 	sprintf(scoreStr2, "%d", m_player2->totalMoneyNum());
-	
 
-	m_p1Label1 = Label::createWithTTF(scoreStr1, "fonts/Marker Felt.ttf", 40);
-	m_p1Label2 = Label::createWithTTF(scoreStr2, "fonts/Marker Felt.ttf", 30);
-	m_p1Label1->setPosition(origin.x + visibleSize.width / 2 - 60, origin.y + visibleSize.height / 2 - 40);
-	m_p1Label2->setPosition(origin.x + visibleSize.width / 2 + 60, origin.y + visibleSize.height / 2 - 40);
-	
-	m_p2Label1 = Label::createWithTTF(scoreStr1, "fonts/Marker Felt.ttf", 30);
-	m_p2Label2 = Label::createWithTTF(scoreStr2, "fonts/Marker Felt.ttf", 40);
+
+	m_p1Label1 = Label::createWithTTF(scoreStr1, "fonts/DTLNobelT-Bold.otf", 30);
+	m_p1Label2 = Label::createWithTTF(scoreStr2, "fonts/DTLNobelT-Bold.otf", 30);
+	m_p1Label1->setPosition(origin.x + visibleSize.width / 2 + 190, origin.y + visibleSize.height / 2 - 40);
+	m_p1Label2->setPosition(origin.x + visibleSize.width / 2 + 280, origin.y + visibleSize.height / 2 - 40);
+
+	m_p2Label1 = Label::createWithTTF(scoreStr1, "fonts/DTLNobelT-Bold.otf", 30);
+	m_p2Label2 = Label::createWithTTF(scoreStr2, "fonts/DTLNobelT-Bold.otf", 30);
 	m_p2Label1->setRotation(180);
 	m_p2Label2->setRotation(180);
-	m_p2Label1->setPosition(origin.x + visibleSize.width / 2 - 60, origin.y + visibleSize.height / 2 + 40);
-	m_p2Label2->setPosition(origin.x + visibleSize.width / 2 + 60, origin.y + visibleSize.height / 2 + 40);
+	m_p2Label1->setPosition(origin.x + visibleSize.width / 2 - 280, origin.y + visibleSize.height / 2 + 40);
+	m_p2Label2->setPosition(origin.x + visibleSize.width / 2 - 190, origin.y + visibleSize.height / 2 + 40);
 
-	m_p1Label1->setColor(Color3B(151.0, 36.0, 9.0));
-	m_p1Label2->setColor(Color3B(39.0, 93.0, 139.0));
-	m_p2Label1->setColor(Color3B(151.0, 36.0, 9.0));
-	m_p2Label2->setColor(Color3B(39.0, 93.0, 139.0));
-	
+	m_p1Label1->setColor(Color3B(255, 255, 255));
+	m_p1Label2->setColor(Color3B(255, 255, 255));
+	m_p2Label1->setColor(Color3B(255, 255, 255));
+	m_p2Label2->setColor(Color3B(255, 255, 255));
+
+	Label *m_label3 = Label::createWithTTF(":", "fonts/DTLNobelT-Bold.otf", 40);
+	m_label3->setPosition(origin.x + visibleSize.width / 2 + 235, origin.y + visibleSize.height / 2 - 40);
+	Label *m_label4 = Label::createWithTTF(":", "fonts/DTLNobelT-Bold.otf", 40);
+	m_label4->setPosition(origin.x + visibleSize.width / 2 - 235, origin.y + visibleSize.height / 2 + 40);
+	m_label3->setColor(Color3B(255, 255, 255));
+	m_label4->setColor(Color3B(255, 255, 255));
+
 
 	this->addChild(m_p1Label1, 1);
 	this->addChild(m_p1Label2, 1);
 	this->addChild(m_p2Label1, 1);
 	this->addChild(m_p2Label2, 1);
+	this->addChild(m_label3, 2);
+	this->addChild(m_label4, 2);
+
 }
 
 void MultiScene::changeCurScore(int whichPlayer)
@@ -501,14 +543,14 @@ void MultiScene::update(float dt)
 		Director::sharedDirector()->pushScene(scene);
 		this->unscheduleUpdate();
 	}
-	if (m_player1->totalMoneyNum() == m_targetNum)
+	if (m_player1->totalMoneyNum() >= m_targetNum)
 	{
 		auto scene = MultiEndScene::createScene("1");
 		Director::sharedDirector()->pushScene(scene);
 		this->unscheduleUpdate();
 	}
 
-	if (m_player2->totalMoneyNum() == m_targetNum)
+	if (m_player2->totalMoneyNum() >= m_targetNum)
 	{
 		auto scene = MultiEndScene::createScene("-1");
 		Director::sharedDirector()->pushScene(scene);
@@ -520,7 +562,7 @@ void MultiScene::returnCallback(cocos2d::Ref* pSender)
 {
 	AudioControl::stopBGMusic();
 	auto scene = StartScene::createScene();
-	Director::getInstance()->replaceScene(scene);
+	Director::getInstance()->replaceScene(CCTransitionZoomFlipX::create(0.5, scene, TransitionScene::Orientation::LEFT_OVER));
 }
 
 void MultiScene::pauseCallback(cocos2d::Ref* pSender)
@@ -580,16 +622,17 @@ void MultiScene::addGateWay()
 
 	//gateway 1
 	m_gateWay1 = Sprite::create("multi/gateway.png");
-	m_gateWay1->setScale(0.7);
-	m_gateWay1->setRotation(180);
-	m_gateWay1->setPosition(Vec2(origin.x + visibleSize.width - 60, origin.y + visibleSize.height / 2 - 350));
+	m_gateWay1->setScale(1);
+	m_gateWay1->setRotation(0);
+	m_gateWay1->setPosition(Vec2(origin.x + visibleSize.width - 90, origin.y + visibleSize.height / 2 - 350));
 	this->addChild(m_gateWay1, 1);
-	
+
 
 	//gateway 2
 	m_gateWay2 = Sprite::create("multi/gateway.png");
-	m_gateWay2->setScale(0.7);
-	m_gateWay2->setPosition(Vec2(origin.x + 60, origin.y + visibleSize.height - 150));
+	m_gateWay2->setScale(1);
+	m_gateWay2->setRotation(180);
+	m_gateWay2->setPosition(Vec2(origin.x + 90, origin.y + visibleSize.height - 150));
 	this->addChild(m_gateWay2, 1);
 }
 
@@ -599,19 +642,34 @@ void MultiScene::addWallet()
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
 	//wallet 1
-	m_wallet1 = Sprite::create("multi/wallet.png");
-	m_wallet1->setRotation(90);
-	m_wallet1->setScale(0.7);
-	m_wallet1->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 - 120));
+	m_wallet1 = Sprite::create("multi/person.png");
+	m_wallet1->setScale(1);
+	m_wallet1->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 - 100));	
 	this->addChild(m_wallet1, 0);
 
+	Sprite *m_icon1 = Sprite::create("multi/person_icon.png");
+	m_icon1->setPosition(Vec2(origin.x + visibleSize.width / 2 + 120, origin.y + visibleSize.height / 2 - 40));
+	this->addChild(m_icon1, 1);
+
+	Sprite *m_icon2 = Sprite::create("multi/duck_icon.png");
+	m_icon2->setPosition(Vec2(origin.x + visibleSize.width / 2 + 350, origin.y + visibleSize.height / 2 - 40));
+	this->addChild(m_icon2, 1);
 
 	//wallet 2
-	m_wallet2 = Sprite::create("multi/wallet.png");
-	m_wallet2->setRotation(270);
-	m_wallet2->setScale(0.7);
-	m_wallet2->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 + 120));
+	m_wallet2 = Sprite::create("multi/duck.png");
+	m_wallet2->setScale(1);
+	m_wallet2->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 + 90));
 	this->addChild(m_wallet2, 0);
+
+	Sprite *m_icon3 = Sprite::create("multi/duck_icon.png");
+	m_icon3->setPosition(Vec2(origin.x + visibleSize.width / 2 - 120, origin.y + visibleSize.height / 2 + 40));
+	m_icon3->setRotation(180);
+	this->addChild(m_icon3, 1);
+
+	Sprite *m_icon4 = Sprite::create("multi/person_icon.png");
+	m_icon4->setPosition(Vec2(origin.x + visibleSize.width / 2 - 350, origin.y + visibleSize.height / 2 + 40));
+	m_icon4->setRotation(180);
+	this->addChild(m_icon4, 1);
 	
 }
 
@@ -718,6 +776,28 @@ void MultiScene::giveOpponent(MCDirection direction, Vec2 location, int whichPla
 		isInvincible = m_p1Status[5];
 	}
 
+	if (curType == Real_100_S || curType == Tool_5_S || curType == Tool_6_S || ((curType == Tool_2_S) && m_p1Status[1]))
+	{
+		if (whichPlayer == 1)
+			m_p1GoodCount = 0;
+		if (whichPlayer == 2)
+			m_p2GoodCount = 0;
+	}
+
+
+	if (curType == Tool_1_S || curType == Tool_3_S || curType == Tool_4_S || ((curType == Tool_2_S) && !m_p1Status[1]))
+	{
+		if (whichPlayer == 1)
+			m_p1GoodCount++;
+		if (whichPlayer == 2)
+			m_p2GoodCount++;
+
+		encourageEffect(whichPlayer);
+	}
+
+	triggerFlash(whichPlayer);
+
+
 	switch (direction)
 	{
 	case UP:
@@ -752,37 +832,37 @@ void MultiScene::giveOpponent(MCDirection direction, Vec2 location, int whichPla
 	case Tool_1_S:
 		if (!isInvincible)
 		{
-			AudioControl::playBufferEffect();
+			AudioControl::playTool1Effect();
 			halfSmoke(whichPlayer % 2 + 1);
 		}
 		break;
 	case Tool_2_S:
 		if (!isInvincible)
 		{
-			AudioControl::playDebufferEffect();
+			AudioControl::playTool2Effect();
 			changePos(whichPlayer % 2 + 1);
 		}
 		break;
 	case Tool_3_S:
 		if (!isInvincible)
 		{
-			AudioControl::playBufferEffect();
+			AudioControl::playTool3Effect();
 			increaseWeight(whichPlayer % 2 + 1);
 		}
 		break;
 	case Tool_4_S:
 		if (!isInvincible)
 		{
-			AudioControl::playDebufferEffect();
-			triggerPoor(whichPlayer % 2 + 1);
+			AudioControl::playTool4Effect();
+			triggerPoor(whichPlayer % 2 + 1, PoorOtherNum);
 		}
 		break;
 	case Tool_5_S:
-		AudioControl::playBufferEffect();
+		AudioControl::playTool5Effect();
 		triggerRich(whichPlayer % 2 + 1);
 		break;
 	case Tool_6_S:
-		AudioControl::playBufferEffect();
+		AudioControl::playTool6Effect();
 		triggerInvincible(whichPlayer % 2 + 1);
 		break;
 
@@ -792,6 +872,29 @@ void MultiScene::giveOpponent(MCDirection direction, Vec2 location, int whichPla
 
 }
 
+void MultiScene::triggerFlash(int whichPlayer)
+{
+	if (whichPlayer == 1)
+	{
+		m_gateWay1->setTexture("multi/gateway_light.png");
+		ActionInterval* delaytime = DelayTime::create(0.2f);
+		CallFunc * funcall = CallFunc::create([&](){
+			m_gateWay1->setTexture("multi/gateway.png");
+		});
+		FiniteTimeAction * seq = Sequence::create(delaytime, funcall, NULL);
+		m_gateWay1->runAction(seq);
+	}
+	if (whichPlayer == 2)
+	{
+		m_gateWay2->setTexture("multi/gateway_light.png");
+		ActionInterval* delaytime = DelayTime::create(0.2f);
+		CallFunc * funcall = CallFunc::create([&](){
+			m_gateWay2->setTexture("multi/gateway.png");
+		});
+		FiniteTimeAction * seq = Sequence::create(delaytime, funcall, NULL);
+		m_gateWay2->runAction(seq);
+	}
+}
 
 void MultiScene::throwTrashCan(MCDirection direction, Vec2 location, int whichPlayer)
 {
@@ -846,6 +949,24 @@ void MultiScene::giveMyself(MCDirection direction, Vec2 location, int whichPlaye
 		isInvincible = m_p2Status[5];
 	}
 
+	if (curType == Real_100_S || curType == Tool_5_S || curType == Tool_6_S || ((curType == Tool_2_S) && m_p1Status[1]))
+	{
+		if (whichPlayer == 1)
+			m_p1GoodCount++;
+		if (whichPlayer == 2)
+			m_p2GoodCount++;
+
+		encourageEffect(whichPlayer);
+	}
+
+	if (curType == Tool_1_S || curType == Tool_3_S || curType == Tool_4_S || ((curType == Tool_2_S) && !m_p1Status[1]))
+	{
+		if (whichPlayer == 1)
+			m_p1GoodCount = 0;
+		if (whichPlayer == 2)
+			m_p2GoodCount = 0;
+	}
+
 	switch (direction)
 	{
 	case UP:
@@ -876,9 +997,16 @@ void MultiScene::giveMyself(MCDirection direction, Vec2 location, int whichPlaye
 	{
 	case Real_100_S:
 		if (isDouble)
-			tmpPlayer->addTotalMoney(200);	
+		{
+			m_flyWord[whichPlayer - 1][1]->Flying();
+			tmpPlayer->addTotalMoney(200);
+		}
 		else
+		{
+			m_flyWord[whichPlayer - 1][0]->Flying();
 			tmpPlayer->addTotalMoney(100);
+		}
+			
 		break;
 	case Fake_100_S:
 		if (!isInvincible)
@@ -890,34 +1018,37 @@ void MultiScene::giveMyself(MCDirection direction, Vec2 location, int whichPlaye
 	case Tool_1_S:
 		if (!isInvincible)
 		{
-			AudioControl::playBufferEffect();
+			AudioControl::playTool1Effect();
 			halfSmoke(whichPlayer);
 		}
 		break;
 	case Tool_2_S:
 		if (!isInvincible)
 		{
-			AudioControl::playDebufferEffect();
+			AudioControl::playTool2Effect();
 			changePos(whichPlayer);
 		}
 		break;
 	case Tool_3_S:
-		AudioControl::playBufferEffect();
-		increaseWeight(whichPlayer); 
+		if (!isInvincible)
+		{
+			AudioControl::playTool3Effect();
+			increaseWeight(whichPlayer);
+		}
 		break;
 	case Tool_4_S:
 		if (!isInvincible)
 		{
-			AudioControl::playDebufferEffect();
-			triggerPoor(whichPlayer);
+			AudioControl::playTool4Effect();
+			triggerPoor(whichPlayer, PoorMeNum);
 		}
 		break;
 	case Tool_5_S:
-		AudioControl::playBufferEffect();
+		AudioControl::playTool5Effect();
 		triggerRich(whichPlayer);
 		break;
 	case Tool_6_S:
-		AudioControl::playBufferEffect();
+		AudioControl::playTool6Effect();
 		triggerInvincible(whichPlayer);
 		break;
 
@@ -943,16 +1074,11 @@ void MultiScene::halfSmoke(int whichHalf)
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
+	//添加效果
+	smokeEffect(whichHalf);
+
 	if (whichHalf == 1 && !m_p1Status[0])
 	{
-		//添加效果
-		CCSprite * sp = CCSprite::create("multi/smoke_effect.png");
-		Vec2 pos = Vec2(origin.x + visibleSize.width / 2 + 5, origin.y + sp->getContentSize().height / 2);
-		sp->setPosition(pos);
-		sp->setRotation(90);
-		sp->setScale(0.5);		
-		this->addChild(sp, 2, "smokeeffect1");
-
 		//添加状态
 		for (int i = 0; i < 6; i++)
 		{
@@ -975,14 +1101,6 @@ void MultiScene::halfSmoke(int whichHalf)
 	}
 	if (whichHalf == 2 && !m_p2Status[0])
 	{
-		//添加效果
-		CCSprite * sp = CCSprite::create("multi/smoke_effect.png");
-		Vec2 pos = Vec2(origin.x + visibleSize.width / 2 - 5, origin.y + visibleSize.height - sp->getContentSize().height / 2 - 1);
-		sp->setPosition(pos);
-		sp->setRotation(270);
-		sp->setScale(0.5);
-		this->addChild(sp, 2, "smokeeffect2");
-
 		//添加状态
 		for (int i = 0; i < 6; i++)
 		{
@@ -1006,7 +1124,6 @@ void MultiScene::halfSmoke(int whichHalf)
 
 void MultiScene::updateSmoke1(float time)
 {
-	this->removeChildByName("smokeeffect1");
 	this->removeChildByName("tool1_1");
 	m_p1Status[0] = false;
 	m_occupiedP1[m_p1Occupied[0]] = false;
@@ -1015,7 +1132,6 @@ void MultiScene::updateSmoke1(float time)
 
 void MultiScene::updateSmoke2(float time)
 {
-	this->removeChildByName("smokeeffect2");
 	this->removeChildByName("tool1_2");
 	m_p2Status[0] = false;
 	m_occupiedP2[m_p2Occupied[0]] = false;
@@ -1024,7 +1140,8 @@ void MultiScene::updateSmoke2(float time)
 
 void MultiScene::changePos(int whichHalf)
 {
-
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	if (whichHalf == 1)
 	{
 		if (m_p1Status[1])
@@ -1051,20 +1168,17 @@ void MultiScene::changePos(int whichHalf)
 			sprite1->setScale(0.3);
 			this->addChild(sprite1, 1, "tool2_1");
 		}
-		Vec2 gateWayPos = m_gateWay1->getPosition();
-		Vec2 walletPos = m_wallet1->getPosition();
-		m_gateWay1->setPosition(walletPos);
-		m_wallet1->setPosition(gateWayPos);
+
 		m_p1Status[1] = !m_p1Status[1];
 		if (m_p1Status[1])
 		{
-			m_gateWay1->setRotation(90);
-			m_wallet1->setRotation(180);
+			m_gateWay1->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 - 110));
+			m_wallet1->setPosition(Vec2(origin.x + visibleSize.width - 120, origin.y + visibleSize.height / 2 - 350));
 		}
 		else
 		{
-			m_gateWay1->setRotation(180);
-			m_wallet1->setRotation(90);
+			m_gateWay1->setPosition(Vec2(origin.x + visibleSize.width - 90, origin.y + visibleSize.height / 2 - 350));
+			m_wallet1->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 - 100));
 		}
 		
 		CCActionInterval * gateWayBlink = CCBlink::create(1, 2);
@@ -1100,20 +1214,18 @@ void MultiScene::changePos(int whichHalf)
 			this->addChild(sprite2, 1, "tool2_2");
 		}
 
-		Vec2 gateWayPos = m_gateWay2->getPosition();
-		Vec2 walletPos = m_wallet2->getPosition();
-		m_gateWay2->setPosition(walletPos);
-		m_wallet2->setPosition(gateWayPos);
 		m_p2Status[1] = !m_p2Status[1];
 		if (m_p2Status[1])
 		{
-			m_gateWay2->setRotation(270);
-			m_wallet2->setRotation(0);
+			m_gateWay2->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 + 120));
+			m_gateWay2->setRotation(180);
+			m_wallet2->setPosition(Vec2(origin.x + 120, origin.y + visibleSize.height - 150));
 		}
 		else
 		{
-			m_gateWay2->setRotation(0);
-			m_wallet2->setRotation(270);
+			m_gateWay2->setPosition(Vec2(origin.x + 90, origin.y + visibleSize.height - 150));
+			m_gateWay2->setRotation(180);
+			m_wallet2->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 + 90));
 		}
 
 		CCActionInterval * gateWayBlink = CCBlink::create(1, 2);
@@ -1132,10 +1244,10 @@ void MultiScene::increaseWeight(int whichHalf)
 	{
 		//添加效果
 		CCSprite * sp = CCSprite::create("multi/weight_effect.png");
-		Vec2 pos = Vec2(origin.x + visibleSize.width / 2 + 5, origin.y + sp->getContentSize().height / 2);
+		Vec2 pos = Vec2(origin.x + visibleSize.width / 2 + 20, origin.y + sp->getContentSize().height / 2 - 10);
 		sp->setPosition(pos);
 		sp->setRotation(90);
-		sp->setScale(0.5);
+		sp->setScale(0.8);
 		this->addChild(sp, 2, "weighteffect1");
 
 		//添加状态
@@ -1162,10 +1274,10 @@ void MultiScene::increaseWeight(int whichHalf)
 	{
 		//添加效果
 		CCSprite * sp = CCSprite::create("multi/weight_effect.png");
-		Vec2 pos = Vec2(origin.x + visibleSize.width / 2 - 5, origin.y + visibleSize.height - sp->getContentSize().height / 2 - 1);
+		Vec2 pos = Vec2(origin.x + visibleSize.width / 2 - 20, origin.y + visibleSize.height - sp->getContentSize().height / 2 + 10);
 		sp->setPosition(pos);
 		sp->setRotation(270);
-		sp->setScale(0.5);
+		sp->setScale(0.8);
 		this->addChild(sp, 2, "weighteffect2");
 
 		//添加状态
@@ -1207,13 +1319,15 @@ void MultiScene::updateWeight2(float time)
 	m_p2Occupied[2] = -1;
 }
 
-void MultiScene::triggerPoor(int whichHalf)
+void MultiScene::triggerPoor(int whichHalf, int minusScore)
 {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
 	if (whichHalf == 1 && !m_p1Status[3])
 	{
+		//添加效果
+		poorAnimation(1);
 		//添加状态
 		for (int i = 0; i < 6; i++)
 		{
@@ -1230,7 +1344,12 @@ void MultiScene::triggerPoor(int whichHalf)
 		this->addChild(sprite1, 1, "tool4_1");
 		m_p1Status[3] = true;
 
-		m_player1->addTotalMoney(PoorNum);
+		if (minusScore == -300)
+			m_flyWord[0][2]->Flying();
+		else if (minusScore == -500)
+			m_flyWord[0][3]->Flying();
+		
+		m_player1->addTotalMoney(minusScore);
 		m_player1->changeTotalMoneyLabel();
 		changeCurScore(1);
 		scheduleOnce(schedule_selector(MultiScene::updatePoor1), 1.0f);
@@ -1238,6 +1357,8 @@ void MultiScene::triggerPoor(int whichHalf)
 	}
 	if (whichHalf == 2 && !m_p2Status[3])
 	{
+		//添加效果
+		poorAnimation(2);
 		//添加状态
 		for (int i = 0; i < 6; i++)
 		{
@@ -1255,7 +1376,12 @@ void MultiScene::triggerPoor(int whichHalf)
 		this->addChild(sprite2, 1, "tool4_2");
 
 		m_p2Status[3] = true;
-		m_player2->addTotalMoney(PoorNum);
+		if (minusScore == -300)
+			m_flyWord[1][2]->Flying();
+		else if (minusScore == -500)
+			m_flyWord[1][3]->Flying();
+
+		m_player2->addTotalMoney(minusScore);
 		m_player2->changeTotalMoneyLabel();
 		changeCurScore(2);
 		scheduleOnce(schedule_selector(MultiScene::updatePoor2), 1.0f);
@@ -1285,6 +1411,8 @@ void MultiScene::triggerRich(int whichHalf)
 
 	if (whichHalf == 1 && !m_p1Status[4])
 	{
+		//添加效果
+		richAnimation(1);
 		//添加状态
 		for (int i = 0; i < 6; i++)
 		{
@@ -1306,6 +1434,8 @@ void MultiScene::triggerRich(int whichHalf)
 	}
 	if (whichHalf == 2 && !m_p2Status[4])
 	{
+		//添加效果
+		richAnimation(2);
 		//添加状态
 		for (int i = 0; i < 6; i++)
 		{
@@ -1350,6 +1480,8 @@ void MultiScene::triggerInvincible(int whichHalf)
 
 	if (whichHalf == 1 && !m_p1Status[5])
 	{
+		//添加效果
+		invincibleAnimation(1);
 		//添加状态
 		for (int i = 0; i < 6; i++)
 		{
@@ -1371,6 +1503,8 @@ void MultiScene::triggerInvincible(int whichHalf)
 	}
 	if (whichHalf == 2 && !m_p2Status[5])
 	{
+		//添加效果
+		invincibleAnimation(2);
 		//添加状态
 		for (int i = 0; i < 6; i++)
 		{
@@ -1454,8 +1588,8 @@ void MultiScene::addPlayerName()
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
 
-	auto pname1 = Label::createWithTTF("player1", "fonts/Marker Felt.ttf", 40);
-	auto pname2 = Label::createWithTTF("player2", "fonts/Marker Felt.ttf", 40);
+	auto pname1 = Label::createWithTTF("player1", "fonts/DTLNobelT-Bold.otf", 40);
+	auto pname2 = Label::createWithTTF("player2", "fonts/DTLNobelT-Bold.otf", 40);
 
 	pname1->setPosition(origin.x + 60, origin.y + 40);
 	pname2->setPosition(origin.x + visibleSize.width - 60, origin.y + visibleSize.height - 40);
@@ -1478,10 +1612,19 @@ void MultiScene::addPlayerName2()
 	pname1->setPosition(origin.x + 60, origin.y + 40);
 	this->addChild(pname1, 1);
 
+	auto pnameicon1 = Sprite::create("multi/person_icon.png");
+	pnameicon1->setPosition(origin.x + 155, origin.y + 40);
+	this->addChild(pnameicon1, 1);
+
+
 	auto pname2 = Sprite::create("multi/player2.png");
 	pname2->setPosition(origin.x + visibleSize.width - 60, origin.y + visibleSize.height - 40);
-	pname2->setRotation(180);
 	this->addChild(pname2, 1);
+
+	auto pnameicon2 = Sprite::create("multi/duck_icon.png");
+	pnameicon2->setPosition(origin.x + visibleSize.width - 150, origin.y + visibleSize.height - 40);
+	pnameicon2->setRotation(180);
+	this->addChild(pnameicon2, 1);
 }
 
 void MultiScene::manualAct1()
@@ -1635,8 +1778,8 @@ void MultiScene::updateManualAct1(float time)
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	
 	CCSprite* target_frame = CCSprite::create("manual/redFrame.png");
-	target_frame->setPosition(origin.x + visibleSize.width / 2 + 230, origin.y + visibleSize.height / 2 - 70);
-	target_frame->setScale(1.1, 0.8);
+	target_frame->setPosition(origin.x + visibleSize.width / 2 - 180, origin.y + visibleSize.height / 2 - 40);
+	target_frame->setScale(1.0, 0.4);
 	this->addChild(target_frame, 5, "target_frame");
 
 	auto multi_tip5 = Sprite::create("manual/multiTip5.png");
@@ -1655,6 +1798,268 @@ void MultiScene::updateManualAct2(float time)
 	Director::sharedDirector()->replaceScene(CCTransitionPageTurn::create(0.5f, scene, false));
 }
 
+void MultiScene::smokeEffect(int whichHalf)
+{
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+	if (whichHalf == 1)
+	{
+		auto smokeLayer1 = Sprite::create("multi/cloud1.png");
+		smokeLayer1->setPosition(origin.x + visibleSize.width / 2 + 5, origin.y + smokeLayer1->getContentSize().height / 2);
+		this->addChild(smokeLayer1, 2, "smokeLayer1_1");
+
+		auto smokeLayer2 = Sprite::create("multi/cloud2.png");
+		smokeLayer2->setPosition(origin.x + visibleSize.width / 2 + 5, origin.y + smokeLayer1->getContentSize().height / 2);
+		this->addChild(smokeLayer2, 2, "smokeLayer1_2");
+
+		auto smokeLayer3 = Sprite::create("multi/cloud3.png");
+		smokeLayer3->setPosition(origin.x + visibleSize.width / 2 + 5, origin.y + smokeLayer1->getContentSize().height / 2);
+		this->addChild(smokeLayer3, 2, "smokeLayer1_3");
+
+		CCActionInterval* moveleft = CCMoveBy::create(2.5f, ccp(-30, 0));
+		CCActionInterval* fadeout = CCFadeOut::create(0.5f);
+
+		CCCallFunc * funcall = CCCallFunc::create([&](){
+			this->removeChildByName("smokeLayer1_1");
+			this->removeChildByName("smokeLayer1_2");
+			this->removeChildByName("smokeLayer1_3");
+			m_stageCount = 7;
+		});
+
+		CCFiniteTimeAction * seq = CCSequence::create(moveleft, fadeout, funcall, NULL);
+
+		smokeLayer2->runAction(seq);
+	}
+	if (whichHalf == 2)
+	{
+		auto smokeLayer1 = Sprite::create("multi/cloud1.png");
+		smokeLayer1->setPosition(origin.x + visibleSize.width / 2 - 5, origin.y + visibleSize.height - smokeLayer1->getContentSize().height / 2 - 1);
+		smokeLayer1->setRotation(180);
+		this->addChild(smokeLayer1, 2, "smokeLayer2_1");
+
+		auto smokeLayer2 = Sprite::create("multi/cloud2.png");
+		smokeLayer2->setPosition(origin.x + visibleSize.width / 2 - 5, origin.y + visibleSize.height - smokeLayer1->getContentSize().height / 2 - 1);
+		smokeLayer2->setRotation(180);
+		this->addChild(smokeLayer2, 2, "smokeLayer2_2");
+
+		auto smokeLayer3 = Sprite::create("multi/cloud3.png");
+		smokeLayer3->setPosition(origin.x + visibleSize.width / 2 - 5, origin.y + visibleSize.height - smokeLayer1->getContentSize().height / 2 - 1);
+		smokeLayer3->setRotation(180);
+		this->addChild(smokeLayer3, 2, "smokeLayer2_3");
+
+		CCActionInterval* moveright = CCMoveBy::create(2.5f, ccp(30, 0));
+		CCActionInterval* fadeout = CCFadeOut::create(0.5f);
+
+		CCCallFunc * funcall = CCCallFunc::create([&](){
+			this->removeChildByName("smokeLayer2_1");
+			this->removeChildByName("smokeLayer2_2");
+			this->removeChildByName("smokeLayer2_3");
+			m_stageCount = 7;
+		});
+
+		CCFiniteTimeAction * seq = CCSequence::create(moveright, fadeout, funcall, NULL);
+
+		smokeLayer2->runAction(seq);
+	}
+
+}
+
+void MultiScene::poorAnimation(int whichPlayer)
+{
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+	auto poorSp = Sprite::create();
+	if (whichPlayer == 1)
+	{
+		poorSp->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 - 250));
+		poorSp->setName("poorsp");
+	}
+	else
+	{
+		poorSp->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 + 250));
+		poorSp->setRotation(180);
+		poorSp->setName("poorsp");
+	}
+	this->addChild(poorSp, 1);
 
 
+	SpriteFrameCache *m_frameCache = SpriteFrameCache::sharedSpriteFrameCache();
+	m_frameCache->addSpriteFramesWithFile("multi/poor_animation.plist", "multi/poor_animation.png");
+	Vector<SpriteFrame*> frameArray;
+	for (unsigned int i = 1; i <= 12; i++)
+	{
+		SpriteFrame* frame = m_frameCache->spriteFrameByName(String::createWithFormat("poor_%d.png", i)->getCString());
+		frameArray.pushBack(frame);
+	}
 
+	Animation* animation = Animation::createWithSpriteFrames(frameArray);
+	animation->setLoops(1);             
+	animation->setDelayPerUnit(0.083f);
+
+	Animate* act = Animate::create(animation);
+
+	CCCallFunc * funcall = CCCallFunc::create([&](){
+		this->removeChildByName("poorsp");
+	});
+
+	CCFiniteTimeAction * seq = CCSequence::create(act, funcall, NULL);
+	poorSp->runAction(seq);
+}
+
+void MultiScene::invincibleAnimation(int whichPlayer)
+{
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+	auto invincibleSp = Sprite::create();
+	auto invincibleLightSp = Sprite::create("multi/engel_light.png");
+	auto invincibTipSp = Sprite::create("multi/invic_tip.png");
+
+	if (whichPlayer == 1)
+	{
+		invincibleSp->setPosition(Vec2(origin.x + visibleSize.width / 2 - 50, origin.y + visibleSize.height / 2 - 250));
+		invincibleSp->setScale(0.8);
+		invincibleLightSp->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 - 335));
+		invincibleLightSp->setScale(0.73, 0.9);
+		invincibTipSp->setPosition(Vec2(origin.x + visibleSize.width / 2 + 80, origin.y + visibleSize.height / 2 - 250));
+		invincibTipSp->setScale(0.8);
+	}
+	else
+	{
+		invincibleSp->setPosition(Vec2(origin.x + visibleSize.width / 2 + 50, origin.y + visibleSize.height / 2 + 250));
+		invincibleSp->setRotation(180);
+		invincibleSp->setScale(0.8);
+		invincibleLightSp->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 + 335));
+		invincibleLightSp->setScale(0.73, 0.9);
+		invincibleLightSp->setRotation(180);
+		invincibTipSp->setPosition(Vec2(origin.x + visibleSize.width / 2 - 80, origin.y + visibleSize.height / 2 + 250));
+		invincibTipSp->setRotation(180);
+		invincibTipSp->setScale(0.8);
+	}
+
+	invincibleSp->setName("invinciblesp");
+	invincibleLightSp->setName("invincibleLightsp");
+	invincibTipSp->setName("invincibTipsp");
+
+	this->addChild(invincibleSp, 1);
+	this->addChild(invincibleLightSp, 1);
+	this->addChild(invincibTipSp, 1);
+
+	SpriteFrameCache *m_frameCache = SpriteFrameCache::sharedSpriteFrameCache();
+	m_frameCache->addSpriteFramesWithFile("multi/invincible.plist", "multi/invincible.png");
+	Vector<SpriteFrame*> frameArray;
+	for (unsigned int i = 1; i <= 2; i++)
+	{
+		SpriteFrame* frame = m_frameCache->spriteFrameByName(String::createWithFormat("invincible_%d.png", i)->getCString());
+		frameArray.pushBack(frame);
+	}
+
+	Animation* animation = Animation::createWithSpriteFrames(frameArray);
+	animation->setLoops(10);
+	animation->setDelayPerUnit(0.2f);
+
+	Animate* act = Animate::create(animation);
+
+	CCCallFunc * funcall = CCCallFunc::create([&](){
+		this->removeChildByName("invinciblesp");
+		this->removeChildByName("invincibleLightsp");
+		this->removeChildByName("invincibTipsp");
+	});
+
+	CCFiniteTimeAction * seq = CCSequence::create(act, funcall, NULL);
+	invincibleSp->runAction(seq);
+}
+
+void MultiScene::richAnimation(int whichPlayer)
+{
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+	auto richSp = Sprite::create();
+	auto richNumSp = Sprite::create("multi/rich_rate.png");
+	richSp->setScale(0.5);
+	richNumSp->setScale(0.8);
+	if (whichPlayer == 1)
+	{
+		richSp->setPosition(Vec2(origin.x + visibleSize.width / 2 - 30, origin.y + visibleSize.height / 2 - 250));
+		richNumSp->setPosition(Vec2(origin.x + visibleSize.width / 2 + 30, origin.y + visibleSize.height / 2 - 250));
+	}
+	else
+	{
+		richSp->setPosition(Vec2(origin.x + visibleSize.width / 2 + 30, origin.y + visibleSize.height / 2 + 250));
+		richNumSp->setPosition(Vec2(origin.x + visibleSize.width / 2 - 30, origin.y + visibleSize.height / 2 + 250));
+		richSp->setRotation(180);
+		richNumSp->setRotation(180);
+	}
+
+	richSp->setName("richsp");
+	richNumSp->setName("richNumsp");
+
+	this->addChild(richSp, 1);
+	this->addChild(richNumSp, 1);
+
+
+	SpriteFrameCache *m_frameCache = SpriteFrameCache::sharedSpriteFrameCache();
+	m_frameCache->addSpriteFramesWithFile("multi/rich_animation.plist", "multi/rich_animation.png");
+	Vector<SpriteFrame*> frameArray;
+	for (unsigned int i = 1; i <= 13; i++)
+	{
+		SpriteFrame* frame = m_frameCache->spriteFrameByName(String::createWithFormat("rich_%d.png", i)->getCString());
+		frameArray.pushBack(frame);
+	}
+
+	Animation* animation = Animation::createWithSpriteFrames(frameArray);
+	animation->setLoops(2);
+	animation->setDelayPerUnit(0.154f);
+
+	Animate* act = Animate::create(animation);
+
+	CCCallFunc * funcall = CCCallFunc::create([&](){
+		this->removeChildByName("richsp");
+		this->removeChildByName("richNumsp");
+	});
+
+	CCFiniteTimeAction * seq = CCSequence::create(act, funcall, NULL);
+	richSp->runAction(seq);
+}
+
+void MultiScene::encourageEffect(int whichPlayer)
+{
+	int goodCount = m_p1GoodCount;
+	if (whichPlayer == 2)
+		goodCount = m_p2GoodCount;
+
+	if (goodCount == 4)
+	{
+		AudioControl::playEncourageEffect(COOL);
+		m_zoomingWord[whichPlayer-1][0]->Zooming();
+	}
+	else if (goodCount == 7)
+	{
+		AudioControl::playEncourageEffect(NICE);
+		m_zoomingWord[whichPlayer - 1][1]->Zooming();
+	}
+	else if (goodCount == 10)
+	{
+		AudioControl::playEncourageEffect(GREAT);
+		m_zoomingWord[whichPlayer - 1][2]->Zooming();
+	}
+	else if (goodCount == 13)
+	{
+		AudioControl::playEncourageEffect(ACE);
+		m_zoomingWord[whichPlayer - 1][3]->Zooming();
+	}
+	else if (goodCount == 16)
+	{
+		AudioControl::playEncourageEffect(EXCELLENT);
+		m_zoomingWord[whichPlayer - 1][4]->Zooming();
+	}
+	else if (goodCount % 4 == 0 && goodCount > 16)
+	{
+		AudioControl::playEncourageEffect(AWESOME);
+		m_zoomingWord[whichPlayer - 1][5]->Zooming();
+	}
+
+}

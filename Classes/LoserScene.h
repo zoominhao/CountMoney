@@ -4,6 +4,7 @@
 #include "cocos2d.h"
 #include "CMTimer.h"
 #include "Player.h"
+#include "FlyWord.h"
 
 
 USING_NS_CC;
@@ -51,6 +52,8 @@ private:
 	Sprite*  m_timerFrame;
 
 	bool     m_enabled;
+
+	FlyWord *m_flyword;
 };
 
 #endif // __LOSER_SCENE_H__

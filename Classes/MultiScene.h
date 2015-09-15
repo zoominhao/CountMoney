@@ -4,9 +4,12 @@
 #include "cocos2d.h"
 #include "Player.h"
 #include "MCUtil.h"
+#include "FlyWord.h"
+#include "ZoomingWord.h"
 
 #define WeightDis 250
-#define PoorNum  -300
+#define PoorMeNum  -500
+#define PoorOtherNum  -300
 
 USING_NS_CC;
 
@@ -53,6 +56,7 @@ private:
 
 
 	void giveOpponent(MCDirection direction, Vec2 location, int whichPlayer);
+	void triggerFlash(int whichPlayer);
 	void giveMyself(MCDirection direction, Vec2 location, int whichPlayer);
 	void throwTrashCan(MCDirection direction, Vec2 location, int whichPlayer);
 	void returnPos(Vec2 location, int whichPlayer);
@@ -62,6 +66,8 @@ private:
 	void updateSmoke1(float time);
 	void updateSmoke2(float time);
 
+	void smokeEffect(int whichHalf);
+
 	void changePos(int whichHalf);    //换位
 
 
@@ -69,17 +75,20 @@ private:
 	void updateWeight1(float time);
 	void updateWeight2(float time);
 	
-	void triggerPoor(int whichHalf);   //穷神
+	void triggerPoor(int whichHalf, int minusScore);   //穷神
 	void updatePoor1(float time);
 	void updatePoor2(float time);
+	void poorAnimation(int whichPlayer);
 
 	void triggerRich(int whichHalf);   //土豪卡
 	void updateRich1(float time);
 	void updateRich2(float time);
+	void richAnimation(int whichPlayer);
 
 	void triggerInvincible(int whichHalf);  //无敌卡
 	void updateInvincible1(float time);
 	void updateInvincible2(float time);
+	void invincibleAnimation(int whichPlayer);
 
 	void initStatus();
 
@@ -92,6 +101,9 @@ private:
 	void manualAct5();
 	void updateManualAct1(float time);
 	void updateManualAct2(float time);
+
+	//encourage effect
+	void encourageEffect(int whichPlayer);
 
 private:
 	Vec2 _sP1Pos;
@@ -125,6 +137,7 @@ private:
 	//
 	Sprite*  m_gateWay1;
 	Sprite*  m_gateWay2;
+
 	Sprite*  m_wallet1;
 	Sprite*  m_wallet2;
 
@@ -154,6 +167,12 @@ private:
 
 	//manual
 	int m_stageCount;
+
+	FlyWord* m_flyWord[2][4];
+
+	ZoomingWord* m_zoomingWord[2][6];
+	int    m_p1GoodCount;
+	int    m_p2GoodCount;
 
 };
 #endif

@@ -23,7 +23,7 @@ void CMTimer::createLabel(Vec2 pos, Player* pyr, int sceneMode)
 {
 	char totalTimeStr[10];
 	sprintf(totalTimeStr, "%4.2f", m_totaltime);
-	m_timerLabel = Label::createWithTTF(totalTimeStr, "fonts/Marker Felt.ttf", 60);
+	m_timerLabel = Label::createWithTTF(totalTimeStr, "fonts/DTLNobelT-Bold.otf", 50);
 	
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
@@ -81,21 +81,21 @@ void CMTimer::switchScene()
 	if (m_sceneMode == 1)
 	{
 		AudioControl::stopBGMusic();
-		sprintf(displayStr, "Score: %d", m_player_status->totalMoneyNum());
+		sprintf(displayStr, "%d", m_player_status->totalMoneyNum());
 		scene = LoserEndScene::createScene(displayStr, m_player_status->totalMoneyNum());
 		AudioControl::playOverEffect();
 	}
 	else if (m_sceneMode == 2)
 	{
 		AudioControl::stopBGMusic();
-		sprintf(displayStr, "Score: %d", m_player_status->totalMoneyNum());
+		sprintf(displayStr, "%d", m_player_status->totalMoneyNum());
 		scene = TellerEndScene::createScene(displayStr, m_player_status->totalMoneyNum());
 		AudioControl::playOverEffect();
 	}
 	else if (m_sceneMode == 3)
 	{
 		AudioControl::stopBGMusic();
-		sprintf(displayStr, "Fail In Level %d ", m_player_status->stageNum() + 1);
+		sprintf(displayStr, "%d ", m_player_status->stageNum() + 1);
 		scene = EndlessEndScene::createScene(displayStr, m_player_status->stageNum() + 1);
 		AudioControl::playEndlessEffect(false);
 	}

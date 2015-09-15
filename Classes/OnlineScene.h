@@ -1,4 +1,3 @@
-/*
 #ifndef __ONLINE_SCENE_H__
 #define __ONLINE_SCENE_H__
 
@@ -10,7 +9,7 @@
 
 USING_NS_CC;
 
-class OnlineScene : public Layer, public WebClientMethod
+class OnlineScene : public Layer
 {
 public:
 	static Scene* createScene();
@@ -18,12 +17,12 @@ public:
 	CREATE_FUNC(OnlineScene);
 
 	//联网响应事件
-	virtual void onFight(MCFIGHT  fight_event, bool toMe);
+	/*virtual void onFight(MCFIGHT  fight_event, bool toMe);
 	virtual void onOpponentExit();
 	virtual void onMatch();
 	virtual void onWait();
 	virtual void onStart();
-	virtual void onError(const std::string message);
+	virtual void onError(const std::string message);*/
 
 private:
 	void setBgImage();
@@ -44,11 +43,11 @@ private:
 	void createVS();
 	void changeMeVS();
 	void changeUVS();
-	void sendFight(MCFIGHT fight_type);
-	void startConnect();
-	void closeConnection();
+	//void sendFight(MCFIGHT fight_type);
+	//void startConnect();
+	//void closeConnection();
 
-	void timetest(float time);
+	//void timetest(float time);
 
 private:
 	Vec2 _spos;
@@ -75,4 +74,3 @@ private:
 };
 
 #endif // __ONLINE_SCENE_H__
-*/

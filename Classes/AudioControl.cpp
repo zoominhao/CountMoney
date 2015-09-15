@@ -23,8 +23,7 @@ void AudioControl::preLoad()
 	SimpleAudioEngine::sharedEngine()->preloadEffect(CCFileUtils::sharedFileUtils()->fullPathForFilename(READY_EFFECT).c_str());
 	SimpleAudioEngine::sharedEngine()->preloadEffect(CCFileUtils::sharedFileUtils()->fullPathForFilename(ENDLESS_WIN_EFFECT).c_str());
 	SimpleAudioEngine::sharedEngine()->preloadEffect(CCFileUtils::sharedFileUtils()->fullPathForFilename(ENDLESS_LOSE_EFFECT).c_str());
-	SimpleAudioEngine::sharedEngine()->preloadEffect(CCFileUtils::sharedFileUtils()->fullPathForFilename(BUFFER_EFFECT).c_str());
-	SimpleAudioEngine::sharedEngine()->preloadEffect(CCFileUtils::sharedFileUtils()->fullPathForFilename(DEBUFFER_EFFECT).c_str());
+
 }
 
 
@@ -104,22 +103,6 @@ int AudioControl::playReadyEffect()
 }
 
 
-int AudioControl::playBufferEffect()
-{
-	if (isEffectStopped)
-		return -1;
-	int id = SimpleAudioEngine::sharedEngine()->playEffect(CCFileUtils::sharedFileUtils()->fullPathForFilename(BUFFER_EFFECT).c_str(), false);
-	return id;
-}
-
-int AudioControl::playDebufferEffect()
-{
-	if (isEffectStopped)
-		return -1;
-	int id = SimpleAudioEngine::sharedEngine()->playEffect(CCFileUtils::sharedFileUtils()->fullPathForFilename(DEBUFFER_EFFECT).c_str(), false);
-	return id;
-}
-
 
 int AudioControl::playEndlessEffect(bool flag)
 {
@@ -164,4 +147,87 @@ void AudioControl::stopMCEffects()
 void AudioControl::stopBGMusic()
 {
 	SimpleAudioEngine::sharedEngine()->stopBackgroundMusic();
+}
+
+int AudioControl::playTool1Effect()
+{
+	if (isEffectStopped)
+		return -1;
+	int id = SimpleAudioEngine::sharedEngine()->playEffect(CCFileUtils::sharedFileUtils()->fullPathForFilename(TOOL1_EFFECT).c_str(), false);
+	return id;
+}
+
+int AudioControl::playTool2Effect()
+{
+	if (isEffectStopped)
+		return -1;
+	int id = SimpleAudioEngine::sharedEngine()->playEffect(CCFileUtils::sharedFileUtils()->fullPathForFilename(TOOL2_EFFECT).c_str(), false);
+	return id;
+}
+
+int AudioControl::playTool3Effect()
+{
+	if (isEffectStopped)
+		return -1;
+	int id = SimpleAudioEngine::sharedEngine()->playEffect(CCFileUtils::sharedFileUtils()->fullPathForFilename(TOOL3_EFFECT).c_str(), false);
+	return id;
+}
+
+int AudioControl::playTool4Effect()
+{
+	if (isEffectStopped)
+		return -1;
+	int id = SimpleAudioEngine::sharedEngine()->playEffect(CCFileUtils::sharedFileUtils()->fullPathForFilename(TOOL4_EFFECT).c_str(), false);
+	return id;
+}
+
+int AudioControl::playTool5Effect()
+{
+	if (isEffectStopped)
+		return -1;
+	int id = SimpleAudioEngine::sharedEngine()->playEffect(CCFileUtils::sharedFileUtils()->fullPathForFilename(TOOL5_EFFECT).c_str(), false);
+	return id;
+}
+
+int AudioControl::playTool6Effect()
+{
+	if (isEffectStopped)
+		return -1;
+	int id = SimpleAudioEngine::sharedEngine()->playEffect(CCFileUtils::sharedFileUtils()->fullPathForFilename(TOOL6_EFFECT).c_str(), false);
+	return id;
+}
+
+int AudioControl::playEncourageEffect(ENCOURAGEMODE mode)
+{
+	if (isEffectStopped)
+		return -1;
+	int id = -1;
+	switch (mode)
+	{
+	case COOL:
+		id = SimpleAudioEngine::sharedEngine()->playEffect(CCFileUtils::sharedFileUtils()->fullPathForFilename(ENCOURAGE_EFFECT_COOL).c_str(), false);
+		break;
+
+	case NICE:
+		id = SimpleAudioEngine::sharedEngine()->playEffect(CCFileUtils::sharedFileUtils()->fullPathForFilename(ENCOURAGE_EFFECT_NICE).c_str(), false);
+		break;
+
+	case GREAT:
+		id = SimpleAudioEngine::sharedEngine()->playEffect(CCFileUtils::sharedFileUtils()->fullPathForFilename(ENCOURAGE_EFFECT_GREAT).c_str(), false);
+		break;
+
+	case ACE:
+		id = SimpleAudioEngine::sharedEngine()->playEffect(CCFileUtils::sharedFileUtils()->fullPathForFilename(ENCOURAGE_EFFECT_ACE).c_str(), false);
+		break;
+
+	case EXCELLENT:
+		id = SimpleAudioEngine::sharedEngine()->playEffect(CCFileUtils::sharedFileUtils()->fullPathForFilename(ENCOURAGE_EFFECT_EXCELLENT).c_str(), false);
+		break;
+	case AWESOME:
+		id = SimpleAudioEngine::sharedEngine()->playEffect(CCFileUtils::sharedFileUtils()->fullPathForFilename(ENCOURAGE_EFFECT_AWESOME).c_str(), false);
+		break;
+	default:
+		break;
+	}
+	return id;
 }

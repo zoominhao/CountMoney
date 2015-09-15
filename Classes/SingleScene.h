@@ -25,5 +25,6 @@ private:
 	void WJManualScene(Ref *pSender, ui::Widget::TouchEventType type);
 
 	
+	void boatAnimation();
 };
 #endif

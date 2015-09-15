@@ -4,7 +4,7 @@
 	<dict>
 		<key>frames</key>
 		<dict>
-			<key>background.png</key>
+			<key>single_end1_bg.png</key>
 			<dict>
 				<key>width</key>
 				<integer>768</integer>
@@ -23,7 +23,7 @@
 				<key>offsetY</key>
 				<real>0</real>
 			</dict>
-			<key>restart_r_btn.png</key>
+			<key>single_end1_retry.png</key>
 			<dict>
 				<key>width</key>
 				<integer>253</integer>
@@ -42,7 +42,7 @@
 				<key>offsetY</key>
 				<real>0</real>
 			</dict>
-			<key>return_r_btn.png</key>
+			<key>single_end1_return.png</key>
 			<dict>
 				<key>width</key>
 				<integer>253</integer>
@@ -54,6 +54,44 @@
 				<integer>87</integer>
 				<key>x</key>
 				<integer>1025</integer>
+				<key>y</key>
+				<integer>0</integer>
+				<key>offsetX</key>
+				<real>0</real>
+				<key>offsetY</key>
+				<real>0</real>
+			</dict>
+			<key>single_end1_cal.png</key>
+			<dict>
+				<key>width</key>
+				<integer>564</integer>
+				<key>height</key>
+				<integer>661</integer>
+				<key>originalWidth</key>
+				<integer>564</integer>
+				<key>originalHeight</key>
+				<integer>661</integer>
+				<key>x</key>
+				<integer>1280</integer>
+				<key>y</key>
+				<integer>0</integer>
+				<key>offsetX</key>
+				<real>0</real>
+				<key>offsetY</key>
+				<real>0</real>
+			</dict>
+			<key>single_end1_score.png</key>
+			<dict>
+				<key>width</key>
+				<integer>72</integer>
+				<key>height</key>
+				<integer>34</integer>
+				<key>originalWidth</key>
+				<integer>72</integer>
+				<key>originalHeight</key>
+				<integer>34</integer>
+				<key>x</key>
+				<integer>1846</integer>
 				<key>y</key>
 				<integer>0</integer>
 				<key>offsetX</key>

@@ -16,7 +16,7 @@ Scene* TellerPauseScene::createScene(RenderTexture* sqr, int score)
 
 	/*char scoreStr[20];
 	sprintf(scoreStr, "Score: %d", score);
-	auto scoreLabel = Label::createWithTTF(scoreStr, "fonts/Marker Felt.ttf", 70);
+	auto scoreLabel = Label::createWithTTF(scoreStr, "fonts/DTLNobelT-Bold.otf", 70);
 	scoreLabel->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 + 80);
 	scoreLabel->setColor(Color3B(255.0, 255.0, 255.0));
 	scene->addChild(scoreLabel, 1);*/

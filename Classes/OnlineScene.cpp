@@ -1,4 +1,3 @@
-/*
 #include "OnlineScene.h"
 #include "StartScene.h"
 #include "MCUtil.h"
@@ -35,7 +34,7 @@ bool OnlineScene::init()
 		origin.y + visibleSize.height - returnItem->getContentSize().height / 2));
 
 
-	/ *auto pauseItem = MenuItemImage::create(
+	/*auto pauseItem = MenuItemImage::create(
 		"online/icon_pause.png",
 		"online/icon_pause.png",
 		CC_CALLBACK_1(OnlineScene::pauseCallback, this));
@@ -44,7 +43,7 @@ bool OnlineScene::init()
 		origin.y + visibleSize.height - pauseItem->getContentSize().height / 2));
 
 	// create menu, it's an autorelease object
-	auto menu = Menu::create(returnItem, pauseItem, NULL);* /
+	auto menu = Menu::create(returnItem, pauseItem, NULL);*/
 	auto menu = Menu::create(returnItem, NULL);
 	menu->setPosition(Vec2::ZERO);
 	this->addChild(menu, 1);
@@ -85,7 +84,7 @@ bool OnlineScene::init()
 	touchlistenter->onTouchMoved = CC_CALLBACK_2(OnlineScene::onTouchMoved, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(touchlistenter, this);
 
-	startConnect();
+	//startConnect();
 
 	//播放背景音乐
 	AudioControl::playBgMusic(PK_ONLINE);
@@ -101,22 +100,22 @@ void OnlineScene::pauseCallback(Ref* pSender)
 {
 	//遍历当前类的所有子节点信息，画入renderTexture中。  
 	//这里类似截图。  
-	/ *Size visibleSize = Director::getInstance()->getVisibleSize();
+	/*Size visibleSize = Director::getInstance()->getVisibleSize();
 	RenderTexture *renderTexture = RenderTexture::create(visibleSize.width, visibleSize.height + 30);
 	renderTexture->begin();
 	this->getParent()->visit();
 	renderTexture->end();
 
 	auto scene = OnlinePauseScene::createScene(renderTexture, m_player->totalMoneyNum());
-	Director::sharedDirector()->pushScene(scene);* /
+	Director::sharedDirector()->pushScene(scene);*/
 }
 
 void OnlineScene::returnCallback(Ref* pSender)
 {
 	AudioControl::stopBGMusic();
-	closeConnection();
+	//closeConnection();
 	auto scene = StartScene::createScene();
-	Director::getInstance()->replaceScene(scene);
+	Director::getInstance()->replaceScene(CCTransitionZoomFlipX::create(0.5, scene, TransitionScene::Orientation::LEFT_OVER));
 }
 
 void OnlineScene::setBgImage()
@@ -150,14 +149,14 @@ bool OnlineScene::onTouchBegan(Touch* touch, Event* event)
 			{
 				m_timerStart = true;
 				m_cmTimer->startTimer();
-				WebClient::getinstance().sendCountEvent(EVENT_START, false);
+				//WebClient::getinstance().sendCountEvent(EVENT_START, false);
 			}
 			m_effect_id = AudioControl::playCountEffect();
 			m_player->addSingleMoneyLabel(false, "center", Vec2(12.0, 0.0));
 		}
 		else
 		{
-			WebClient::getinstance().sendCountEvent(EVENT_NO_PAIR, true);
+			//WebClient::getinstance().sendCountEvent(EVENT_NO_PAIR, true);
 		}
 	}
 
@@ -195,7 +194,7 @@ void OnlineScene::onTouchEnded(Touch* touch, Event* event)
 		m_player->removeChildByName("up");
 		m_player->MoneySingle()->setName("up");
 	
-		sendFight(EVENT_MONEY_REAL);
+		//sendFight(EVENT_MONEY_REAL);
 		//test
 		//this->schedule(schedule_selector(OnlineScene::timetest), 0.02f);
 		break;
@@ -222,6 +221,7 @@ void OnlineScene::addTimerFrame()
 }
 
 
+/*
 void OnlineScene::onFight(MCFIGHT fight_event, bool toMe)
 {
 	switch (fight_event)
@@ -277,21 +277,21 @@ void OnlineScene::onWait()
 
 	//PopChoiceDlg* dlg = PopChoiceDlg::create();
 	//this->addChild(dlg, 2);
-}
+}*/
 
 void OnlineScene::createVS()
 {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	//myself
-	m_meLabel = Label::createWithTTF("0", "fonts/Marker Felt.ttf", 40);
+	m_meLabel = Label::createWithTTF("0", "fonts/DTLNobelT-Bold.otf", 40);
 	m_meLabel->setPosition(origin.x + visibleSize.width * 0.5 - 100, origin.y + visibleSize.height * 0.5 - 50);
 	m_meLabel->setColor(Color3B(106.0, 57.0, 6.0));
 	this->addChild(m_meLabel, 3);
 
 
 	//opponent
-	m_uLabel = Label::createWithTTF("0", "fonts/Marker Felt.ttf", 40);
+	m_uLabel = Label::createWithTTF("0", "fonts/DTLNobelT-Bold.otf", 40);
 	m_uLabel->setPosition(origin.x + visibleSize.width * 0.5 + 100, origin.y + visibleSize.height * 0.5 - 50);
 	m_uLabel->setColor(Color3B(106.0, 57.0, 6.0));
 	this->addChild(m_uLabel, 3);
@@ -319,6 +319,7 @@ void OnlineScene::changeUVS()
 	m_uLabel->setString(uMoneyStr);
 }
 
+/*
 void OnlineScene::sendFight(MCFIGHT fight_type)
 {
 	WebClient::getinstance().sendCountEvent(fight_type, true);

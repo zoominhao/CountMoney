@@ -27,6 +27,8 @@ public:
 
 	static Color3B  m_timerColor;
 	static Color3B  m_targetColor;
+
+	static bool m_flag_openscene;
 };
 
 #endif

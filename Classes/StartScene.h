@@ -30,5 +30,7 @@ private:
 
 	void multiOpenAct();
 
+	void openSceneAnimation();
+
 };
 #endif

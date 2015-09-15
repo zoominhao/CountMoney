@@ -16,7 +16,5 @@ public:
 
 private:
 	void StartScene(Ref *pSender, ui::Widget::TouchEventType type);
-
-
 };
 #endif

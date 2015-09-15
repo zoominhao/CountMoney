@@ -24,15 +24,14 @@ Scene* TellerEndScene::createScene(const char* resultstr, int result)
 	SimpleAudioEngine::sharedEngine()->stopAllEffects();
 
 
-	auto scoreLabel = Label::createWithTTF(resultstr, "fonts/Marker Felt.ttf", 50);
+	auto scoreLabel = Label::createWithTTF(resultstr, "fonts/DTLNobelT-Bold.otf", 50);
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	//添加得分
-	scoreLabel->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - 200);
-	//scoreLabel->setColor(Color3B(255.0, 255.0, 255.0));
-	scoreLabel->setColor(Color3B::GRAY);
+	scoreLabel->setPosition(origin.x + visibleSize.width / 2 - 10, origin.y + visibleSize.height / 2 + 50);
+	scoreLabel->setColor(Color3B::WHITE);
 
-	scene->addChild(scoreLabel, 1);
+	layer->addChild(scoreLabel, 1);
 
 	m_score = result;
 	WebClient::getinstance().sendScore(GY, m_score);
@@ -113,8 +112,8 @@ void TellerEndScene::updatePopDlg(float time)
 	if (isPop)
 	{
 		isPop = false;
-		auto scene = PopInputDlg::createScene(GY, m_score);
-		this->addChild(scene);
+		auto poplayer = PopInputDlg::createLayer(GY, m_score);
+		this->addChild(poplayer, 2);
 	}
 
 	Btn_Restart->setEnabled(true);

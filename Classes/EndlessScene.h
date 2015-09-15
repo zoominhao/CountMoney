@@ -4,6 +4,7 @@
 #include "cocos2d.h"
 #include "CMTimer.h"
 #include "Player.h"
+#include "FlyWord.h"
 
 USING_NS_CC;
 
@@ -36,8 +37,6 @@ private:
 	void randNewSingleMoney();
 	void initProArr();
 
-	//add timer frame
-	void addTimerFrame();
 
 	void playStageEffect(int level, int target, float timelimit);
 	void removeStageEffect(float time);
@@ -88,6 +87,9 @@ private:
 
 	//manual
 	int      m_stageCount;
+
+	FlyWord* m_flyWord[5];
+
 };
 
 #endif // __ENDLESS_SCENE_H__

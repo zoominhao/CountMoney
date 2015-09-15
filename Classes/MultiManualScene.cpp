@@ -66,50 +66,6 @@ void MultiManualScene::btnCB(Ref *pSender, ui::Widget::TouchEventType type)
 	{
 		AudioControl::playClickEffect();
 		auto scene = StartScene::createScene();
-		Director::sharedDirector()->replaceScene(TransitionFadeUp::create(0.5f, scene));
-		//multiOpenAct();
+		Director::sharedDirector()->replaceScene(scene);
 	}
-}
-
-void MultiManualScene::multiOpenAct()
-{
-	auto visibleSize = Director::getInstance()->getVisibleSize();
-	auto origin = Director::getInstance()->getVisibleOrigin();
-
-	//°×µ×
-	Layer *layer = LayerColor::create(ccc4(0xff, 0xff, 0xff, 0xff), visibleSize.width, visibleSize.height);
-	this->addChild(layer, 2, "vsbg");
-
-	CCSprite* sp1 = CCSprite::create("multi/P1.png");
-	sp1->setPosition(origin.x + visibleSize.width, origin.y + visibleSize.height);
-	this->addChild(sp1, 2, "vsdown");
-	CCActionInterval * movedown = CCMoveBy::create(0.5f, ccp(-visibleSize.width / 2, -visibleSize.height / 2));
-	sp1->runAction(movedown);
-
-	CCSprite * sp2 = CCSprite::create("multi/P2.png");
-	sp2->setPosition(origin.x, origin.y);
-	this->addChild(sp2, 2, "vsup");
-	CCActionInterval * moveup = CCMoveBy::create(0.5f, ccp(visibleSize.width / 2, visibleSize.height / 2));
-	sp2->runAction(moveup);
-
-	CCSprite * svs = CCSprite::create("multi/pvp.png");
-	svs->setPosition(origin.x, origin.y + visibleSize.height / 2);
-	this->addChild(svs, 2, "vscenter");
-	CCActionInterval* moveby = CCMoveBy::create(0.5f, ccp(visibleSize.width / 2, 0));
-	CCActionInterval * easeElasticOut = CCEaseElasticOut::create(moveby);
-
-	CCActionInterval* rmdelay = CCDelayTime::create(1.0f);
-
-	CCCallFunc * funcall = CCCallFunc::create([&](){
-		this->removeChildByName("vsbg");
-		this->removeChildByName("vsdown");
-		this->removeChildByName("vsup");
-		this->removeChildByName("vscenter");
-		auto scene = StartScene::createScene();
-		Director::sharedDirector()->replaceScene(TransitionFadeUp::create(0.5f, scene));
-
-	});
-	CCFiniteTimeAction * seq = CCSequence::create(easeElasticOut, rmdelay, funcall, NULL);
-
-	svs->runAction(seq);
 }

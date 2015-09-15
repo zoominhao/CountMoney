@@ -6,6 +6,7 @@
 #include "AudioControl.h"
 
 
+
 Scene* LoserScene::createScene()
 {
 	auto scene = Scene::create();
@@ -65,9 +66,13 @@ bool LoserScene::init()
 
 	//Ìí¼Ó¼ÆÊ±Æ÷
 	m_cmTimer = CMTimer::create();
-	m_cmTimer->createLabel(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - 80), m_player, 1);
+	m_cmTimer->createLabel(Vec2(origin.x + visibleSize.width / 2 - 5, origin.y + visibleSize.height - 73), m_player, 1);
 	this->addChild(m_cmTimer, 2);
 
+
+	//Æ®×Ö
+	m_flyword = FlyWord::create("flyword/+100.png", 1.0, Vec2(origin.x + visibleSize.width/2 - 130, origin.y + visibleSize.height / 2), 50);
+	this->addChild(m_flyword, 2);
 
 	//²¥·Å±³¾°ÒôÀÖ
 	//AudioControl::playBgMusic(LOSER);
@@ -119,7 +124,7 @@ void LoserScene::returnCallback(Ref* pSender)
 {
 	AudioControl::stopBGMusic();
 	auto scene = SingleScene::createScene();
-	Director::getInstance()->replaceScene(scene);
+	Director::getInstance()->replaceScene(TransitionZoomFlipX::create(0.5, scene, TransitionScene::Orientation::LEFT_OVER));
 }
 
 void LoserScene::setBgImage()
@@ -178,8 +183,6 @@ void LoserScene::onTouchEnded(Touch* touch, Event* event)
 	else
 		return;
 
-
-
 	auto pos = touch->getLocation();
 
 	switch (MCUtil::direction(_spos, pos))
@@ -189,6 +192,8 @@ void LoserScene::onTouchEnded(Touch* touch, Event* event)
 		m_player->addTotalMoney(100);
 		m_player->removeChildByName("up");
 		m_player->MoneySingle()->setName("up");
+
+		m_flyword->Flying();
 
 		if (MCManual::novice[0])
 		{

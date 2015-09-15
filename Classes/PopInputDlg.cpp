@@ -5,15 +5,16 @@
 GameMode PopInputDlg::m_gmode = DS;
 int PopInputDlg::m_score = 0;
 
-Scene* PopInputDlg::createScene(GameMode gmode, int score)
+Layer* PopInputDlg::createLayer(GameMode gmode, int score)
 {
-	auto scene = Scene::create();
+	//auto scene = Scene::create();
 	auto layer = PopInputDlg::create();
-	scene->addChild(layer);
+	//scene->addChild(layer);
 
 	m_gmode = gmode;
 	m_score = score;
-	return scene;
+	//return scene;
+	return layer;
 }
 
 bool PopInputDlg::init()

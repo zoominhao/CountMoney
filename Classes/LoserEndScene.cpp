@@ -23,17 +23,13 @@ Scene* LoserEndScene::createScene(const char* resultstr, int result)
 
 	SimpleAudioEngine::sharedEngine()->stopAllEffects();
 
-
-	auto scoreLabel = Label::createWithTTF(resultstr, "fonts/Marker Felt.ttf", 50);
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-
-
-	//添加得分
-	scoreLabel->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - 200);
-	scoreLabel->setColor(Color3B::GRAY);
-	scene->addChild(scoreLabel, 1);
+	auto scoreLabel = Label::createWithTTF(resultstr, "fonts/DTLNobelT-Bold.otf", 50);
+	scoreLabel->setPosition(origin.x + visibleSize.width / 2 - 10, origin.y + visibleSize.height / 2 + 50);
+	scoreLabel->setColor(Color3B::WHITE);
+	layer->addChild(scoreLabel, 1);
 
 	m_score = result;
 	WebClient::getinstance().sendScore(DS, m_score);
@@ -112,11 +108,10 @@ void LoserEndScene::updatePopDlg(float time)
 	if (isPop)
 	{
 		isPop = false;
-		auto scene = PopInputDlg::createScene(DS, m_score);
-		this->addChild(scene);
-
+		auto poplayer = PopInputDlg::createLayer(DS, m_score);
+		this->addChild(poplayer, 2);
 	}
-	
+
 	Btn_Restart->setEnabled(true);
 	Btn_Return->setEnabled(true);
 

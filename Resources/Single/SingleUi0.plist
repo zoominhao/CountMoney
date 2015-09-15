@@ -23,16 +23,16 @@
 				<key>offsetY</key>
 				<real>0</real>
 			</dict>
-			<key>button_normal.png</key>
+			<key>button_return.png</key>
 			<dict>
 				<key>width</key>
-				<integer>253</integer>
+				<integer>212</integer>
 				<key>height</key>
-				<integer>87</integer>
+				<integer>73</integer>
 				<key>originalWidth</key>
-				<integer>253</integer>
+				<integer>212</integer>
 				<key>originalHeight</key>
-				<integer>87</integer>
+				<integer>73</integer>
 				<key>x</key>
 				<integer>770</integer>
 				<key>y</key>
@@ -53,7 +53,7 @@
 				<key>originalHeight</key>
 				<integer>294</integer>
 				<key>x</key>
-				<integer>1025</integer>
+				<integer>984</integer>
 				<key>y</key>
 				<integer>0</integer>
 				<key>offsetX</key>
@@ -72,7 +72,7 @@
 				<key>originalHeight</key>
 				<integer>294</integer>
 				<key>x</key>
-				<integer>1326</integer>
+				<integer>1285</integer>
 				<key>y</key>
 				<integer>0</integer>
 				<key>offsetX</key>
@@ -91,7 +91,7 @@
 				<key>originalHeight</key>
 				<integer>294</integer>
 				<key>x</key>
-				<integer>1627</integer>
+				<integer>1586</integer>
 				<key>y</key>
 				<integer>0</integer>
 				<key>offsetX</key>
@@ -110,7 +110,7 @@
 				<key>originalHeight</key>
 				<integer>40</integer>
 				<key>x</key>
-				<integer>1928</integer>
+				<integer>1887</integer>
 				<key>y</key>
 				<integer>0</integer>
 				<key>offsetX</key>

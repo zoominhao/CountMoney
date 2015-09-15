@@ -4,6 +4,8 @@
 #include "cocos2d.h"
 #include "CMTimer.h"
 #include "Player.h"
+#include "FlyWord.h"
+#include "ZoomingWord.h"
 
 USING_NS_CC;
 
@@ -47,6 +49,9 @@ private:
 	void updateManualAct2(float time);
 	void updateManualAct3(float time);
 
+	//encourage effect
+	void encourageEffect();
+
 private:
 	Vec2 _spos;
 	Vec2 _curPos;
@@ -72,6 +77,12 @@ private:
 	bool     m_enabled;
 
 	bool     m_fakeStage;
+
+	FlyWord* m_RflyWord;
+	FlyWord* m_FflyWord;
+
+	ZoomingWord* m_zoomingWord[6];
+	int    m_GoodCount;
 
 };
 

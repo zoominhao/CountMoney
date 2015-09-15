@@ -27,7 +27,6 @@ bool AboutScene::init()
 	ui::Button *Btn_Return = dynamic_cast<ui::Button*>(uilayer->getChildByName("Return"));
 	Btn_Return->addTouchEventListener(CC_CALLBACK_2(AboutScene::StartScene, this));
 
-	
 
 	return true;
 }
