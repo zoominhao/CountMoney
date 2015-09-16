@@ -19,5 +19,6 @@ private:
 	void restartButton(Ref *pSender, ui::Widget::TouchEventType type);
 	void returnButton(Ref *pSender, ui::Widget::TouchEventType type);
 
+	void addWinSprite(int whichplayer);
 };
 #endif

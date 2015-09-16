@@ -4,11 +4,9 @@
 #include <sstream>
 
 
-#define DEFAULT_PORT 8080
-//#define DEFAULT_ADDR "10.66.227.70"
+#define DEFAULT_PORT 80
 #define DEFAULT_ADDR "112.74.212.113"
-//#define DEFAULT_ADDR "192.168.1.102"
-//#define DEFAULT_ADDR "10.66.237.210"
+
 
 WebClient::WebClient()
 {
@@ -66,9 +64,10 @@ void WebClient::getMessage(int socket)
 			if (event & EVENT_FIGHT_MASK) {
 				int ret = recv(socket, buf, 1, 0);
 				char direction = *buf;
-				method->onFight(event, (direction == 0) ? false : true);
-			}
-			else if (event & EVENT_UPLOAD_MASK) {
+				ret = recv(socket, buf, 4, 0);
+				int score = *(int *)buf;
+				method->onFight(event, (direction == 0) ? false : true, score);
+			} else if (event & EVENT_UPLOAD_MASK) {
 				recv(socket, buf, 1, 0);
 				if (event & EVENT_UPLOAD_LUP_MASK)
 					method->onUpdateScore();
@@ -76,23 +75,22 @@ void WebClient::getMessage(int socket)
 					bool islevelup = (buf[0] == 0x10);
 					method->onSendScore(islevelup);
 				}
-			}
-			else if (event & EVENT_QUERY_MASK) {
+			} else if (event & EVENT_QUERY_MASK) {
 				recv(socket, buf, 1, 0); // err
 				recv(socket, buf, 4, 0); // size
 				int size = *(int *)buf;
 				recv(socket, buf, size, 0);
 				std::string name, score;
 				std::vector<std::string> result;
+
 				char *str = buf;
 				// number#name#score#name#score#...#
 				int pos = strcspn(str, "#");
 				buf[pos] = '\0';
 				int number;
-				//scanf(buf, "%d", &number); 
 				std::stringstream iss(buf);
 				iss >> number;
-
+			
 				str = buf + pos + 1;
 				for (int i = 0; i < number; i++) {
 					pos = strcspn(str, "#");
@@ -105,8 +103,10 @@ void WebClient::getMessage(int socket)
 					result.push_back(score);
 				}
 				method->onQuery(GameMode((event >> EVENT_QUERY_SHIFT) - 1), result);
-			}
-			else
+			} else if (event & EVENT_STATUS_MASK) {
+				//method->onStatusChanged(ConnectStatus(event));
+				method->onStatusChanged(ConnectStatus((event >> EVENT_STATUS_SHIFT) - 1));
+			} else
 				method->onError("unknow event");
 		}
 	}
@@ -220,6 +220,10 @@ void WebClient::start()
 
 void WebClient::shutdown()
 {
+	if (status == -1)
+	{
+		return;
+	}
 	status = -1;
 	close();
 }
@@ -261,15 +265,26 @@ void WebClient::query(enum GameMode mode)
 	send((char *)&buf, 4);
 }
 
-void WebClient::sendFightEvent(int type, bool toMe)
+void WebClient::sendFightEvent(int type, bool toMe, int myScore)
 {
 	if (status != 0)
 		return;
-	char buf[8];
+	char buf[9];
 	memcpy(buf, &type, 4);
 	char diretion = toMe ? 1 : 0;
 	memcpy(buf + 4, &diretion, 1);
-	send((char *)&buf, 5);
+	memcpy(buf + 5, &myScore, 4);
+	send((char *)&buf, 9);
+}
+
+void WebClient::sendGameOverEvent()
+{
+	if (status != 0)
+		return;
+	char buf[16];
+	int type = EVENT_GAMEOVER;
+	memcpy(buf, &type, 4);
+	send((char *)&buf, 4);
 }
 
 void WebClient::sendScore(enum GameMode mode, int score)
@@ -344,4 +359,24 @@ void WebClient::send(const char *data, int size)
 void WebClient::registerMethod(WebClientMethod *method)
 {
 	this->method = method;
+}
+
+void WebClient::sendReadyEvent()
+{
+	if (status != 0)
+		return;
+	char buf[16];
+	int type = EVENT_READY;
+	memcpy(buf, &type, 4);
+	send((char *)&buf, 4);
+}
+
+void WebClient::sendStartEvent()
+{
+	if (status != 0)
+		return;
+	char buf[16];
+	int type = EVENT_START;
+	memcpy(buf, &type, 4);
+	send((char *)&buf, 4);
 }

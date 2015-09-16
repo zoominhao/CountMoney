@@ -13,7 +13,7 @@ Scene* RankScene::createScene()
 	auto scene = Scene::create();
 	auto layer = RankScene::create();
 	scene->addChild(layer);
-
+	WebClient::getinstance().query(DS);
 
 	return scene;
 }
@@ -73,7 +73,7 @@ bool RankScene::init()
 
 	WebClient::getinstance().registerMethod(this);
 	WebClient::getinstance().start();
-	WebClient::getinstance().query(DS);
+	
 
 	return true;
 }

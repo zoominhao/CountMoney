@@ -23,6 +23,7 @@ public:
 
 	void setAllowed(bool flag) { m_allowed = flag; }
 
+	float timeLeft(){ return m_timeLeft; }
 
 private:
 	void updatetime(float time);

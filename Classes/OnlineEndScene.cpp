@@ -13,19 +13,28 @@ Scene* OnlineEndScene::createScene(const char* resultstr)
 	auto layer = OnlineEndScene::create();
 	scene->addChild(layer, 1);
 
-
 	SimpleAudioEngine::sharedEngine()->stopAllEffects();
 
-
-	auto scoreLabel = Label::createWithTTF(resultstr, "fonts/DTLNobelT-Bold.otf", 50);
+	
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
 	//Ìí¼ÓµÃ·Ö
+/*
+	auto scoreLabel = Label::createWithTTF(resultstr, "fonts/DTLNobelT-Bold.otf", 50);
 	scoreLabel->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - 200);
 	//scoreLabel->setColor(Color3B(255.0, 255.0, 255.0));
 	scoreLabel->setColor(Color3B::GRAY);
+	layer->addChild(scoreLabel, 1);*/
 
-	scene->addChild(scoreLabel, 1);
+	if (strcmp(resultstr, "0") == 0)
+		layer->addWinSprite(1);
+	else if (strcmp(resultstr, "1") == 0)
+		layer->addWinSprite(1);
+	else
+		layer->addWinSprite(2);
+
+	WebClient::getinstance().shutdown();
 
 	return scene;
 }
@@ -58,8 +67,8 @@ void OnlineEndScene::restartButton(Ref *pSender, ui::Widget::TouchEventType type
 {
 	if (type == ui::Widget::TouchEventType::ENDED)
 	{
-		//auto scene = OnlineScene::createScene();
-		//Director::getInstance()->replaceScene(scene);
+		auto scene = OnlineScene::createScene();
+		Director::getInstance()->replaceScene(scene);
 	}
 }
 
@@ -69,5 +78,24 @@ void OnlineEndScene::returnButton(Ref *pSender, ui::Widget::TouchEventType type)
 	{
 		auto scene = StartScene::createScene();
 		Director::getInstance()->replaceScene(scene);
+	}
+}
+
+void OnlineEndScene::addWinSprite(int whichplayer)
+{
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+	if (whichplayer == 1)
+	{
+		auto p1 = Sprite::create("multi/boy_win.png");
+		p1->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 + 100);
+		this->addChild(p1, 1);
+	
+	}
+	if (whichplayer == 2)
+	{
+		auto p1 = Sprite::create("multi/boy_lose.png");
+		p1->setPosition(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 + 50);
+		this->addChild(p1, 1);
 	}
 }

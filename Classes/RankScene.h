@@ -15,7 +15,7 @@ public:
 	static Scene* createScene();
 	virtual bool init();
 	CREATE_FUNC(RankScene);
-	virtual void onFight(int type, bool toMe){
+	virtual void onFight(int type, bool toMe, int enemyScore){
 	};
 	virtual void onClose(){
 		// TODO: onclose
@@ -33,8 +33,10 @@ public:
 	virtual void onContinue(){};
 	// name1,score1,name2,score2,...
 	virtual void onQuery(GameMode mode, std::vector<std::string> result);
+	virtual void onStatusChanged(ConnectStatus status) {}
 
 	void startConnect(GameMode mode);
+	
 private:
 	
 	void setLabelContent(std::vector<std::string> &rankStrs);

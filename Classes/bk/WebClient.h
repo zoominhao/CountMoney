@@ -1,5 +1,4 @@
-#ifndef __WEB_CLIENT_H__
-#define __WEB_CLIENT_H__
+#pragma once
 
 #ifdef _WIN32  
 #include <winsock2.h>  
@@ -15,47 +14,55 @@
 
 #include <string>
 #include <mutex>
+#include <vector>
 
+#define EVENT_REGIST 0X00
+#define EVENT_LOGIN  0X01
 
-/*
-typedef enum{
-	EVENT_REGIST,
-	EVENT_LOGIN,
-	EVENT_UPLOAD_1,
-	EVENT_UPLOAD_2,
-	EVENT_QUERY_1,
-	EVENT_QUERY_2
-} MCUSER;*/
+#define EVENT_UPLOAD_1    0X0100
+#define EVENT_UPLOAD_2	  0X0200
+#define EVENT_UPLOAD_3    0X0300
+#define EVENT_UPLOAD_4    0X0400
+#define EVENT_UPLOAD_LUP_MASK    0X1000
+#define EVENT_UPLOAD_MASK 0XFF00
 
-typedef enum{
-	EVENT_TOOL_1,
-	EVENT_TOOL_2,
-	EVENT_TOOL_3,
-	EVENT_TOOL_4,
-	EVENT_MONEY_REAL,
-	EVENT_MONEY_FAKE,
-	EVENT_NO_PAIR,
-	EVENT_LOSE,
-	EVENT_START,
-} MCFIGHT;
+#define EVENT_QUERY_1	 0X010000
+#define EVENT_QUERY_2	 0X020000
+#define EVENT_QUERY_3	 0X030000
+#define EVENT_QUERY_4	 0X040000
+#define EVENT_QUERY_MASK 0XFF0000
+#define EVENT_QUERY_SHIFT 16
 
+#define EVENT_FIGHT      0X01000000
+#define EVENT_WEAPON_1   0X02000000
+#define EVENT_WEAPON_2   0X03000000
+#define EVENT_WEAPON_3   0X04000000
+#define EVENT_WEAPON_4   0X05000000
+#define EVENT_FIGHT_MASK 0XFF000000
+enum GameMode
+{
+	DS = 0, GY, WJ, PK
+};
 
 class WebClientMethod
 {
 public:
 	virtual ~WebClientMethod(){};
 
-	virtual void onFight(MCFIGHT  fight_event, bool toMe) = 0;
-	virtual void onOpponentExit() = 0;
-	virtual void onMatch() = 0;
-	virtual void onWait() = 0;
-	virtual void onStart() = 0;
+	virtual void onFight(int type, bool toMe) = 0;
+	virtual void onClose() = 0;
+	virtual void onPause() = 0;
+	virtual void onContinue() = 0;
+	virtual void onQuery(GameMode mode, std::vector<std::string> result) = 0;
+	virtual void onUpdateScore() = 0;
+	virtual void onSendScore(bool levelup) = 0;
 	virtual void onError(const std::string message) = 0;
 };
 
 class WebClient
 {
 public:
+
 	static WebClient &getinstance()
 	{
 		static WebClient instance;
@@ -64,33 +71,30 @@ public:
 
 	~WebClient();
 
-	void registerMethod(WebClientMethod* CbObj);
-	void unregisterMethod();
+	void registerMethod(WebClientMethod *method);
 	void start();
 	void shutdown();
-	void shutdown2();
 	void pause();
 	void conti();
-	void sendCountEvent(MCFIGHT fight_event, bool toMe = false);
-	
+	void query(enum GameMode mode);
+	void sendScore(enum GameMode mode, int score);
+	void updateScore(enum GameMode mode, std::string name, int score);
+	void sendFightEvent(int type, bool toMe);
 
 private:
 	WebClient();
 	void getMessage(int socket);
 	void send(const char *data, int size);
 	void close();
-	void partExit();
 	bool connect();
-
 
 	bool createSocket();
 
 	static WebClient *instance;
-	int status;      // 0: OK ; -1: close
+	int status;// 0: OK ; -1: close
 	int socket;
 	std::mutex mutex;
 	fd_set fdset;
-	WebClientMethod* m_CbObj;
+	WebClientMethod *method;
 };
 
-#endif // __WEB_CLIENT_H__

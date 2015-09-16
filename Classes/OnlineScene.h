@@ -9,20 +9,25 @@
 
 USING_NS_CC;
 
-class OnlineScene : public Layer
+class OnlineScene : public Layer, public WebClientMethod
 {
 public:
+	~OnlineScene();
 	static Scene* createScene();
 	virtual bool init();
 	CREATE_FUNC(OnlineScene);
 
-	//联网响应事件
-	/*virtual void onFight(MCFIGHT  fight_event, bool toMe);
-	virtual void onOpponentExit();
-	virtual void onMatch();
-	virtual void onWait();
-	virtual void onStart();
-	virtual void onError(const std::string message);*/
+	virtual void onFight(int type, bool toMe, int enemyScore);
+	virtual void onClose(){};
+	virtual void onUpdateScore() {}
+	virtual void onSendScore(bool levelup) {}
+	virtual void onError(const std::string message){};
+	virtual void onPause(){};
+	virtual void onContinue(){};
+	// name1,score1,name2,score2,...
+	virtual void onQuery(GameMode mode, std::vector<std::string> result){};
+	virtual void onStatusChanged(ConnectStatus status);
+
 
 private:
 	void setBgImage();
@@ -43,11 +48,14 @@ private:
 	void createVS();
 	void changeMeVS();
 	void changeUVS();
-	//void sendFight(MCFIGHT fight_type);
-	//void startConnect();
-	//void closeConnection();
+	void startConnect();
 
-	//void timetest(float time);
+	void sendFightEvent(int type, bool toMe);
+	void sendStartEvent();
+
+	//
+	void readyGoAct();
+
 
 private:
 	Vec2 _spos;

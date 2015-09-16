@@ -5,6 +5,12 @@
 #include "PopChoiceDlg.h"
 
 
+OnlineScene::~OnlineScene()
+{
+	//WebClient::getinstance().shutdown();
+}
+
+
 Scene* OnlineScene::createScene()
 {
 	auto scene = Scene::create();
@@ -53,9 +59,6 @@ bool OnlineScene::init()
 	m_connected = false;
 	m_uScore = 0;
 
-	//preload audio
-	//AudioControl::preLoad();
-
 	//add background image
 	setBgImage();
 
@@ -70,7 +73,7 @@ bool OnlineScene::init()
 
 	//添加计时器
 	m_cmTimer = CMTimer::create();
-	m_cmTimer->createLabel(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - 80), m_player, 4);
+	m_cmTimer->createLabel(Vec2(origin.x + visibleSize.width / 2 - 5, origin.y + visibleSize.height - 73), m_player, 4);
 	this->addChild(m_cmTimer, 2);
 
 	
@@ -84,7 +87,7 @@ bool OnlineScene::init()
 	touchlistenter->onTouchMoved = CC_CALLBACK_2(OnlineScene::onTouchMoved, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(touchlistenter, this);
 
-	//startConnect();
+	startConnect();
 
 	//播放背景音乐
 	AudioControl::playBgMusic(PK_ONLINE);
@@ -113,7 +116,7 @@ void OnlineScene::pauseCallback(Ref* pSender)
 void OnlineScene::returnCallback(Ref* pSender)
 {
 	AudioControl::stopBGMusic();
-	//closeConnection();
+	WebClient::getinstance().shutdown();
 	auto scene = StartScene::createScene();
 	Director::getInstance()->replaceScene(CCTransitionZoomFlipX::create(0.5, scene, TransitionScene::Orientation::LEFT_OVER));
 }
@@ -149,14 +152,10 @@ bool OnlineScene::onTouchBegan(Touch* touch, Event* event)
 			{
 				m_timerStart = true;
 				m_cmTimer->startTimer();
-				//WebClient::getinstance().sendCountEvent(EVENT_START, false);
+				sendStartEvent();
 			}
 			m_effect_id = AudioControl::playCountEffect();
 			m_player->addSingleMoneyLabel(false, "center", Vec2(12.0, 0.0));
-		}
-		else
-		{
-			//WebClient::getinstance().sendCountEvent(EVENT_NO_PAIR, true);
 		}
 	}
 
@@ -194,18 +193,15 @@ void OnlineScene::onTouchEnded(Touch* touch, Event* event)
 		m_player->removeChildByName("up");
 		m_player->MoneySingle()->setName("up");
 	
-		//sendFight(EVENT_MONEY_REAL);
-		//test
-		//this->schedule(schedule_selector(OnlineScene::timetest), 0.02f);
+		sendFightEvent(EVENT_FIGHT, false);
+
 		break;
 	default:
 		m_player->removeChild(m_player->MoneySingle());
-		//AudioControl::stopEffectMusic(m_effect_id);
 		return;
 		break;
 	}
 
-	//AudioControl::stopEffectMusic(m_effect_id);
 	m_player->changeTotalMoneyLabel();
 	changeMeVS();
 }
@@ -219,65 +215,6 @@ void OnlineScene::addTimerFrame()
 	m_timerFrame->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - 75));
 	this->addChild(m_timerFrame, 1);
 }
-
-
-/*
-void OnlineScene::onFight(MCFIGHT fight_event, bool toMe)
-{
-	switch (fight_event)
-	{
-	case EVENT_MONEY_REAL:
-	{
-		m_uScore += 100;
-		m_player->setWin(m_uScore);
-		changeUVS();
-		break;
-	}
-	default:
-		break;
-	}
-}
-
-void OnlineScene::onOpponentExit()
-{
-	m_connected = false;
-	m_cmTimer->setAllowed(false);
-	m_cmTimer->stopTimer();
-	m_player->setAllowed(false);
-	MessageBox("Opponent Lost!", "Info");
-}
-
-void OnlineScene::onError(const std::string message)
-{
-	MessageBox(message.c_str(), "Info");
-}
-
-void OnlineScene::onMatch()
-{
-	if (!m_connected)
-	{
-		m_connected = true;
-		MessageBox("Match Successful!", "Info");
-		m_cmTimer->setAllowed(true);
-		m_player->setAllowed(true);
-	}
-}
-
-void OnlineScene::onStart()
-{
-	m_cmTimer->startTimer();
-}
-
-
-void OnlineScene::onWait()
-{
-	m_cmTimer->setAllowed(false);
-	m_player->setAllowed(false);
-	MessageBox("Waiting for match!", "Info");
-
-	//PopChoiceDlg* dlg = PopChoiceDlg::create();
-	//this->addChild(dlg, 2);
-}*/
 
 void OnlineScene::createVS()
 {
@@ -319,24 +256,113 @@ void OnlineScene::changeUVS()
 	m_uLabel->setString(uMoneyStr);
 }
 
-/*
-void OnlineScene::sendFight(MCFIGHT fight_type)
-{
-	WebClient::getinstance().sendCountEvent(fight_type, true);
-}
-
 void OnlineScene::startConnect()
 {
 	WebClient::getinstance().registerMethod(this);
 	WebClient::getinstance().start();
+	WebClient::getinstance().sendReadyEvent();
 }
 
-void OnlineScene::closeConnection()
+void OnlineScene::onStatusChanged(ConnectStatus status)
 {
-	WebClient::getinstance().shutdown();
+	switch (status)
+	{
+	case WAITING:
+		m_cmTimer->setAllowed(false);
+		m_player->setAllowed(false);
+		MessageBox("Waiting...", "Info");
+		//PopChoiceDlg* dlg = PopChoiceDlg::create();
+		//this->addChild(dlg, 2);
+		break;
+	case ENEMY_READY:
+		if (!m_connected)
+		{
+			m_connected = true;
+			MessageBox("Match Successful!", "Info");
+			m_cmTimer->setAllowed(true);
+			m_player->setAllowed(true);
+		}
+		break;
+	case ENEMY_QUIT:
+		m_connected = false;
+		m_cmTimer->setAllowed(false);
+		m_cmTimer->stopTimer();
+		if (m_cmTimer->timeLeft() > 0.5f)
+		{
+			m_player->setAllowed(false);
+			MessageBox("Opponent Lost!", "Info");
+		}
+		break;
+	case ENEMY_START:
+		m_cmTimer->startTimer();
+		m_timerStart = true;
+		break;
+	default:
+		break;
+	}
 }
 
-void OnlineScene::timetest(float time)
+
+void OnlineScene::sendFightEvent(int type, bool toMe)
 {
-	sendFight(EVENT_MONEY_REAL);
-}*/
+	WebClient::getinstance().sendFightEvent(type, toMe, m_player->totalMoneyNum());
+}
+
+void OnlineScene::onFight(int type, bool toMe, int enemyScore)
+{
+	switch (type)
+	{
+		case EVENT_FIGHT:
+		{
+			m_uScore = enemyScore;
+			m_player->setWin(enemyScore);
+			changeUVS();
+			break;
+		}
+		default:
+			break;
+	}
+}
+
+void OnlineScene::sendStartEvent()
+{
+	WebClient::getinstance().sendStartEvent();
+}
+
+void OnlineScene::readyGoAct()
+{
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+	auto m_ready = Sprite::create();
+	m_ready->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 + 100));
+	m_ready->setScale(0.5);
+	this->addChild(m_ready, 1, "ready");
+	//将图片加载到精灵帧缓存池  
+	SpriteFrameCache *m_frameCache = SpriteFrameCache::sharedSpriteFrameCache();
+	m_frameCache->addSpriteFramesWithFile("ready/ready.plist", "ready/ready.png");
+	//用一个列表保存所有的CCSpriteFrameCache  
+	Vector<SpriteFrame*> frameArray;
+	for (unsigned int i = 1; i <= 5; i++)
+	{
+		SpriteFrame* frame = m_frameCache->spriteFrameByName(String::createWithFormat("%d.png", i)->getCString());
+		frameArray.pushBack(frame);
+	}
+	//使用列表创建动画对象  
+	Animation* animation = Animation::createWithSpriteFrames(frameArray, 0.4f, 1);
+
+	//将动画包装成一个动作  
+	Animate* act = Animate::create(animation);
+
+	CCCallFunc * funcall = CCCallFunc::create([&](){
+		this->removeChildByName("ready");
+		AudioControl::playBgMusic(LOSER);
+		//m_enabled = true;
+		m_cmTimer->startTimer();
+	});
+	CCFiniteTimeAction * seq = CCSequence::create(act, funcall, NULL);
+	m_ready->runAction(seq);
+
+	AudioControl::playReadyEffect();
+}
+

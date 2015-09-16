@@ -101,7 +101,6 @@ void CMTimer::switchScene()
 	}
 	else if (m_sceneMode == 4)
 	{
-		//WebClient::getinstance().unregisterMethod();
 	#ifdef _WIN32  
 		Sleep(100);
 	#else  
@@ -111,15 +110,15 @@ void CMTimer::switchScene()
 		AudioControl::stopBGMusic();
 		if (m_player_status->Win() == 1)
 		{
-			scene = OnlineEndScene::createScene("You Win!");
+			scene = OnlineEndScene::createScene("1");
 		}
 		else if (m_player_status->Win() == -1)
 		{
-			scene = OnlineEndScene::createScene("You Lose!");
+			scene = OnlineEndScene::createScene("-1");
 		}
 		else
 		{
-			scene = OnlineEndScene::createScene("Tie!");
+			scene = OnlineEndScene::createScene("0");
 		}
 	}
 	 

@@ -66,6 +66,8 @@ bool EndlessScene::init()
 	m_player = Player::create();
 	m_player->createPlayer(4);
 	m_player->setTotalMoneySpritePos(0, -20);
+	m_player->ScoreFrame()->setPosition(m_player->ScoreFrame()->getPositionX(),m_player->ScoreFrame()->getPositionY() + 100);
+	m_player->setTotalMoneyNumPos(0, 100);
 	this->addChild(m_player, 1);
 
 	//Ìí¼Ó¼ÆÊ±Æ÷
@@ -704,8 +706,3 @@ void EndlessScene::updateManualAct2(float time)
 	this->removeChildByName("endlesstip4");
 	MCManual::writeUserProfile(MANUAL_ENDLESS, false);
 }
-
-
-
-
-
